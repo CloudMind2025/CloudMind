@@ -1,0 +1,143 @@
+* {
+  font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
+  
+  
+}
+
+
+:root {
+  --bg1: #e9e1ce;
+  --bg2: #f3ecd8;
+}
+
+
+.busca-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #052c3a;
+  padding-top: 30px;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-top: 71px;
+}
+
+.avatar img {
+  max-height: 300px;
+  width: 100%;
+  max-width: 430px;
+  height: auto;
+  margin-top: 40px;
+  margin-left: 2rem;
+}
+
+.conteudo-busca {
+  flex: 1;
+  color: white;
+  min-width: 280px;
+}
+
+.conteudo-busca header h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.conteudo-busca header p {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.barra-pesquisa {
+  display: flex;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  width: 80%
+}
+
+.barra-pesquisa input {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 8px 0 0 8px;
+  font-size: 1rem;
+  color: #333;
+  min-width: 0;
+}
+
+.barra-pesquisa button {
+  background-color: white;
+  border: none;
+  padding: 0 1rem;
+  border-radius: 0 8px 8px 0;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #0f4a60;
+}
+
+.botoes-filtros {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  padding-top:1rem;
+}
+
+.botoes-filtros button {
+  padding: 0.7rem 1.2rem;
+  background-color: #447a8c;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.botoes-filtros button:hover{
+  transform: scale(1.03);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  background-color: #3194adea;
+}
+
+
+
+
+/* Responsivo para telas menores */
+@media (max-width: 768px) {
+  .busca-area {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .barra-pesquisa {
+    flex-direction: column;
+    width: 80%;
+    margin: auto;
+  }
+
+  .barra-pesquisa input,
+  .barra-pesquisa button {
+    width: 100%;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+  }
+
+  .barra-pesquisa input:first-child {
+    margin-top: 0;
+  }
+
+  .botoes-filtros {
+    justify-content: center;
+  }
+
+
+  .avatar img {
+    display: none;
+  }
+
+  .conteudo-busca {
+    width: 100%;
+  }
+}

@@ -1,0 +1,176 @@
+/* ===== Reset ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+:root {
+  --bg1: #e9e1ce;
+  --bg2: #f3ecd8;
+}
+
+body {
+    background: linear-gradient(180deg, var(--bg1), var(--bg2), #374147);
+    min-height: 100vh;
+    color: #f5f5f5;
+}
+
+/* ===== Container geral ===== */
+.cadastro-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 50px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    margin-top: -22rem; /* mantém ajuste no desktop */
+}
+
+/* ===== Formulário ===== */
+form {
+    background: linear-gradient(185deg, #234162, #18343b);
+    backdrop-filter: blur(10px);
+    padding: 35px 30px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+    margin-left: 50rem;
+    margin-bottom: 7rem;
+}
+
+form:hover {
+    transform: translateY(-2px);
+}
+
+label {
+    font-weight: 600;
+    color: #ffffff;
+    margin-top: 15px;
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid rgba(255,255,255);
+    border-radius: 8px;
+    font-size: 15px;
+    background-color: rgba(255,255,255);
+    color: #000000;
+    transition: all 0.3s ease;
+}
+
+input::placeholder {
+    color: rgba(255,255,255,0.5);
+}
+
+
+
+h2 {
+    margin-top: 120px;
+    font-size: 30px;
+    color: #0c213b;
+    text-align: center;
+}
+
+span, div {
+    font-size: 13px;
+    color: #ff6b6b;
+    margin-top: 3px;
+    margin-bottom: 5px;
+    display: block;
+    line-height: 1.3;
+}
+
+.erro {
+    border-color: #ff6b6b !important;
+    background-color: rgba(255,107,107,0.1);
+}
+
+input[type="submit"] {
+    background: linear-gradient(135deg, #4dabf7, #1c7ed6);
+    color: #fff;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 25px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+input[type="submit"]:hover {
+    background: linear-gradient(135deg, #1c7ed6, #1971c2);
+    transform: translateY(-2px);
+}
+
+/* ===== Imagem ===== */
+.imgg img {
+    max-width: 350px;
+    height: auto;
+    position: relative;
+    top: 604px;
+    margin-left: 470px;
+}
+
+/* ===== Link de cadastro ===== */
+.link-cadastro {
+    color: rgba(255,255,255,0.85);
+    font-size: 14px;
+    margin-top: 12px;
+    text-align: center;
+}
+
+.link-cadastro a {
+    color: #4dabf7;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.link-cadastro a:hover {
+    text-decoration: underline;
+}
+
+/* ===== Responsividade ===== */
+@media (max-width: 1024px) {
+    form {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .imgg img {
+        position: static;
+        margin: 0 auto;
+        display: block;
+    }
+
+    .cadastro-container {
+        margin-top: 2rem;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 600px) {
+    form {
+        padding: 25px 20px;
+    }
+
+    h2 {
+        font-size: 24px;
+        margin-top: 120px;
+    }
+
+    .imgg img {
+        display: none;
+         
+    }
+}
+

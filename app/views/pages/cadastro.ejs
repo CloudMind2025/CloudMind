@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/cadastro.css">
+    <link rel="stylesheet" href="/css/erro.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/menu.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>CloudMind - cadastro</title>
+</head>
+
+<body>
+
+    <header>
+
+  <%- include('../partials/menu') %>
+   
+    <h2>Junte-se a nós e desbloqueie novas possibilidades!</h2>
+</header>
+
+    <%
+        var cssErro = {"nome":"","email":"","cpf":"", senha: "", csenha: "" }  
+        var msgErro = {"nome":"","email":"","cpf":"", senha: "", csenha: "" }
+    if(listaErros && listaErros.length > 0) { 
+        listaErros.forEach(function(itemErro){
+             if (itemErro.path  == "nome"){ 
+                cssErro.nome = "erro";
+                msgErro.nome = itemErro.msg;
+            }  
+             if (itemErro.path  == "email"){ 
+                cssErro.email = "erro";
+                msgErro.email = itemErro.msg;            
+             }  
+             if (itemErro.path  == "cpf"){
+                cssErro.cpf = "erro";
+                msgErro.cpf = itemErro.msg;                
+             } 
+             if (itemErro.path  == "senha"){
+                cssErro.senha = "erro";
+                msgErro.senha = itemErro.msg;                
+             }  
+             if (itemErro.path  == "csenha"){
+                cssErro.csenha = "erro";
+                msgErro.csenha = itemErro.msg;                
+             }  
+         }); 
+     }; %>
+ 
+    <section class="cadastro-container">
+        <section class="imgg">
+            <img src="/image/avatar2.png" alt="">
+        </section>
+    </section>
+
+    <form method="post" action="/cadastro">
+        <label for="nome">Razão Social:</label>
+        <input type="text" name="nome" id="nome" value="<%= campos.nome %>" class="<%= cssErro.nome %>">
+        <span><%= msgErro.nome %></span>
+
+        <br>
+        <label for="email">E-mail:</label>
+        <input type="text" name="email" id="email" value="<%= campos.email  %>" class="<%= cssErro.email %>">
+        <span><%= msgErro.email %></span>   
+
+        <br>
+        <label for="cpf">CPF:</label>
+        <input type="text" name="cpf" id="cpf" value="<%= campos.cpf %>" class="<%= cssErro.cpf %>">
+        <div><%= msgErro.cpf %></div> 
+
+        <br>
+        <label for="senha">Senha:</label>
+        <input type="password" name="senha" id="senha" value="<%= campos.senha  %>" class="<%= cssErro.senha %>">
+        <span><%= msgErro.senha %></span>   
+
+        <br>
+        <label for="csenha">Confirme a Senha:</label>
+        <input type="password" name="csenha" id="csenha" value="<%= campos.csenha  %>" class="<%= cssErro.csenha %>">
+        <span><%= msgErro.csenha %></span>
+        
+       <p class="link-cadastro">
+       Já tem conta? <a href="/login">Faça cadastro</a>
+      </p>
+
+        <br>
+        <input type="submit" value="Enviar">
+    </form>
+
+    <footer>
+
+      <%- include('../partials/footer') %>
+
+    </footer>
+</body>
+
+
+
+</html>
