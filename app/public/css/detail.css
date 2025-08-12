@@ -15,9 +15,6 @@
   border-radius: 5px;
 }
 
-
-
-
 .container .main-grid{
     margin-bottom: 40px;
 }
@@ -63,13 +60,13 @@ body {
 
 .btn.outline {
   background: transparent;
-  border-color: #d7e6ea;
-  color: #ffffff;
+  border-color: #B18547;
+  color: #fafafa;
 }
 
 .btn.buy {
-  background: rgba(167, 184, 194, 0.897);
-  color: #070d2e;
+  background: #B18547;
+  color: #152638;
 }
 
 .btn.ghost {
