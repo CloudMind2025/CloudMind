@@ -479,6 +479,9 @@ height: auto;
     margin-bottom: 60px;
     min-width: 220px;
   }
+  .hero-media img {
+    display: none;
+  }
 }
 
 @media (max-width: 640px) {
