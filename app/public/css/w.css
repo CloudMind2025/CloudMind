@@ -155,24 +155,24 @@ ul {
 
 /* ===== BOTÕES ===== */
 .btn {
-  background: linear-gradient(185deg, #234162, #18343b);
+  background-color: transparent;
+  border-color: #B18547;
   color: rgb(255, 255, 255);
   padding: 10px 56px;
   border-radius: 10px;
   font-weight: 600;
-  border: none;
   cursor: pointer;
   margin-left: px;
 }
 .btn3{
-  background: rgba(167, 184, 194, 0.897);
+  background: #B18547;
   color: rgb(255, 255, 255);
   padding: 10px 56px;
   border-radius: 10px;
   font-weight: 600;
   border: none;
   cursor: pointer;
-  color: #234162;
+  color: #152638;
 }
 .btn2{
   background: linear-gradient(185deg, #234162, #18343b);
