@@ -17,37 +17,7 @@
       line-height: 1.5;
     }
 
-    /* Header */
-    header {
-      background: linear-gradient(180deg, #4a6ea9, #2b4c7e);
-      color: white;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    header h1 {
-      font-size: 1.3rem;
-      font-weight: 600;
-    }
-
-    nav ul {
-      display: flex;
-      gap: 1.5rem;
-      list-style: none;
-    }
-
-    nav a {
-      color: white;
-      text-decoration: none;
-      font-weight: 500;
-      transition: opacity 0.2s;
-    }
-
-    nav a:hover {
-      opacity: 0.8;
-    }
+  
 
     /* Layout principal */
     main {
