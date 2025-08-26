@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Detahes do Produto — Marketplace Digital</title>
+  <link rel="stylesheet" href="/css/detail.css" />
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+  <%- include('../partials/menu') %>
+  </header>
+
+  <main class="container main-grid" id="main">
+    <!-- imagem / Galeria -->
+    <section class="product-media">
+      <section class="main-image">
+        <!-- Troque a URL para a imagem do seu produto -->
+        <img src="image/CursoProgm1.jpg"Capa do produto digital — exemplo">
+      </section>
+
+      <section class="thumbs">
+        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=9d7f2c5b0f2d4f6e7f8a1b2c3d4e5f6a" alt="miniatura 1">
+        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=2c5b7d9f7a8a6b4c3d2e1f0a9b8c6d7e" alt="miniatura 2">
+      <img src= "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=2c5b7d9f7a8a6b4c3d2e1f0a9b8c6d7e" alt="miniatura 3">
+      </section>
+    </section>
+
+    <!-- Informações do produto -->
+    <aside class="product-info">
+      <h1 class="product-title">Guia Prático: Técnicas de Estudo & Produtividade</h1>
+      <p class="product-meta">
+        <span class="author">por <a href="#">Maria Criadora</a></span>
+        <span class="dot">•</span>
+        <span class="format">eBook • 120 páginas</span>
+      </p>
+
+      <section class="pricing">
+        <section class="price">R$ 29,90</section>
+        <section class="old-price">R$ 49,90</section>
+      </section>
+
+      <section class="buy-actions">
+        <button class="btn buy">Comprar agora</button>
+        <button class="btn outline">Adicionar ao carrinho</button>
+      </section>
+
+      <ul class="product-highlights">
+        <li>Entrega digital imediata via link seguro</li>
+        <li>Formato: PDF + acesso a área de membros</li>
+        <li>Atualizações gratuitas por 6 meses</li>
+      </ul>
+
+      <section class="seller-card">
+        <img class="seller-avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.0.3&s=3f4e1b2c5d6a7b8c9d0e1f2a3b4c5d6e" alt="avatar do vendedor">
+        <section>
+          <strong>Maria Criadora</strong>
+          <section class="seller-stats">5.2k vendas • 98% avaliação positiva</section>
+          <a class="btn small" href="#">Visitar Perfil</a>
+        </section>
+      </section>
+
+      <section class="product-actions-aux">
+        <button class="icon-btn">❤ Favoritar</button>
+        <button class="icon-btn">🔗 Compartilhar</button>
+      </section>
+    </aside>
+  </main>
+
+  <!-- Seções: descrição, conteúdo, avaliações, FAQ -->
+  <section class="container bottom-sections">
+    <section class="tabs">
+      <nav class="tabs-nav" role="tablist" aria-label="Seções do produto">
+        <button role="tab" aria-selected="true">Descrição</button>
+        <button role="tab">Conteúdo</button>
+        <button role="tab">Avaliações</button>
+        <button role="tab">Perguntas</button>
+      </nav>
+
+      <section class="tab-panels">
+        <section class="tab-panel">
+          <h2>Descrição</h2>
+          <p>Aprenda a programar de forma prática e descomplicada! Este curso foi criado para iniciantes e também para quem deseja reforçar sua base em programação.
+            Ao longo das aulas, você vai dominar conceitos fundamentais como lógica de programação, estruturas de controle, variáveis, funções e manipulação de dados.
+          </p>
+          <h3 class="oni">O que você recebe</h3>
+          <ul>
+            <li>eBook em PDF (120 páginas)</li>
+            <li>Modelos editáveis (Planner e Checklist em .docx)</li>
+            <li>Acesso à área de membros com vídeos</li>
+            <li>Material complementar em formato de flashcards</li>
+          </ul>
+        </section>
+
+        <section class="tab-panel" hidden>
+          <h2>Conteúdo do Produto</h2>
+          <ol>
+            <li>Conceitos básicos da programação</li>
+            <li>Lógica e raciocínio computacional</li>
+            <li>Primeiros códigos na prática</li>
+            <li>Modelos de cronograma e revisão</li>
+            <li>Fundamentos da linguagem</li>
+          </ol>
+        </section>
+
+        <section class="tab-panel" hidden>
+          <h2>Avaliações</h2>
+          <section class="review">
+            <strong>João, estudante</strong>
+            <p>Recomendo para qualquer pessoa que queira entrar na área de tecnologia.. ⭐⭐⭐⭐⭐</p>
+          </section>
+          <section class="review">
+            <strong>Ana, professora</strong>
+            <p>Gostei muito da didática. Tudo é explicado passo a passo, e o suporte foi essencial para tirar minhas dúvidas ⭐⭐⭐⭐☆</p>
+          </section>
+        </section>
+
+        <section class="tab-panel" hidden>
+          <h2>Perguntas e Respostas</h2>
+          <details>
+            <summary>Recebo o PDF imediatamente após a compra?</summary>
+            <p>Sim — envio por link privado e e-mail.</p>
+          </details>
+          <details>
+            <summary>Posso usar em sala de aula?</summary>
+            <p>Uso pessoal e educacional permitido; confira a licença no produto.</p>
+          </details>
+        </section>
+      </section>
+    </section>
+
+    <!-- Produtos relacionados -->
+    <aside class="related">
+      <h3 class="oni2">Produtos relacionados</h3>
+      <ul class="related-list">
+        <li>
+          <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.0.3&s=abcd1234" alt="produto relacionado">
+          <section class="rel-title">Mini-curso: Técnicas de Memória</section>
+          <section class="rel-price">R$ 19,90</section>
+        </li>
+        <li>
+          <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.0.3&s=efgh5678" alt="produto relacionado">
+          <section class="rel-title">Templates: Planner Semanal</section>
+          <section class="rel-price">R$ 457,90</section>
+        </li>
+      </ul>
+    </aside>
+
+  
+
+
+ </section>
+
+  </body>
+
+    <%- include('../partials/footer') %>
+
+</html>

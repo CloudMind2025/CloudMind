@@ -1,0 +1,47 @@
+  <nav class="menu">
+    <!-- LOGO -->
+    <section class="menu-esq">
+      <a href="/" class="logo">
+        <img src="/image/Logo.png" alt="CloudMind Logo" />
+      </a>
+    </section>
+
+    <!-- MENU CENTRO -->
+    <ul class="menu-links" id="menu-links">
+      <li><a href="/">Inicio</a></li>
+      <li><a href="/PProdutos">Produtos</a></li>
+      <li><a href="/SobreNos">Sobre</a></li>
+      <li><a href="/adm">Suporte</a></li>
+    </ul>
+
+    <!-- MENU DIREITA -->
+    <section class="menu-direita">
+      <a href="/cadastro"><img src="/image/User.png" alt="User" /></a>
+      <a href="#"><img src="/image/Carrinho.png" alt="Market" /></a>
+      <button id="menu-toggle" class="hamburger">☰</button>
+    </section>
+  </nav>
+
+  <!-- MENU MOBILE -->
+  <section class="mobile-menu" id="mobile-menu">
+    <a href="/">Inicio</a>
+    <a href="/PProdutos">Produtos</a>
+    <a href="/SobreNos">Sobre</a>
+    <a href="/adm">Suporte</a>
+  </section>
+</header>
+
+<!-- CONTEÚDO DA PÁGINA -->
+<main class="conteudo-principal">
+  <!-- Aqui entra todo o seu formulário e resultados -->
+</main>
+
+<script>
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  menuToggle.addEventListener('click', () => {
+    mobileMenu.classList.toggle('show');
+    menuToggle.textContent = mobileMenu.classList.contains('show') ? '✖' : '☰';
+  });
+</script>

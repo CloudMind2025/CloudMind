@@ -1,0 +1,196 @@
+.vendas-section {
+  padding: 40px 20px;
+background: linear-gradient(180deg, var(--bg1), var(--bg2), #374147);
+  text-align: center;
+  color: white;
+}
+
+.destaque {
+background: linear-gradient(185deg, #234162, #18343b);
+  padding: 10px 20px;
+  max-width: 200px;
+  border-radius: 5px;
+  margin-left: 2rem;
+  font-weight: 600;
+  font-size: 1.125rem; 
+  text-align: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.Novidade {
+ background: linear-gradient(185deg, #234162, #18343b);
+  padding: 10px 20px;
+  max-width: 200px;
+  border-radius: 5px;
+  margin-left: 2rem;
+  font-weight: 600;
+  font-size: 1.125rem; 
+  text-align: center;
+  margin-top: 4rem;
+  margin-bottom: -2rem;
+  
+}
+
+
+
+.vendas-section h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.vendas-section p {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.vendas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  justify-items: center;
+  padding-top: 3rem;
+
+}
+
+
+.vendas-grid2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  justify-items: center;
+  padding-top:5rem ;
+  padding-bottom: 25px;
+  
+}
+
+.vendas-grid3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  justify-items: center;
+  padding-top:5rem ;
+  
+}
+
+.vendas-grid4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  justify-items: center;
+  padding-top:5rem ;
+  
+}
+
+.novi{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  justify-items: center;
+  padding-top: 3rem
+ ;
+}
+
+
+.produto-card {
+  background: #052c3a;
+  padding: 20px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  text-align: center;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+ 
+}
+
+.produto-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.produto-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.produto-card h3 {
+  font-size: 1rem;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.produto-card .preco {
+  font-weight: bold;
+  margin: 5px 0;
+  cursor: pointer;
+}
+
+.produto-card .avaliacao {
+  color: gold;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.produto-card button {
+  padding: 10px;
+  background-color: #a3c6d7;
+  border: none;
+  border-radius: 6px;
+  color: #003544;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.produto-card button:hover {
+  background-color: #64a8bf;
+}
+
+
+
+@media (max-width: 768px) {
+  .destaque {
+    max-width: 70%;
+    font-size: 1rem;
+    padding: 8px 16px;
+    margin: 0 auto;
+  }
+
+  .Novidade{
+    max-width: 70%;
+    font-size: 1rem;
+    padding: 8px 16px;
+    margin: 0 auto;
+    margin-top: 2rem;
+  }
+
+  .vendas-grid2{
+    padding-top:3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .destaque {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    max-width: 70%;
+  }
+  .Novidade{
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    max-width: 70%;
+    margin-top: 2rem;
+  }
+ .vendas-grid2{
+    padding-top:3rem;
+  }
+}
+

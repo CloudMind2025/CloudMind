@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/adm.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <title>Painel Administrativo</title>
+
+
+<!-- CONTEÚDO DA PÁGINA -->
+<main class="conteudo-principal">
+  <!-- Aqui entra todo o seu formulário e resultados -->
+</main>
+
+<script>
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  menuToggle.addEventListener('click', () => {
+    mobileMenu.classList.toggle('show');
+    menuToggle.textContent = mobileMenu.classList.contains('show') ? '✖' : '☰';
+  });
+</script>
+
+
+  <main>
+    <!-- Seção de métricas -->
+    <section aria-labelledby="metricas">
+      <h2 id="metricas">Resumo</h2>
+      <section class="cards">
+        <article class="card">
+          <h3>Usuários</h3>
+          <p>1.245</p>
+        </article>
+        <article class="card">
+          <h3>Produtos</h3>
+          <p>350</p>
+        </article>
+        <article class="card">
+          <h3>Vendas</h3>
+          <p>890</p>
+        </article>
+        <article class="card">
+          <h3>Receita</h3>
+          <p>R$ 45.230</p>
+        </article>
+        <article class="card">
+          <h3>Downloads liberados:</h3>
+          <p>56 nas últimas 24h</p>
+        </article>
+        <article class="card">
+          <h3>Novos clintes hoje:</h3>
+          <p>48 Cadastrados</p>
+        </article>
+      </section>
+    </section>
+
+    <!-- Seção de usuários -->
+    <section aria-labelledby="usuarios">
+      <h2 id="usuarios">Usuários</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ana Souza</td>
+            <td>ana@email.com</td>
+            <td>Ativo</td>
+            <td><button class="btn btn-secondary">Editar</button></td>
+          </tr>
+          <tr>
+            <td>João Lima</td>
+            <td>joao@email.com</td>
+            <td>Inativo</td>
+            <td><button class="btn btn-secondary">Editar</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Seção de produtos -->
+    <section aria-labelledby="produtos">
+      <h2 id="produtos">Produtos</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Categoria</th>
+            <th>Preço</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>E-book Frontend</td>
+            <td>Educação</td>
+            <td>R$ 29,90</td>
+            <td><button class="btn btn-secondary">Gerenciar</button></td>
+          </tr>
+          <tr>
+            <td>Curso JS</td>
+            <td>Educação</td>
+            <td>R$ 99,90</td>
+            <td><button class="btn btn-secondary">Gerenciar</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+
+    <!--Seção do gráfico-->
+
+    <section id="graficos">
+  <h2>Indicadores do Projeto</h2>
+
+  <article class="grafico">
+    <h3>Vendas Mensais</h3>
+    <canvas id="graficoVendas"></canvas>
+  </article>
+
+  <article class="grafico">
+    <h3>Tópicos Mais Acessados</h3>
+    <canvas id="graficoAcessos"></canvas>
+  </article>
+
+  <article class="grafico">
+    <h3>Lucros Anuais</h3>
+    <canvas id="graficoLucros"></canvas>
+  </article>
+</section>
+
+<!-- Importando o Chart.js direto do CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  // Gráfico de Vendas
+  const ctxVendas = document.getElementById('graficoVendas').getContext('2d');
+  new Chart(ctxVendas, {
+    type: 'line',
+    data: {
+      labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+      datasets: [{
+        label: 'Vendas (R$)',
+        data: [1200, 1900, 3000, 2500, 3200, 4000],
+        borderColor: '#2563eb',
+        backgroundColor: 'rgba(37, 99, 235, 0.2)',
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+  });
+
+  // Gráfico de Tópicos Mais Acessados
+  const ctxAcessos = document.getElementById('graficoAcessos').getContext('2d');
+  new Chart(ctxAcessos, {
+    type: 'doughnut',
+    data: {
+      labels: ['Tutoriais', 'Projetos', 'Notícias', 'Doações'],
+      datasets: [{
+        label: 'Acessos',
+        data: [40, 25, 20, 15],
+        backgroundColor: ['#2563eb', '#3b82f6', '#60a5fa', '#93c5fd']
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'right' } } }
+  });
+
+  // Gráfico de Lucros
+  const ctxLucros = document.getElementById('graficoLucros').getContext('2d');
+  new Chart(ctxLucros, {
+    type: 'bar',
+    data: {
+      labels: ['2021', '2022', '2023', '2024'],
+      datasets: [{
+        label: 'Lucros (R$ mil)',
+        data: [15, 25, 35, 50],
+        backgroundColor: '#2563eb'
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+  });
+</script>
+
+    <!-- Seção de vendas -->
+    <section aria-labelledby="vendas">
+      <h2 id="vendas">Vendas</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Produto</th>
+            <th>Valor</th>
+            <th>Data</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Maria Silva</td>
+            <td>E-book Frontend</td>
+            <td>R$ 29,90</td>
+            <td>24/08/2025</td>
+          </tr>
+          <tr>
+            <td>Pedro Oliveira</td>
+            <td>Curso JS</td>
+            <td>R$ 99,90</td>
+            <td>23/08/2025</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Seção de categorias -->
+    <section aria-labelledby="categorias">
+      <h2 id="categorias">Categorias Populares</h2>
+      <section class="categorias">
+        <section class="categoria">E-books</section>
+        <section class="categoria">Cursos em Vídeo</section>
+        <section class="categoria">Templates</section>
+        <section class="categoria">Audiobooks</section>
+        <section class="categoria">Flashcards</section>
+        <section class="categoria">Podcast</section>
+        <section class="categoria">Flashcards</section>
+        <section class="categoria">Flashcards</section>
+        <section class="categoria">Flashcards</section>
+        <section class="categoria">Flashcards</section>
+      </section>
+    </section>
+  </main>
+</body>
+<!-- FOOTER  -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<footer>
+    <section class="footer-container">
+        <p>&copy; Cloundmind 2025 - Todos os direitos reservados</p>
+        <section class="social-icons">
+            <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+        </section>
+    </section>
+</footer>
+</html>
