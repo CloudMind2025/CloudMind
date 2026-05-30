@@ -1,0 +1,248 @@
+:root {
+
+  --bg: #f5f6fa;
+  --card: #fff;
+  --radius: 12px;
+  --shadow: 0 4px 16px rgba(0,0,0,0.05);
+  --text: #2d3748;
+  --bg1: #e9e1ce;
+  --bg2: #f3ecd8;
+
+
+
+}
+
+/* Reset */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: "Inter", sans-serif; }
+
+body {
+  background: linear-gradient(180deg, var(--bg1), var(--bg2), #374147);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding-top: 280px;
+}
+
+/* Topbar */
+.topbar {
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+}
+.topbar h1 {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-new {
+  background: #fff;
+  color: linear-gradient(185deg, #15202c, #18343b);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Container */
+.container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 0 16px;
+}
+
+/* Intro */
+.intro {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.intro h2 { color: var(--accent); margin-bottom: 6px; }
+.search-bar {
+  margin-top: 12px;
+  display: flex;
+  gap: 6px;
+}
+.search-bar input {
+  flex: 1;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  padding: 10px;
+}
+.search-bar button {
+  background:#15202c;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Card */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
+  margin-bottom: 18px;
+}
+.card h2 {
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+/* FAQ */
+.faq-item {
+  border-bottom: 1px solid #e2e8f0;
+}
+.faq-question {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 0.95rem;
+  padding: 10px 0;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.faq-answer p {
+  padding-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+/* Formulário */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+label { font-weight: 600; margin-bottom: 4px; }
+input, select, textarea {
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 0.95rem;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Botões */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.btn-submit, .btn-cancel, .btn-small {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-submit {
+  background: #ad7b24;
+  color: #fff;
+}
+.btn-cancel {
+  background: #8a1a1a;
+  color: #e2e8f0;
+}
+.btn-small {
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Tabelas */
+.table-wrap { overflow-x: auto; }
+.responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+.responsive-table th, .responsive-table td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #edf2f7;
+}
+.responsive-table th {
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+/* Status */
+.status {
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #fff;
+  font-weight: 600;
+}
+.status.open { background: #10b981; }
+.status.pending { background: #f59e0b; color: #111; }
+.status.resolved { background: #2563eb; }
+
+/* Footer */
+.footer {
+  text-align: center;
+  color: #718096;
+  padding: 20px;
+  font-size: 0.85rem;
+}
+
+/* =========================
+   Responsividade
+========================= */
+/* TABLET (>= 769px) */
+@media (min-width: 769px) {
+  body { padding-top: 150px; }
+  .topbar h1 { font-size: 1.25rem; }
+  .container { max-width: 960px; padding: 0 24px; }
+  .faq-question { font-size: 1rem; }
+  .form-actions { justify-content: flex-start; }
+}
+
+/* DESKTOP (>= 1024px) */
+@media (min-width: 1024px) {
+  .container { max-width: 1200px; }
+  .card { padding: 24px; }
+}
+
+
+input.error {
+  border-color: #e74c3c !important;
+}
+
+input.success {
+  border-color: #27ae60 !important;
+}
+
+.error-message {
+  display: block;
+  color: #e74c3c;
+  font-size: 14px;
+  margin-top: 0px;
+  text-align: left;    
+  width: 100%;          
+  padding-left: 2px;  
+}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Central de Suporte</title>
+  <link rel="stylesheet" href="/css/suporteloged.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <!-- Cabeçalho -->
+  <header class="topbar">
+    <h1><i class="fa-solid fa-headset"></i> Central de Suporte</h1>
+  </header>
+
+  <main class="container">
+    <% if (resultado) { %>
+      <section class="alert success"><%= resultado %></section>
+    <% } %>
+    <% if (listaErros && listaErros.length > 0) { %>
+      <section class="alert error">
+        <ul>
+          <% listaErros.forEach(function(erro) { %>
+            <li><%= erro.msg %></li>
+          <% }) %>
+        </ul>
+      </section>
+    <% } %>
+
+    <section class="intro">
+      <h2>Como podemos te ajudar?</h2>
+      <p>Envie um ticket de suporte e nossa equipe administrativa irá responder o mais rápido possível.</p>
+    </section>
+
+    <section class="card form-card">
+      <h2><i class="fa-solid fa-ticket"></i> Enviar um Ticket</h2>
+      <form class="ticket-form" action="/suporteloged" method="POST">
+        <div class="form-group">
+          <label for="tipo_chamada">Categoria</label>
+          <select id="tipo_chamada" name="tipo_chamada" required>
+            <option value="">Selecione</option>
+            <option value="duvida" <%= campos.tipo_chamada === 'duvida' ? 'selected' : '' %>>Dúvida</option>
+            <option value="problema" <%= campos.tipo_chamada === 'problema' ? 'selected' : '' %>>Problema</option>
+            <option value="sugestao" <%= campos.tipo_chamada === 'sugestao' ? 'selected' : '' %>>Sugestão</option>
+            <option value="outro" <%= campos.tipo_chamada === 'outro' ? 'selected' : '' %>>Outro</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="descricao">Descrição do problema</label>
+          <textarea id="descricao" name="descricao" rows="6" placeholder="Descreva seu problema ou dúvida..." required><%= campos.descricao || '' %></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" id="cancel-ticket" class="btn-cancel">Cancelar</button>
+          <button type="submit" class="btn-submit"><i class="fa-solid fa-paper-plane"></i> Enviar Ticket</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2><i class="fa-solid fa-clock-rotate-left"></i> Meus Tickets Recentes</h2>
+      <div class="table-wrap">
+        <table class="responsive-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Categoria</th>
+              <th>Descrição</th>
+              <th>Status</th>
+              <th>Data</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (tickets && tickets.length > 0) { %>
+              <% tickets.forEach(function(ticket) { %>
+                <tr>
+                  <td>#<%= ticket.id_chamada %></td>
+                  <td><%= ticket.tipo_chamada %></td>
+                  <td><%= ticket.descricao.length > 60 ? ticket.descricao.substring(0, 60) + '...' : ticket.descricao %></td>
+                  <td><span class="status <%= ticket.status %>"><%= ticket.status === 'aberto' ? 'Aberto' : ticket.status === 'em_andamento' ? 'Em andamento' : 'Fechado' %></span></td>
+                  <td><%= ticket.data_chamada ? new Date(ticket.data_chamada).toLocaleDateString('pt-BR') : '-' %></td>
+                  <td>
+                    <% if (ticket.status !== 'fechado') { %>
+                      <form action="/suporteloged/cancelar" method="POST" style="display:inline;">
+                        <input type="hidden" name="id_chamada" value="<%= ticket.id_chamada %>">
+                        <button type="submit" class="btn-small btn-danger">Cancelar</button>
+                      </form>
+                    <% } else { %>
+                      <span class="text-muted">Sem ações</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr><td colspan="6">Nenhum ticket encontrado.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById('cancel-ticket').addEventListener('click', function() {
+      document.getElementById('tipo_chamada').selectedIndex = 0;
+      document.getElementById('descricao').value = '';
+    });
+  </script>
+  <script src="/js/linker.js"></script>
+</body>
+</html>

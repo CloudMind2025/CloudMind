@@ -1,0 +1,256 @@
+/* ----------------------------- */
+/* CONFIGURAÇÃO BASE - MOBILE FIRST */
+/* ----------------------------- */
+:root {
+  --azul-escuro: #122742;
+  --azul-medio: #18343b;
+  --bg-claro: #f3ecd8;
+  --bg-bege: #e9e1ce;
+  --texto: #1c1c1c;
+  --branco: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  background: linear-gradient(180deg, var(--bg-bege), var(--bg-claro), #374147);
+  color: var(--texto);
+  overflow-x: hidden;
+  min-height: 100vh;
+  padding-top: 280px;
+}
+
+/* ----------------------------- */
+/* ESTRUTURA PRINCIPAL */
+/* ----------------------------- */
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+h2 {
+  font-size: 1.3rem;
+  color: var(--azul-escuro);
+  padding-left: 0.3rem;
+  margin-bottom: 1rem;
+  text-align: left;
+  word-break: break-word;
+}
+
+/* ----------------------------- */
+/* CARDS PRINCIPAIS */
+/* ----------------------------- */
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  width: 100%;
+}
+
+.card {
+  background: linear-gradient(180deg, #234162, #18343b);
+  color: var(--branco);
+  border-radius: 14px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  width: 100%;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card h3 {
+  font-size: 0.95rem;
+  font-weight: 400;
+  margin-bottom: 0.4rem;
+  word-break: break-word;
+}
+
+.card p {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+/* ----------------------------- */
+/* TABELAS */
+/* ----------------------------- */
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--branco);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+thead {
+  color: var(--branco);
+}
+
+th {
+  background-color: var(--azul-medio);
+  color: var(--branco);
+}
+
+th,
+td {
+  padding: 0.7rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+tr:hover td {
+  background: #1f3659;
+  color: var(--branco);
+}
+
+/* ----------------------------- */
+/* BOTÕES */
+/* ----------------------------- */
+.btn {
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+  white-space: nowrap;
+}
+
+.btn-edit {
+  background: #e0e0e0;
+}
+.btn-edit:hover {
+  background: #ccc;
+}
+
+.btn-danger {
+  background: #b72f2f;
+  color: white;
+}
+.btn-danger:hover {
+  background: #8a2222;
+}
+
+/* ----------------------------- */
+/* GRÁFICOS */
+/* ----------------------------- */
+#graficos {
+  background: transparent;
+  text-align: center;
+}
+
+.grafico {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin: 15px auto;
+  padding: 15px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.grafico h3 {
+  font-size: 1rem;
+  color: var(--azul-escuro);
+  margin-bottom: 10px;
+}
+
+canvas {
+  width: 100% !important;
+  max-height: 280px;
+}
+
+/* ----------------------------- */
+/* CATEGORIAS */
+/* ----------------------------- */
+.categorias {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.8rem;
+  width: 100%;
+}
+
+.categoria {
+  background: linear-gradient(185deg, #234162, #18343b);
+  color: white;
+  padding: 0.8rem;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-size: 0.85rem;
+  word-break: break-word;
+}
+
+.categoria:hover {
+  background: #1f3659;
+}
+
+/* ----------------------------- */
+/* RESPONSIVIDADE */
+/* ----------------------------- */
+
+/* Tablets (≥ 768px) */
+@media (min-width: 768px) {
+  main {
+    padding: 2rem;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+  }
+
+  table {
+    font-size: 1rem;
+    white-space: normal;
+  }
+
+  h2 {
+    font-size: 1.6rem;
+  }
+}
+
+/* Desktop (≥ 1024px) */
+@media (min-width: 1024px) {
+  main {
+    max-width: 1200px;
+    padding: 2rem 3rem;
+  }
+
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+  }
+
+  .grafico {
+    max-width: 900px;
+  }
+
+  table {
+    font-size: 1rem;
+  }
+}

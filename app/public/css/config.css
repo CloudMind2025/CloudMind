@@ -1,0 +1,232 @@
+/* ===== Layout Base ===== */
+
+:root {
+  --bg1: #e9e1ce;
+  --bg2: #f3ecd8;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(180deg, var(--bg1), var(--bg2), #374147);
+  color: #14192b;
+  display: block;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-top: 280px;
+}
+
+/* ===== CONTAINER GERAL ===== */
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+}
+
+
+/* ===== CONTEÚDO ===== */
+.settings {
+  flex: 1;
+  padding: 25px;
+  border-left: none;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.settings header {
+  margin-bottom: 20px;
+}
+
+.settings h1 {
+  font-size: 22px;
+  margin-bottom: 5px;
+}
+
+.settings p {
+  color: #111b36;
+}
+
+/* ===== CARDS ===== */
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.card h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #151d3a;
+}
+
+/* ===== FORM ===== */
+.form-grid {
+  display: grid;
+  gap: 15px;
+}
+
+select,
+input[type="text"],
+input[type="password"] {
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #ced1da;
+  color: #151d3a;
+}
+
+fieldset.notifications {
+  border: 1px solid #2d3e64;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+fieldset.notifications legend {
+  color: #9fb5ff;
+  padding: 0 8px;
+}
+
+/* ===== SEGURANÇA ===== */
+.security-options {
+  display: grid;
+  gap: 15px;
+}
+
+.security-options div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ced1da;
+  padding: 12px 18px;
+  border-radius: 10px;
+}
+
+.security-options h3 {
+  font-size: 15px;
+  color: #151d3a;
+}
+
+/* ===== SWITCH 2FA ===== */
+.switch {
+  position: relative;
+  width: 50px;
+  height: 26px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background-color: #555;
+  border-radius: 34px;
+  cursor: pointer;
+  transition: 0.4s;
+}
+
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #4f7cff;
+}
+
+input:checked + .slider::before {
+  transform: translateX(24px);
+}
+
+/* ===== BOTÕES ===== */
+.btn {
+  background: #ad7b24;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background: #0b1220;
+}
+
+.btn.danger {
+  background: #d14b4b;
+}
+
+.btn.danger:hover {
+  background: #472c2c;
+}
+
+/* ========= TABLET (769px - 1199px) ========= */
+@media (min-width: 769px) and (max-width: 1199px) {
+  body {
+    flex-direction: row;
+  }
+
+  .container {
+    flex-direction: row;
+  }
+
+  
+
+  .settings {
+    padding: 30px;
+    border-left: 1px solid #1f2a45;
+  }
+}
+
+/* ========= DESKTOP (a partir de 1200px) ========= */
+@media (min-width: 1200px) {
+  body {
+    flex-direction: row;
+  }
+
+  .container {
+    flex-direction: row;
+  }
+
+  
+
+  
+
+  .settings {
+    padding: 40px;
+    border-left: 1px solid #1f2a45;
+  }
+
+  .card h2 {
+    font-size: 20px;
+  }
+}

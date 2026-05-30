@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alterar Dados Pessoais</title>
+  <link rel="stylesheet" href="/css/editardados.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <%- include('../partials/menu') %>
+  </header>
+
+  <%- include('../partials/sidebar') %>
+
+  <main>
+    <section class="dados">
+      <%- include('../partials/btnV') %>
+
+      <header>
+        <h1>Alterar Dados Pessoais</h1>
+        <p>Atualize suas informações pessoais e mantenha seu perfil sempre atualizado.</p>
+      </header>
+
+      <% if (resultado) { %>
+        <p class="msg-sucesso"><i class="fa-solid fa-circle-check"></i> <%= resultado %></p>
+      <% } %>
+
+      <% if (listaErros && listaErros.length > 0) { %>
+        <ul class="msg-erros">
+          <% listaErros.forEach(function(err) { %>
+            <li><%= err.msg %></li>
+          <% }) %>
+        </ul>
+      <% } %>
+
+      <form class="dados-form" action="/editardados" method="POST">
+
+        <section class="form-group">
+          <label for="nome">Nome</label>
+          <input type="text" id="nome" name="nome"
+                 value="<%= campos.nome !== undefined ? campos.nome : (usuario ? usuario.nome : '') %>"
+                 placeholder="Ex: João da Silva">
+        </section>
+
+        <section class="form-group">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email"
+                 value="<%= campos.email !== undefined ? campos.email : (usuario ? usuario.email : '') %>"
+                 placeholder="exemplo@email.com">
+        </section>
+
+        <button type="submit" class="btn">
+          <i class="fa-solid fa-save"></i> Salvar Alterações
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <%- include('../partials/footer') %>
+  </footer>
+
+  <script src="/js/linker.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/js/validaF_editardados.js"></script>
+</body>
+</html>

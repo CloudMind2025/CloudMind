@@ -1,0 +1,44 @@
+<% if (typeof resultado !== 'undefined' && resultado) { %>
+  <section class="alert alert-success" role="alert" style="margin-bottom:12px;">
+    <i class="fa-solid fa-check-circle"></i> <%= resultado %>
+  </section>
+<% } %>
+
+<% 
+  // Agrupa mensagens por campo (param/path). 'geral' para erros sem campo.
+  const errosPorCampo = {};
+  if (typeof listaErros !== 'undefined' && listaErros && listaErros.length) {
+    listaErros.forEach(e => {
+      const chave = e.param || e.path || 'geral';
+      if (!errosPorCampo[chave]) errosPorCampo[chave] = [];
+      errosPorCampo[chave].push(String(e.msg || e.message || e));
+    });
+  }
+%>
+
+<% if (typeof field !== 'undefined') { 
+     const msgs = errosPorCampo[field];
+     if (msgs && msgs.length) { %>
+  <section class="mensagem-erro">
+    <i class="fa-solid fa-exclamation-circle"></i> <%= msgs.join(', ') %>
+  </section>
+<%   } 
+   } else { 
+     const globais = errosPorCampo['geral'];
+     const campos = Object.keys(errosPorCampo).filter(k => k !== 'geral');
+     if ((globais && globais.length) || campos.length) { %>
+  <section class="erros-resumo">
+    <% if (globais && globais.length) { %>
+      <% globais.forEach(m => { %>
+        <section class="mensagem-erro"><i class="fa-solid fa-exclamation-circle"></i> <%= m %></section>
+      <% }) %>
+    <% } %>
+
+    <% campos.forEach(c => { errosPorCampo[c].forEach(m => { %>
+      <section class="mensagem-erro" data-field="<%= c %>">
+        <i class="fa-solid fa-exclamation-circle"></i> <strong><%= c %>:</strong> <%= m %>
+      </section>
+    <% }) }) %>
+  </section>
+<%   } 
+   } %>

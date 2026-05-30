@@ -1,0 +1,248 @@
+/* ========== RESET ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg1: #e9e1ce;
+  --bg2: #f3ecd8;
+}
+
+/* ========== BASE (MOBILE FIRST) ========== */
+body {
+  font-family: "Segoe UI", "Inter", Arial, sans-serif;
+  background: linear-gradient(180deg, var(--bg1), var(--bg2), #374147);
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-top: 280px;
+  overflow-x: hidden; /* evita rolagem lateral */
+}
+
+/* CONTAINER GERAL */
+.layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+    
+}
+
+/* ========== CONTEÚDO ========== */
+.main {
+  flex: 1;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-content: center;
+}
+
+.page-header {
+  margin-bottom: 20px;
+}
+
+.page-header h1 {
+  font-size: 1.8rem;
+  margin-bottom: 5px;
+}
+
+.page-header p {
+  color: #555;
+}
+
+/* ========== CARDS DE COMPRAS ========== */
+.compras-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.card-compra {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: #ffffff8f;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+    align-content: center;
+}
+
+.card-compra:hover {
+  transform: translateY(-3px);
+}
+
+.card-compra img {
+  width: 100%;
+  max-width: 110px;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-bottom: 0.8rem;
+    
+}
+
+.card-compra .detalhes {
+  flex: 1;
+  width: 100%;
+}
+
+.card-compra h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-compra p {
+  margin: 0.3rem 0;
+  font-size: 0.95rem;
+}
+
+/* ========== STATUS ========== */
+.status {
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.status.enviado {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.status.concluido {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status.pendente {
+  background: #fff3e0;
+  color: #ac7742;
+}
+
+.status.cancelado {
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* ========== BOTÕES ========== */
+.acoes {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.8rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background: #c58a2a;
+  color: #fff;
+  transition: background 0.2s;
+  font-size: 0.9rem;
+}
+
+.btn:hover {
+  background: #a36f1c;
+}
+
+.btn.secundario {
+  background: #ccc;
+  color: #333;
+}
+
+.btn.secundario:hover {
+  background: #bbb;
+}
+
+/* ========= TABLET (769px - 1199px) ========= */
+@media (min-width: 769px) and (max-width: 1199px) {
+  
+   body {
+    padding-top: 100px;
+  }
+
+  .layout {
+    flex-direction: row;
+  }
+
+  .main {
+    padding: 30px;
+    border-left: 1px solid #1f2a45;
+  }
+
+  .card-compra {
+    flex-direction: row;
+    align-items: center;
+    padding: 1rem 1.5rem;
+  }
+
+  .card-compra img {
+    margin-right: 1.2rem;
+    margin-bottom: 0;
+    width: 90px;
+    height: 90px;
+  }
+
+  .acoes {
+    flex-direction: column;
+    margin-top: 0;
+  }
+}
+
+/* ========= DESKTOP (≥1200px) ========= */
+@media (min-width: 1200px) {
+  body {
+    padding-top: 100px;
+  }
+
+  .compras-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .card-compra {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 2rem;
+    max-width: 95%;
+    margin: 0 auto;
+    background: linear-gradient(180deg, #fffefc, #f4f0e7);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-compra img {
+    width: 100px;
+    height: 100px;
+    margin-right: 1.8rem;
+    border-radius: 10px;
+  }
+
+  .detalhes {
+    flex: 1;
+  }
+
+  .acoes {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .btn {
+    font-size: 0.95rem;
+    padding: 0.6rem 1.2rem;
+  }
+}

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel do Vendedor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/admvend.css">
+  <link rel="stylesheet" href="/css/barraspesquisa2.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<header>
+  <%- include('../partials/menu') %>
+</header>
+
+<main class="main">
+  <%- include('../partials/sidebar') %>
+
+  <!-- SEÇÃO PRODUTOS -->
+  <section class="card">
+    <section class="top">
+      <section class="top-left">
+        <h2>Seus produtos</h2>
+      </section><br>
+      <section class="top-right">
+        <button data-link="/cdstraprod" class="btn">Novo Produto</button><br><br>
+        <section class="search-bar">
+          <i class="fa-solid fa-search"></i>
+          <input type="text" placeholder="Buscar produto...">
+        </section>
+      </section>
+    </section>
+    <table>
+      <thead>
+        <tr>
+          <th>Produto</th>
+          <th>Preço</th>
+          <th>Categoria</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (produtos && produtos.length > 0) { %>
+          <% produtos.forEach(function(p) { %>
+            <tr>
+              <td><%= p.titulo %></td>
+              <td>R$ <%= parseFloat(p.preco).toFixed(2).replace('.', ',') %></td>
+              <td><%= p.nome_categoria || p.tipo_produto %></td>
+              <td>
+                <span class="status <%= p.status_produto !== 'ativo' ? 'draft' : '' %>">
+                  <%= p.status_produto === 'ativo' ? 'Publicado' : 'Inativo' %>
+                </span>
+              </td>
+              <td class="actions-cell">
+                <% if (p.status_produto === 'ativo') { %>
+                  <form action="/produto/inativar" method="POST" onsubmit="return confirm('Inativar este produto?')">
+                    <input type="hidden" name="id_produto" value="<%= p.id_produto %>">
+                    <button type="submit" class="edit-btn" style="background:#c0392b;">Inativar</button>
+                  </form>
+                <% } else { %>
+                  <form action="/produto/reativar" method="POST">
+                    <input type="hidden" name="id_produto" value="<%= p.id_produto %>">
+                    <button type="submit" class="edit-btn">Reativar</button>
+                  </form>
+                <% } %>
+                <form action="/produto/excluir" method="POST" onsubmit="return confirm('Excluir permanentemente \'<%= p.titulo %>\'? Esta ação não pode ser desfeita.')">
+                  <input type="hidden" name="id_produto" value="<%= p.id_produto %>">
+                  <button type="submit" class="edit-btn" style="background:#7f1d1d;">
+                    <i class="fa-solid fa-trash-can"></i> Excluir
+                  </button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="5" style="text-align:center; padding:20px; color:#888;">Você ainda não tem produtos cadastrados.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- GRADE COM PEDIDOS E GRÁFICO -->
+  <section class="grid">
+    <section class="card">
+      <section class="top">
+        <h2>Pedidos Recentes</h2><br>
+        <button data-link="/minhascompras" class="btn">Ver todos</button>
+      </section><br>
+      <table>
+        <thead>
+          <tr><th>Cliente</th><th>Produto</th><th>Valor</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="4" style="text-align:center; color:#888;">Em breve</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Gráfico de Vendas</h2>
+      <canvas id="salesChart"></canvas>
+    </section>
+  </section>
+
+  <!-- AVALIAÇÕES E PAGAMENTOS -->
+  <section class="grid-2">
+    <section class="card">
+      <h2>Avaliações recentes</h2><br>
+      <p>★★★★★ <b>Excelente conteúdo!</b><br><small>"Material direto ao ponto."</small></p>
+      <hr style="margin:10px 0; border-color:#2e3a45;">
+      <p>★★★★☆ <b>Muito bom</b><br><small>"Só senti falta de mais exemplos."</small></p>
+    </section>
+    <section class="card">
+      <h2>Pagamentos</h2><br>
+      <p>Saldo disponível: <b style="color:#b88b32;">R$ 0,00</b></p><br>
+      <button class="btn">Solicitar saque</button>
+    </section>
+  </section>
+
+</main>
+
+<footer>
+  <%- include('../partials/footer') %>
+</footer>
+
+<script>
+  const ctx = document.getElementById('salesChart');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul'],
+      datasets: [{
+        label: 'Vendas (R$)',
+        data: [400, 800, 1200, 900, 1500, 2000, 1800],
+        borderColor: '#b88b32',
+        backgroundColor: 'rgba(184,139,50,0.2)',
+        tension: 0.4, fill: true
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false }},
+      scales: { x: { ticks: { color: '#ccc' }}, y: { ticks: { color: '#ccc' }}}
+    }
+  });
+</script>
+<script src="/js/linker.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/validaF_barrapesquisa2.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+.search-suggestions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  display: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  font-size: 14px;
+}
+
+.search-suggestions li {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: #333;
+}
+
+.search-suggestions li:hover,
+.search-suggestions li.active {
+  background-color: #f0f0f0;
+}

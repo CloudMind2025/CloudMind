@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página de Login</title>
+    <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/login.css">
+  <!-- Ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+    <header>
+  
+   <%- include('../partials/menu') %>
+
+  </header>
+  <main>
+    <section class="container">
+    
+    <!-- Lado esquerdo (informações) -->
+    <section class="info">
+      <h2>Bem-vindo de volta</h2><br>
+      <ul>
+        <li><i class="fa-solid fa-key"></i> Acesse sua conta de forma rápida e segura.</li><br>
+        <li><i class="fa-solid fa-layer-group"></i> Continue seus estudos, projetos e vendas de onde parou.</li><br>
+        <li><i class="fa-solid fa-shield-halved"></i> Seus dados estão protegidos com segurança avançada.</li>
+      </ul>
+    </section>
+
+    <!-- Lado direito (formulário) -->
+    <section class="form-box">
+      <h2>Entre na sua conta</h2>
+      
+      <section class="social-login">
+        <button class="google"><i class="fa-brands fa-google"></i> Google</button>
+        <button class="apple"><i class="fa-brands fa-apple"></i> Apple</button>
+      </section>
+      
+      <p class="divider">Ou utilize seu e-mail</p>
+      
+      <form action="/login" method="POST">
+       <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required>
+        <input type="password" id="password" name="senha" placeholder="Digite sua senha" required>
+         <br>  <br>
+        <section class="options">
+         
+          
+          <a href="#">Esqueceu a senha?</a>
+        </section>
+        
+        <% if (locals.erro) { %><p style="color:red;margin-bottom:10px;"><%= erro %></p><% } %>
+        <% if (locals.msg === 'solicitacao_enviada') { %>
+          <p style="background:#d1fae5;color:#065f46;padding:.7rem 1rem;border-radius:8px;font-size:.9rem;margin-bottom:.8rem;">
+            <strong>Solicitação enviada!</strong> Nossa equipe analisará em breve.
+          </p>
+        <% } %>
+        <button type="submit" class="primary">Entrar</button>
+        <button data-link="/cadastro" type="button" class="secondary">Criar nova conta</button>
+      </form>
+    </section>
+  </section>
+  </main>
+  
+   <footer>
+    <%- include('../partials/footer') %>
+  </footer>
+
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/linker.js"></script>
+<script src="/js/validaF_login.js"></script>
+
+  
+</body>
+</html>

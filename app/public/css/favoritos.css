@@ -1,0 +1,172 @@
+/* ========== RESET E VARIÁVEIS ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg1: #e9e1ce;
+  --bg2: #f3ecd8;
+}
+
+/* ========== BASE (MOBILE FIRST) ========== */
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(180deg, var(--bg1), var(--bg2), #374147);
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-top: 280px;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+}
+
+
+
+/* ========== CONTEÚDO ========== */
+.main {
+  flex: 1;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.page-header {
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.3rem;
+  color: #0b1220;
+}
+
+.page-header p {
+  color: #555;
+  font-size: 1rem;
+}
+
+/* ========== LISTA DE FAVORITOS ========== */
+.favoritos-lista {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.2rem;
+}
+
+/* ========== CARD FAVORITO ========== */
+.card-favorito {
+  background: #ffffff8f;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card-favorito:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.card-favorito img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.card-favorito .info {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.card-favorito h2 {
+  font-size: 1.1rem;
+  margin: 0;
+  color: #0b1220;
+}
+
+.card-favorito p {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.preco {
+  font-weight: bold;
+  color: #1976d2;
+  font-size: 1rem;
+}
+
+/* ========== AÇÕES ========== */
+.acoes {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.btn {
+  flex: 1;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background: #ac7742;
+  color: #fff;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.btn:hover {
+  background: #0b1220;
+  transform: scale(1.05);
+}
+
+.btn.remover {
+  background: #7a2d2b;
+}
+
+.btn.remover:hover {
+  background: #b71c1c;
+}
+
+/* ========= TABLET (769px - 1199px) ========= */
+@media (min-width: 769px) and (max-width: 1199px) {
+  .layout {
+    flex-direction: row;
+  }
+
+  .main {
+    padding: 30px;
+    border-left: 1px solid #1f2a45;
+  }
+
+  .favoritos-lista {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
+/* ========= DESKTOP (a partir de 1200px) ========= */
+@media (min-width: 1200px) {
+  .layout {
+    flex-direction: row;
+  }
+
+  .main {
+    padding: 40px;
+    border-left: 1px solid #1f2a45;
+  }
+
+  .favoritos-lista {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+}

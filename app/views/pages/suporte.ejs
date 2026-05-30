@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Central de Suporte</title>
+  <link rel="stylesheet" href="/css/suporte.css">
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/barraspesquisa.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    .alert { padding: 0.9rem 1.2rem; border-radius: 8px; margin-bottom: 1rem; font-weight: 600; }
+    .alert.success { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; }
+    .alert.error   { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+    .alert.error ul { margin: 0.3rem 0 0 1.2rem; }
+
+    .tickets-section { margin-top: 2rem; }
+    .table-wrap { overflow-x: auto; }
+    .responsive-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .responsive-table th,
+    .responsive-table td { padding: 0.7rem 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    .responsive-table thead th { background: #f1f5f9; font-weight: 700; color: #2b4c7e; }
+    .responsive-table tbody tr:hover { background: #f8fafc; }
+
+    .badge {
+      display: inline-block; padding: 0.25rem 0.7rem;
+      border-radius: 20px; font-size: 0.78rem; font-weight: 600; white-space: nowrap;
+    }
+    .badge.aberto      { background: #dbeafe; color: #1d4ed8; }
+    .badge.em_andamento{ background: #fef3c7; color: #92400e; }
+    .badge.pendente    { background: #ede9fe; color: #5b21b6; }
+    .badge.resolvido   { background: #d1fae5; color: #065f46; }
+    .badge.fechado     { background: #f1f5f9; color: #64748b; }
+
+    .btn-small {
+      padding: 0.3rem 0.7rem; font-size: 0.8rem; border: none;
+      border-radius: 5px; cursor: pointer; font-weight: 600;
+    }
+    .btn-danger { background: #ef4444; color: #fff; }
+    .btn-danger:hover { background: #dc2626; }
+    .text-muted { color: #94a3b8; font-size: 0.85rem; }
+
+    .login-hint {
+      text-align: center; padding: 1.2rem;
+      background: #f0f9ff; border-radius: 8px;
+      color: #0369a1; font-size: 0.92rem; margin-top: 1rem;
+    }
+    .login-hint a { color: #2b4c7e; font-weight: 700; }
+  </style>
+</head>
+<body>
+<header>
+  <%- include('../partials/menu') %>
+</header>
+
+<main class="container">
+  <!-- Boas-vindas -->
+  <section class="intro">
+    <h2>Como podemos te ajudar?</h2>
+    <p>Encontre respostas rápidas nas perguntas frequentes ou entre em contato com nossa equipe de suporte.</p>
+    <section class="search-bar">
+      <input type="text" placeholder="Pesquise por um problema, exemplo: pagamento, conta...">
+      <button><i class="fa-solid fa-search"></i></button>
+    </section>
+  </section>
+
+  <!-- Mensagens -->
+  <% if (resultado) { %>
+    <div class="alert success"><i class="fa-solid fa-circle-check"></i> <%= resultado %></div>
+  <% } %>
+  <% if (listaErros && listaErros.length > 0) { %>
+    <div class="alert error">
+      <ul>
+        <% listaErros.forEach(function(erro) { %><li><%= erro.msg %></li><% }) %>
+      </ul>
+    </div>
+  <% } %>
+
+  <!-- FAQ -->
+  <section class="card faq">
+    <h2><i class="fa-solid fa-circle-question"></i> Perguntas Frequentes</h2>
+    <section class="faq-item">
+      <button class="faq-question">Como alterar minha senha? <i class="fa-solid fa-chevron-down"></i></button>
+      <section class="faq-answer">
+        <p>Você pode alterar sua senha acessando a área de configurações da conta e clicando em "Alterar Senha".</p>
+      </section>
+    </section>
+    <section class="faq-item">
+      <button class="faq-question">Meu pagamento não foi aprovado, o que fazer? <i class="fa-solid fa-chevron-down"></i></button>
+      <section class="faq-answer">
+        <p>Verifique com sua operadora de cartão e tente novamente. Caso persista, envie um ticket com os detalhes.</p>
+      </section>
+    </section>
+    <section class="faq-item">
+      <button class="faq-question">Como mudo o nome de usuário? <i class="fa-solid fa-chevron-down"></i></button>
+      <section class="faq-answer">
+        <p>No perfil, clique em "Configurações" e ao lado dos seus dados pessoais haverá um botão de edição.</p>
+      </section>
+    </section>
+  </section>
+
+  <!-- Formulário de ticket -->
+  <section class="card form-card">
+    <h2><i class="fa-solid fa-ticket"></i> Enviar um Ticket</h2>
+    <form class="ticket-form" action="/suporte" method="POST">
+      <section class="form-group">
+        <label>Categoria</label>
+        <select name="tipo_chamada" required>
+          <option value="">Selecione</option>
+          <option value="duvida"   <%= (campos && campos.tipo_chamada === 'duvida')   ? 'selected' : '' %>>Dúvida</option>
+          <option value="problema" <%= (campos && campos.tipo_chamada === 'problema') ? 'selected' : '' %>>Problema</option>
+          <option value="sugestao" <%= (campos && campos.tipo_chamada === 'sugestao') ? 'selected' : '' %>>Sugestão</option>
+          <option value="outro"    <%= (campos && campos.tipo_chamada === 'outro')    ? 'selected' : '' %>>Outro</option>
+        </select>
+      </section>
+      <section class="form-group">
+        <label>Mensagem</label>
+        <textarea name="descricao" rows="5" placeholder="Descreva seu problema ou dúvida..." required><%= (campos && campos.descricao) ? campos.descricao : '' %></textarea>
+      </section>
+      <section class="form-actions">
+        <button type="reset" class="btn-cancel">Cancelar</button>
+        <button type="submit" class="btn-submit"><i class="fa-solid fa-paper-plane"></i> Enviar Ticket</button>
+      </section>
+    </form>
+  </section>
+
+  <!-- Histórico de tickets (apenas para usuários logados) -->
+  <% if (usuarioLogado) { %>
+    <section class="card tickets-section">
+      <h2><i class="fa-solid fa-clock-rotate-left"></i> Meus Tickets Recentes</h2>
+      <div class="table-wrap">
+        <table class="responsive-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Categoria</th>
+              <th>Descrição</th>
+              <th>Status</th>
+              <th>Data</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (tickets && tickets.length > 0) { %>
+              <% tickets.forEach(function(ticket) { %>
+                <% var statusLabel = {
+                  aberto: 'Aberto',
+                  em_andamento: 'Em andamento',
+                  pendente: 'Pendente',
+                  resolvido: 'Resolvido',
+                  fechado: 'Fechado'
+                }[ticket.status] || ticket.status; %>
+                <tr>
+                  <td>#<%= ticket.id_chamada %></td>
+                  <td><%= ticket.tipo_chamada %></td>
+                  <td><%= ticket.descricao && ticket.descricao.length > 60 ? ticket.descricao.substring(0,60) + '...' : ticket.descricao %></td>
+                  <td><span class="badge <%= ticket.status %>"><%= statusLabel %></span></td>
+                  <td><%= ticket.data_chamada ? moment(ticket.data_chamada).format('DD/MM/YYYY') : '-' %></td>
+                  <td>
+                    <% if (ticket.status !== 'fechado' && ticket.status !== 'resolvido') { %>
+                      <form action="/suporte/cancelar" method="POST" style="display:inline;" onsubmit="return confirm('Cancelar este ticket?')">
+                        <input type="hidden" name="id_chamada" value="<%= ticket.id_chamada %>">
+                        <button type="submit" class="btn-small btn-danger">Cancelar</button>
+                      </form>
+                    <% } else { %>
+                      <span class="text-muted">Sem ações</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr><td colspan="6" style="text-align:center; color:#94a3b8;">Nenhum ticket enviado ainda.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  <% } else { %>
+    <div class="login-hint">
+      <i class="fa-solid fa-circle-info"></i>
+      <a href="/login">Faça login</a> para acompanhar o histórico dos seus tickets de suporte.
+    </div>
+  <% } %>
+</main>
+
+<footer>
+  <%- include('../partials/footer') %>
+</footer>
+
+<script>
+  document.querySelectorAll(".faq-question").forEach(button => {
+    button.addEventListener("click", () => {
+      button.classList.toggle("active");
+      const answer = button.nextElementSibling;
+      answer.style.maxHeight = answer.style.maxHeight ? null : answer.scrollHeight + "px";
+    });
+  });
+</script>
+<script src="/js/linker.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/validaF_suporte.js"></script>
+<script src="/js/validaF_barrapesquisa3.js"></script>
+</body>
+</html>

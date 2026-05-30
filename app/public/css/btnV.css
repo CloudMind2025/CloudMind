@@ -1,0 +1,41 @@
+
+
+
+
+.btn-voltar {
+  background: transparent;
+  color: #1c6ea4;
+  border: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: color 0.3s ease;
+}
+
+.btn-voltar:hover {
+  color: #0f4c81;
+}
+
+
+
+
+
+
+@media (min-width: 769px) and (max-width: 1199px) {
+ .btn {
+    font-size: 1.1rem;
+  }
+}
+
+
+/* ===========================
+   DESKTOP (a partir de 1200px)
+=========================== */
+@media (min-width: 1200px) {
+
+
+}

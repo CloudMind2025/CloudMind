@@ -1,0 +1,69 @@
+   <!-- Sidebar -->
+   <aside class="sidebar">
+  <header class="profile">
+    <figure class="avatar">
+      <% if (usuarioLogado && usuarioLogado.foto) { %>
+        <img src="<%= usuarioLogado.foto %>" alt="Foto de perfil" class="avatar-img">
+      <% } else { %>
+        <i class="fa-solid fa-user"></i>
+      <% } %>
+      <% if (usuarioLogado) { %>
+        <label class="avatar-edit" title="Alterar foto" aria-label="Alterar foto de perfil">
+          <i class="fa-solid fa-pen"></i>
+          <input type="file" id="avatarInput" accept=".jpg,.jpeg,.png" hidden>
+        </label>
+      <% } %>
+    </figure>
+    <h2><%= usuarioLogado ? usuarioLogado.nome : 'Visitante' %></h2>
+  </header>
+
+  <nav class="menuz" aria-label="Menu lateral">
+    <ul>
+      <% if (usuarioLogado && usuarioLogado.tipo === 'admin') { %>
+        <li class="active"><a href="/paineladm"><i class="fa-solid fa-chart-simple"></i> Painel ADM</a></li>
+        <li><a href="/logout" class="sidebar-logout"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
+      <% } else { %>
+        <li class="active"><a href="/minhascompras"><i class="fa-solid fa-bag-shopping"></i> Minhas compras</a></li>
+        <li><a href="/meusdowloads"><i class="fa-solid fa-download"></i> Meus downloads</a></li>
+        <li><a href="/favoritos"><i class="fa-solid fa-star"></i> Favoritos</a></li>
+        <li><a href="/config"><i class="fa-solid fa-gear"></i> Configurações</a></li>
+        <% if (usuarioLogado && usuarioLogado.tipo === 'criador') { %>
+          <li><a href="/admvend"><i class="fa-solid fa-chart-line"></i> Painel Vendas</a></li>
+        <% } %>
+        <% if (usuarioLogado) { %>
+          <li style="margin-top:auto"><a href="/logout" class="sidebar-logout"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
+        <% } %>
+      <% } %>
+    </ul>
+  </nav>
+</aside>
+
+<script>
+(function () {
+  const input = document.getElementById('avatarInput');
+  if (!input) return;
+  input.addEventListener('change', async function () {
+    if (!this.files[0]) return;
+    const formData = new FormData();
+    formData.append('foto', this.files[0]);
+    try {
+      const res = await fetch('/perfil/foto', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.foto) {
+        const fig = document.querySelector('.avatar');
+        let img = fig.querySelector('.avatar-img');
+        if (!img) {
+          fig.querySelector('i.fa-user')?.remove();
+          img = document.createElement('img');
+          img.className = 'avatar-img';
+          img.alt = 'Foto de perfil';
+          fig.insertBefore(img, fig.querySelector('.avatar-edit'));
+        }
+        img.src = data.foto + '?t=' + Date.now();
+      }
+    } catch (e) {
+      console.error('Erro ao enviar foto:', e);
+    }
+  });
+})();
+</script>

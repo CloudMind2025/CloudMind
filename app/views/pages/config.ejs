@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurações - Painel do Usuário</title>
+  <link rel="stylesheet" href="/css/config.css">
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+   <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+  
+   <%- include('../partials/menu') %>
+
+  </header>
+
+  <main class="container">
+    
+  <%- include('../partials/sidebar') %>
+    <!-- Conteúdo -->
+    <section class="settings">
+       <%- include('../partials/btnV') %>
+      <header>
+        <h1>Configurações da Conta</h1>
+        <p>Gerencie suas preferências, segurança e privacidade.</p>
+      </header>
+
+      <!-- Preferências -->
+      <section class="card">
+        <h2><i class="fa-solid fa-sliders"></i> Preferências</h2>
+        <form class="form-grid">
+          <label for="theme">Tema</label>
+          <select id="theme" name="theme">
+            <option>Claro</option>
+            <option>Escuro</option>
+            <option>Sistema</option>
+          </select>
+
+          <label for="language">Idioma</label>
+          <select id="language" name="language">
+            <option>Português (BR)</option>
+            <option>Inglês (EN)</option>
+            <option>Espanhol (ES)</option>
+          </select>
+        <br>
+          <fieldset class="notifications">
+            <legend>Notificações</legend>
+            <label><input type="checkbox" checked> Notificações por e-mail</label><br><br>
+            <label><input type="checkbox"> Notificações por SMS</label>
+          </fieldset>
+        </form>
+      </section><br>
+
+      <!-- Segurança -->
+      <section class="card">
+        <h2><i class="fa-solid fa-shield-halved"></i> Segurança</h2>
+        <section class="security-options">
+          <section>
+            <h3>Alterar senha</h3>
+            <button data-link="/alterarsenha" class="btn">Alterar</button>
+          </section>
+          <section>
+            <h3>Ver sessões ativas</h3>
+            <button class="btn">Ver sessões</button>
+          </section>
+          <section>
+            <h3>Autenticação em duas etapas (2FA)</h3>
+            <label class="switch">
+              <input type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </section>
+        </section>
+      </section><br>
+
+      <!-- Ações da Conta -->
+      <section class="card">
+        <h2><i class="fa-solid fa-user-gear"></i> Ações da Conta</h2>
+        <form class="form-grid">
+          <label for="privacy">Quem pode ver meu perfil</label>
+          <select id="privacy">
+            <option>Público</option>
+            <option>Apenas amigos</option>
+            <option>Privado</option>
+          </select>
+        </form>
+        <br>
+        <section class="account-actions">
+          <button class="btn danger" type="button" onclick="abrirModalExclusao()">
+            <i class="fa-solid fa-trash"></i> Excluir conta
+          </button>
+        </section>
+        <br>
+        <section class="account-actions">
+          <a href="/logout" class="btn sair">Logout</a>
+        </section>
+      </section>
+    </section>
+  </main>
+
+ <footer>
+    <%- include('../partials/footer') %>
+  </footer>
+
+  <style>
+    #modalExclusao {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.55);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    #modalExclusao.open { display: flex; }
+    #modalExclusao .modal-box-excl {
+      background: #fff; border-radius: 14px; padding: 2rem;
+      max-width: 440px; width: 90%;
+      box-shadow: 0 8px 32px rgba(0,0,0,.25);
+      position: relative; animation: fadeUpExcl .18s ease;
+    }
+    @keyframes fadeUpExcl {
+      from { opacity:0; transform:translateY(14px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    #modalExclusao .modal-close-excl {
+      position:absolute; top:1rem; right:1rem; background:none;
+      border:none; font-size:1.4rem; cursor:pointer; color:#94a3b8; line-height:1;
+    }
+    #modalExclusao .modal-close-excl:hover { color:#ef4444; }
+    #modalExclusao .modal-icon {
+      width:52px; height:52px; border-radius:50%; background:#fef2f2;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.4rem; color:#dc2626; margin-bottom:1rem;
+    }
+    #modalExclusao h3 { margin:0 0 .6rem; color:#1e293b; font-size:1.1rem; }
+    #modalExclusao .modal-aviso {
+      background:#fef2f2; border:1px solid #fecaca; border-radius:8px;
+      padding:.8rem 1rem; margin-bottom:1.1rem; font-size:.88rem; color:#7f1d1d; line-height:1.55;
+    }
+    #modalExclusao .modal-aviso strong { color:#dc2626; }
+    #modalExclusao .modal-hint {
+      font-size:.82rem; color:#64748b; margin-bottom:1.3rem; line-height:1.5;
+    }
+    #modalExclusao .modal-footer {
+      display:flex; gap:.8rem; justify-content:flex-end;
+    }
+    #modalExclusao .btn-cancelar-excl {
+      padding:.5rem 1.2rem; border:1px solid #cbd5e1; border-radius:8px;
+      background:#f8fafc; cursor:pointer; font-weight:600; font-family:inherit; font-size:.9rem;
+    }
+    #modalExclusao .btn-cancelar-excl:hover { background:#e2e8f0; }
+    #modalExclusao .btn-confirmar-excl {
+      padding:.5rem 1.4rem; border:none; border-radius:8px;
+      background:#dc2626; color:#fff; cursor:pointer; font-weight:700;
+      font-family:inherit; font-size:.9rem; display:flex; align-items:center; gap:.4rem;
+    }
+    #modalExclusao .btn-confirmar-excl:hover { background:#b91c1c; }
+  </style>
+
+  <!-- Modal: Excluir conta -->
+  <div id="modalExclusao" role="dialog" aria-modal="true">
+    <div class="modal-box-excl">
+      <button class="modal-close-excl" type="button" onclick="fecharModalExclusao()" aria-label="Fechar">&times;</button>
+      <div class="modal-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <h3>Excluir minha conta</h3>
+      <div class="modal-aviso">
+        Sua conta será <strong>desativada imediatamente</strong> e excluída permanentemente em <strong>30 dias</strong>.
+      </div>
+      <p class="modal-hint">
+        Para cancelar a exclusão, basta <strong>fazer login</strong> novamente antes do prazo — sua conta será reativada automaticamente.
+      </p>
+      <form action="/conta/inativar" method="POST">
+        <div class="modal-footer">
+          <button type="button" class="btn-cancelar-excl" onclick="fecharModalExclusao()">Cancelar</button>
+          <button type="submit" class="btn-confirmar-excl">
+            <i class="fa-solid fa-trash"></i> Excluir minha conta
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function abrirModalExclusao() {
+      document.getElementById('modalExclusao').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function fecharModalExclusao() {
+      document.getElementById('modalExclusao').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.getElementById('modalExclusao').addEventListener('click', function(e) {
+      if (e.target === this) fecharModalExclusao();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') fecharModalExclusao();
+    });
+  </script>
+
+  <script src="/js/linker.js"></script>
+
+</body>
+</html>

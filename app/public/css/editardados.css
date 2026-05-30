@@ -1,0 +1,207 @@
+/* ===========================
+   VARIÁVEIS GLOBAIS
+=========================== */
+:root {
+  --bg1: #e9e1ce;
+  --bg2: #f3ecd8;
+  --text-dark: #151c33;
+  --text-light: #e0e0e0;
+  --accent: #ad7b24;
+}
+
+/* ===========================
+   BASE / RESET
+=========================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+   
+}
+
+body {
+  font-family: "inter", sans-serif;
+  background: linear-gradient(180deg, var(--bg1), var(--bg2), #374147);
+  color: #e9eefc;
+  display: block;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-top: 280px;
+ 
+  
+}
+
+/* ===========================
+   CONTAINER GERAL
+=========================== */
+.container {
+  flex-direction: column;
+  width: 100%;
+ 
+  
+}
+
+
+/* ===========================
+   CONTEÚDO PRINCIPAL
+=========================== */
+.dados {
+  flex: 1;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  
+}
+
+.dados header {
+  margin-bottom: 30px;
+}
+
+.dados h1 {
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+.dados p {
+  color: var(--text-dark);
+  font-size: 14px;
+}
+
+/* ===========================
+   FORMULÁRIO
+=========================== */
+.dados-form {
+  background: #feffff;
+  padding: 30px;
+  border-radius: 14px;
+  display: grid;
+  gap: 25px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  color: var(--text-dark);
+}
+
+label {
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+input {
+  background: #ced1da;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  color: #151f3a;
+  font-size: 15px;
+  transition: 0.3s;
+}
+
+input:focus {
+  outline: 2px solid #151e3a;
+}
+
+.btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+  width: fit-content;
+}
+
+.btn:hover {
+  background: #0b1220;
+  transform: scale(1.05);
+}
+
+/* ===========================
+   TABLET (769px - 1199px)
+=========================== */
+@media (min-width: 769px) and (max-width: 1199px) {
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .container {
+    flex: 1; /* ocupa todo o espaço disponível */
+    display: flex;
+    flex-direction: column;
+  }
+
+  footer {
+    margin-top: auto; /* empurra o footer pro fim da tela */
+  }
+
+  .dados {
+    padding: 30px;
+    border-left: 1px solid #1f2a45;
+  }
+
+  .dados-form {
+    max-width: 700px;
+  }
+}
+
+
+/* ===========================
+   DESKTOP (a partir de 1200px)
+=========================== */
+@media (min-width: 1200px) {
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .container {
+    flex: 1; /* Faz o conteúdo ocupar o espaço acima do footer */
+    display: flex;
+    flex-direction: column;
+  }
+
+  footer {
+    margin-top: auto; /* Empurra o footer pro fim da tela */
+  }
+
+  .dados {
+    padding: 40px;
+    border-left: 1px solid #1f2a45;
+  }
+
+  .dados-form {
+    max-width: 1800px;
+  }
+
+  .dados header h1 {
+    font-size: 22px;
+  }
+}
+
+
+input.error {
+  border-color: #e74c3c !important;
+}
+
+input.success {
+  border-color: #27ae60 !important;
+}
+
+.error-message {
+  display: block;
+  color: #e74c3c;
+  font-size: 14px;
+  margin-top: 0px;
+  text-align: left;    
+  width: 100%;          
+  padding-left: 2px;  
+}

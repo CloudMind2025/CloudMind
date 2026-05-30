@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalhes da Compra</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/detalhe.css">
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+</head>
+<body>
+  <header>
+    <%- include('../partials/menu') %>
+  </header>
+
+
+  <section class="container">
+
+  
+  <%- include('../partials/sidebar') %>
+
+    <!-- Conteúdo principal -->
+    <main class="main-content">
+         <%- include('../partials/btnV') %>
+      <header class="header">
+        <h1>Detalhes da Compra</h1>
+        <p class="subtitle">Veja as informações completas do seu pedido.</p>
+      </header>
+
+      <section class="purchase-details">
+        <section class="info-header">
+          <section>
+            <h2>Pedido #84321</h2>
+            <p><strong>Data:</strong> 02/10/2025</p>
+            <p><strong>Status:</strong> <span class="status enviado">Enviado</span></p>
+          </section>
+          
+        </section>
+
+        <hr>
+
+        <h3>Itens do Pedido</h3>
+        <section class="item">
+          <img src="/image/soluçãoweb.png" alt="Produto">
+          <section class="details">
+            <h4>Curso Solução Web</h4>
+            <p>Licença digital — Entrega imediata</p>
+          </section>
+          <span class="valor">R$ 149,90</span>
+        </section>
+
+        <section class="item">
+          <img src="/image/frontend.png" alt="Produto">
+          <section class="details">
+            <h4>Ebook: Domine o FrontEnd</h4>
+            <p>Licença digital — Entrega imediata</p>
+          </section>
+          <span class="valor">R$ 79,90</span>
+        </section>
+
+        <hr>
+
+        <section class="resumo">
+          <section class="left">
+            <p>Subtotal:</p>
+            <p>Taxas:</p>
+            <h4>Total:</h4>
+          </section>
+          <section class="right">
+            <p>R$ 229,80</p>
+            <p>R$ 5,00</p>
+            <h4>R$ 234,80</h4>
+          </section>
+        </section>
+
+        <hr>
+
+        <section class="pagamento">
+          <h3>Informações de Pagamento</h3>
+          <p><strong>Método:</strong> Cartão de Crédito (Mastercard final 4821)</p>
+          <p><strong>Status:</strong> Aprovado</p>
+          <p><strong>ID Transação:</strong> TRX9H21F8D</p>
+        </section>
+
+        <hr>
+
+        <section class="acoes">
+          <button class="btn btn-primary"><i class="fa-solid fa-download"></i> Baixar Produtos</button>
+          <button class="btn btn-secundario"><i class="fa-solid fa-file-invoice"></i> Nota Fiscal</button>
+          <button class="btn btn-cancelar"><i class="fa-solid fa-arrow-rotate-left"></i> Solicitar Reembolso</button>
+        </section>
+      </section>
+    </main>
+  </section>
+   <footer>
+    <%- include('../partials/footer') %>
+  </footer>
+
+  <script src="/js/linker.js"></script>
+  
+</body>
+</html>

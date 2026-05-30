@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página de Cadastro</title>
+  <link rel="stylesheet" href="/css/cadastro.css">
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <!-- Ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<header>
+  
+   <%- include('../partials/menu') %>
+
+  </header>
+  <main>
+     <section class="container">
+    
+    <!-- Lado esquerdo -->
+    <section class="info">
+      <h2>Junte-se a nós ☁️</h2><br>
+      <ul>
+        <li><i class="fa-solid fa-book-open"></i> Explore eBooks, cursos, templates, flashcards, audiobooks e muito mais — tudo em um só lugar.</li><br>
+        <li><i class="fa-solid fa-user-check"></i> Materiais feitos por pessoas reais, com preços justos e foco em criatividade, educação e desenvolvimento pessoal.</li><br>
+        <li><i class="fa-solid fa-sack-dollar"></i> Transforme seus conhecimentos em renda extra. Publique seu eBook, curso ou qualquer produto digital.</li><br>
+        <li><i class="fa-solid fa-lightbulb"></i> Aqui você não precisa ser famoso. Nós valorizamos cada criador e incentivamos todos a compartilhar sua criatividade.</li><br>
+        <li><i class="fa-solid fa-compass"></i> Navegação intuitiva, entrega digital confiável e suporte amigável para que você aproveite ao máximo a plataforma.</li><br>
+      </ul>
+    </section>
+
+    <!-- Lado direito -->
+    <section class="form-box">
+      <h2>Crie sua conta</h2>
+      
+      <section class="social-login">
+        <button class="google"><i class="fa-brands fa-google"></i> Google</button>
+        <button class="apple"><i class="fa-brands fa-apple"></i> Apple</button>
+      </section>
+      
+      <p class="ivider">Ou utilize seu e-mail</p>
+      
+      <form action="/cadastro" method="POST">
+        <input type="text" id="name" name="nome" placeholder="Digite seu nome completo"
+               value="<%= locals.campos && campos.nome ? campos.nome : '' %>" required>
+        <input type="email" id="email" name="email" placeholder="Digite seu e-mail principal"
+               value="<%= locals.campos && campos.email ? campos.email : '' %>" required>
+
+        <!-- Tipo de conta -->
+        <span class="tipo-conta-label">Tipo de conta</span>
+        <div class="tipo-conta-wrap">
+          <label class="tipo-card" id="card-cliente">
+            <input type="radio" name="tipo_conta" value="cliente"
+                   <%= (!locals.campos || !campos.tipo_conta || campos.tipo_conta === 'cliente') ? 'checked' : '' %>>
+            <i class="fa-solid fa-user"></i>
+            <span>Cliente</span>
+            <small>Compre produtos digitais</small>
+          </label>
+          <label class="tipo-card" id="card-vendedor">
+            <input type="radio" name="tipo_conta" value="vendedor"
+                   <%= (locals.campos && campos.tipo_conta === 'vendedor') ? 'checked' : '' %>>
+            <i class="fa-solid fa-store"></i>
+            <span>Vendedor</span>
+            <small>Publique e venda produtos</small>
+          </label>
+        </div>
+
+        <div id="cpf-wrapper">
+          <input type="text" id="cpf" name="cpf" placeholder="Digite seu CPF (somente números)"
+                 value="<%= locals.campos && campos.cpf ? campos.cpf : '' %>">
+        </div>
+
+        <input type="password" id="password" name="senha" placeholder="Digite uma senha" required>
+        <input type="password" id="confirm-password" name="csenha" placeholder="Confirme sua senha" required>
+
+        <% if (locals.listaErros && listaErros.length > 0) { %>
+          <div style="color:red;margin-bottom:10px;">
+            <% listaErros.forEach(e => { %><p><%= e.msg %></p><% }) %>
+          </div>
+        <% } %>
+        <% if (locals.resultado) { %>
+          <div style="color:green;margin-bottom:10px;">
+            <p>✅ Conta criada! <a href="/login">Faça login aqui</a></p>
+          </div>
+        <% } %>
+
+        <button type="submit" class="primary">Cadastrar-se agora</button>
+        <button data-link="/login" type="button" class="secondary">Acesse sua conta já</button>
+      </form>
+    </section>
+  </section>
+  </main>
+   <footer>
+    <%- include('../partials/footer') %>
+  </footer>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/validaF_cadastro.js"></script>
+<script src="/js/linker.js"></script>
+<script>
+(function () {
+  const cards      = document.querySelectorAll('.tipo-card');
+  const radios     = document.querySelectorAll('input[name="tipo_conta"]');
+  const cpfWrapper = document.getElementById('cpf-wrapper');
+  const cpfInput   = document.getElementById('cpf');
+
+  function sync() {
+    const val = document.querySelector('input[name="tipo_conta"]:checked').value;
+    cards.forEach(c => c.classList.toggle('ativo', c.querySelector('input').value === val));
+    const precisaCpf = val === 'cliente' || val === 'vendedor';
+    cpfWrapper.style.display = precisaCpf ? '' : 'none';
+    cpfInput.required = precisaCpf;
+    if (!precisaCpf) cpfInput.value = '';
+  }
+
+  radios.forEach(r => r.addEventListener('change', sync));
+  sync();
+})();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,235 @@
+.sidebar {
+  width: 100%;
+  background: linear-gradient(185deg, #15202c, #18343b);
+  color: #fff;
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  gap: 10px;
+  flex-wrap: wrap;
+  top: 70px;
+  z-index: 990;
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: auto;
+
+
+
+}
+
+.profile {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #1a237e;
+  position: relative;
+  overflow: visible;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+.avatar-edit {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 18px;
+  height: 18px;
+  background: #2b4c7e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid #fff;
+  transition: background .2s;
+  z-index: 2;
+}
+
+.avatar-edit i {
+  font-size: 8px;
+  color: #fff;
+  pointer-events: none;
+}
+
+.avatar-edit:hover {
+  background: #1d3461;
+}
+
+.profile h2 {
+  font-size: 14px;
+  color: #e0e0e0;
+}
+
+.menuz ul {
+  list-style: none;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.menuz a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  color: #c5cae9;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: 0.3s;
+  font-size: 13px;
+}
+
+.menuz a:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+body {
+  margin-top: calc(70px+80px);
+}
+
+/* Botão de logout */
+.sidebar-logout {
+  color: #f87171 !important;
+}
+
+.sidebar-logout:hover {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #fca5a5 !important;
+}
+
+/* ========= TABLET (>=769px) ========= */
+@media (min-width: 769px) {
+  .sidebar {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 180px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: 30px 15px;
+    margin-top: 0px;
+    z-index: 100;
+  }
+
+  .menuz {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .menuz ul {
+    flex-direction: column;
+  }
+
+  .profile {
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+
+  .avatar {
+    width: 70px;
+    height: 70px;
+    font-size: 32px;
+  }
+
+  .avatar-edit {
+    width: 22px;
+    height: 22px;
+    bottom: -3px;
+    right: -3px;
+  }
+
+  .avatar-edit i { font-size: 10px; }
+
+  .profile h2 {
+    font-size: 15px;
+  }
+
+  .menuz ul {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .menuz a {
+    font-size: 14px;
+    padding: 10px;
+    justify-content: flex-start;
+  }
+
+  body {
+    margin-top: 0;
+    padding-left: 180px;
+    /* empurra o conteúdo */
+    padding-top: 70px;
+  }
+}
+
+/* ========= DESKTOP (>=1200px) ========= */
+@media (min-width: 1200px) {
+  .sidebar {
+    width: 220px;
+    padding: 40px 20px;
+    margin-top: 0px;
+    padding-top: 70px;
+
+  }
+
+  .avatar {
+    width: 90px;
+    height: 90px;
+    font-size: 42px;
+  }
+
+  .avatar-edit {
+    width: 26px;
+    height: 26px;
+    bottom: -4px;
+    right: -4px;
+  }
+
+  .avatar-edit i { font-size: 11px; }
+
+  .profile h2 {
+    font-size: 16px;
+    margin-top: 10px;
+  }
+
+  .menuz ul {
+    gap: 10px;
+  }
+
+  .menuz a {
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  body {
+    padding-left: 220px;
+  }
+}

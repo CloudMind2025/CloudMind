@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="/css/carrinho.css">
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <title>Carrinho — CloudMind</title>
+</head>
+<body>
+
+  <header>
+    <%- include('../partials/menu') %>
+  </header>
+
+  <main class="page-cart" id="page-cart">
+    <section class="public-page">
+      <%- include('../partials/btnV') %>
+
+      <section class="cart-grid">
+
+        <!-- Lista de itens -->
+        <section class="cart-items" aria-labelledby="titulo-carrinho">
+          <h1 id="titulo-carrinho">Seu Carrinho</h1>
+
+          <% if (!itens || itens.length === 0) { %>
+            <p class="muted" style="padding:20px 0;">Seu carrinho está vazio.</p>
+          <% } else { %>
+
+            <ul id="items-list" class="items-list" aria-live="polite">
+              <% itens.forEach(function(item) { %>
+                <li class="cart-item">
+                  <img src="/<%= item.imagem %>" alt="<%= item.titulo %>" class="item-thumb">
+                  <section class="item-main">
+                    <section class="item-title-row">
+                      <h2 class="item-title"><%= item.titulo %></h2>
+                      <form action="/carrinho/remover" method="POST" style="display:inline;">
+                        <input type="hidden" name="id_carrinho" value="<%= id_carrinho %>">
+                        <input type="hidden" name="id_produto"  value="<%= item.id_produto %>">
+                        <button type="submit" class="remove-btn" title="Remover">
+                          <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                      </form>
+                    </section>
+                    <p class="item-meta">Licença digital — Entrega imediata</p>
+                    <section class="item-controls">
+                      <section class="qty">
+                        <span>Qtd: <%= item.quantidade %></span>
+                      </section>
+                      <section class="price">
+                        R$ <span class="price-value"><%= parseFloat(item.preco_unitario).toFixed(2).replace('.', ',') %></span>
+                      </section>
+                    </section>
+                  </section>
+                </li>
+              <% }) %>
+            </ul>
+
+            <section class="cart-actions">
+              <section class="left-actions">
+                <form action="/carrinho/limpar" method="POST">
+                  <input type="hidden" name="id_carrinho" value="<%= id_carrinho %>">
+                  <button type="submit" class="btn ghost small">
+                    <i class="fa-regular fa-trash-can"></i> Limpar carrinho
+                  </button>
+                </form>
+              </section>
+              <section class="right-actions">
+                <a href="/PProdutos" class="link-continue">← Continuar comprando</a>
+              </section>
+            </section>
+
+          <% } %>
+        </section>
+
+        <!-- Resumo / checkout -->
+        <aside class="cart-summary" aria-labelledby="titulo-resumo">
+          <section class="summary-card card">
+            <h2 id="titulo-resumo">Resumo do Pedido</h2>
+
+            <%
+              let total = 0;
+              if (itens) {
+                itens.forEach(function(item) {
+                  total += parseFloat(item.preco_unitario) * item.quantidade;
+                });
+              }
+            %>
+
+            <dl class="summary-line">
+              <dt>Sub-total</dt>
+              <dd>R$ <%= total.toFixed(2).replace('.', ',') %></dd>
+            </dl>
+
+            <section class="promo">
+              <label for="coupon" class="muted">Código promocional</label>
+              <section class="promo-row">
+                <input id="coupon" type="text" placeholder="insira o cupom">
+                <button id="apply-coupon" class="btn small">Aplicar</button>
+              </section>
+              <p id="coupon-msg" class="muted" aria-live="polite"></p>
+            </section>
+
+            <hr>
+
+            <dl class="summary-line total">
+              <dt>Total</dt>
+              <dd>R$ <span id="total"><%= total.toFixed(2).replace('.', ',') %></span></dd>
+            </dl>
+
+            <section class="checkout-actions">
+              <button id="checkout" class="btn primary" aria-label="Finalizar compra">
+                <i class="fa-solid fa-credit-card"></i> Finalizar compra
+              </button>
+            </section>
+
+            <p class="muted small">Pagamento seguro · Troca em 30 dias · Atendimento 24/7</p>
+          </section>
+        </aside>
+
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <%- include('../partials/footer') %>
+  </footer>
+
+  <script src="/js/linker.js"></script>
+</body>
+</html>

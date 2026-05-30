@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/paineladm.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/footer.css">
+</head>
+<body>
+  <header>
+    <%- include('../partials/menu') %>
+  </header>
+
+  <%- include('../partials/sidebar') %>
+
+  <main>
+    <%- include('../partials/btnV') %>
+
+    <% if (locals.msg === 'conta_excluida') { %>
+      <div style="background:#d1fae5;color:#065f46;border-left:4px solid #10b981;
+                  padding:.9rem 1.2rem;border-radius:8px;margin-bottom:1rem;font-weight:600;">
+        <i class="fa-solid fa-circle-check"></i>
+        Conta excluída permanentemente e e-mail de confirmação enviado ao usuário.
+      </div>
+    <% } else if (locals.msg === 'conta_excluida_sem_email') { %>
+      <div style="background:#fef3c7;color:#92400e;border-left:4px solid #f59e0b;
+                  padding:.9rem 1.2rem;border-radius:8px;margin-bottom:1rem;font-weight:600;">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        Conta excluída, mas o e-mail de confirmação <strong>não foi enviado</strong>
+        (verifique EMAIL_USER e EMAIL_PASS no arquivo <code>.env</code>).
+      </div>
+    <% } %>
+
+    <!-- Métricas -->
+    <section>
+      <h2>Painel Administrativo</h2>
+      <section class="cards">
+        <article class="card"><h3>Usuários</h3><p><%= usuarios ? usuarios.length : 0 %></p></article>
+        <article class="card"><h3>Tickets Abertos</h3><p><%= tickets ? tickets.filter(t => !['resolvido','fechado'].includes(t.status)).length : 0 %></p></article>
+        <article class="card"><h3>Denúncias</h3><p><%= denuncias ? denuncias.filter(d => d.status === 'pendente').length : 0 %></p></article>
+      </section>
+    </section>
+
+    <!-- Usuários -->
+    <section>
+      <h2>Usuários</h2>
+      <style>
+        .badge-tipo {
+          display:inline-block; padding:0.2rem 0.65rem; border-radius:20px;
+          font-size:0.76rem; font-weight:600; white-space:nowrap;
+        }
+        .badge-tipo.cliente  { background:#dbeafe; color:#1d4ed8; }
+        .badge-tipo.criador  { background:#d1fae5; color:#065f46; }
+        .badge-tipo.admin    { background:#fef3c7; color:#92400e; }
+        .badge-status {
+          display:inline-block; padding:0.2rem 0.65rem; border-radius:20px;
+          font-size:0.76rem; font-weight:600; white-space:nowrap;
+        }
+        .badge-status.ativo    { background:#d1fae5; color:#065f46; }
+        .badge-status.suspenso { background:#fef3c7; color:#92400e; }
+        .user-actions { display:flex; gap:.4rem; flex-wrap:wrap; align-items:center; }
+      </style>
+      <div class="table-scroll"><table>
+        <thead>
+          <tr>
+            <th>Nome</th><th>Email</th><th>Tipo</th><th>Status</th><th>Cadastro</th><th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (usuarios && usuarios.length > 0) { %>
+            <% usuarios.forEach(function(u) { %>
+              <% var tipoLabel = { cliente: 'Cliente', criador: 'Vendedor', admin: 'Admin' }[u.tipo] || u.tipo; %>
+              <% var statusLabel = { ativo: 'Ativo', suspenso: 'Suspenso' }[u.status] || u.status; %>
+              <tr>
+                <td><%= u.nome %></td>
+                <td><%= u.email %></td>
+                <td><span class="badge-tipo <%= u.tipo %>"><%= tipoLabel %></span></td>
+                <td><span class="badge-status <%= u.status %>"><%= statusLabel %></span></td>
+                <td><%= u.data_cadastro ? moment(u.data_cadastro).format('DD/MM/YYYY') : '-' %></td>
+                <td>
+                  <% if (u.status === 'ativo') { %>
+                    <div style="display:flex;gap:.4rem;flex-wrap:wrap;">
+                      <form action="/adm/suspender" method="POST" style="display:contents;" onsubmit="return confirm('Suspender este usuário?')">
+                        <input type="hidden" name="id_usuario" value="<%= u.id_usuario %>">
+                        <button type="submit" class="btn btn-danger">Suspender</button>
+                      </form>
+                      <form action="/adm/excluir-permanente" method="POST" style="display:contents;"
+                            onsubmit="return confirm('Excluir permanentemente a conta de <%= u.nome %>? Esta ação é irreversível.')">
+                        <input type="hidden" name="id_usuario" value="<%= u.id_usuario %>">
+                        <button type="submit" class="btn btn-danger">
+                          <i class="fa-solid fa-user-xmark"></i> Excluir
+                        </button>
+                      </form>
+                    </div>
+                  <% } else { %>
+                    <div style="display:flex;gap:.4rem;flex-wrap:wrap;">
+                      <form action="/adm/reativar" method="POST" style="display:contents;">
+                        <input type="hidden" name="id_usuario" value="<%= u.id_usuario %>">
+                        <button type="submit" class="btn btn-edit">Reativar</button>
+                      </form>
+                      <form action="/adm/excluir-permanente" method="POST" style="display:contents;"
+                            onsubmit="return confirm('Excluir permanentemente a conta de <%= u.nome %>? Esta ação é irreversível.')">
+                        <input type="hidden" name="id_usuario" value="<%= u.id_usuario %>">
+                        <button type="submit" class="btn btn-danger">
+                          <i class="fa-solid fa-user-xmark"></i> Excluir
+                        </button>
+                      </form>
+                    </div>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr><td colspan="6">Nenhum usuário encontrado.</td></tr>
+          <% } %>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- Denúncias -->
+    <section>
+      <h2>Acões conta de usuário</h2>
+      <style>
+        .motivo-exclusao { color:#dc2626; font-weight:700; }
+        .den-actions { display:flex; gap:.4rem; flex-wrap:wrap; align-items:center; }
+        .desc-den-cell {
+          cursor: pointer; max-width: 180px;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .desc-den-cell:hover { color: #2b4c7e; text-decoration: underline dotted; }
+      </style>
+      <div class="table-scroll"><table>
+        <thead>
+          <tr><th>Autor</th><th>Motivo</th><th>Descrição</th><th>Data</th><th>Status</th><th>Ação</th></tr>
+        </thead>
+        <tbody>
+          <% if (denuncias && denuncias.length > 0) { %>
+            <% denuncias.forEach(function(d) { %>
+              <% var isExclusao = d.motivo === 'exclusao_de_conta'; %>
+              <tr>
+                <td><%= d.denunciante || '-' %></td>
+                <td>
+                  <% if (isExclusao) { %>
+                    <span class="motivo-exclusao"><i class="fa-solid fa-user-xmark"></i> Exclusão de Conta</span>
+                  <% } else { %>
+                    <%= d.motivo %>
+                  <% } %>
+                </td>
+                <td class="desc-den-cell"
+                    data-descricao="<%= d.descricao %>"
+                    data-autor="<%= d.denunciante || '-' %>"
+                    data-motivo="<%= isExclusao ? 'Exclusão de Conta' : d.motivo %>"
+                    data-data="<%= d.data_denuncia ? moment(d.data_denuncia).format('DD/MM/YYYY') : '-' %>"
+                    data-status="<%= d.status %>"
+                    onclick="abrirModalDenuncia(this)">
+                  <%= d.descricao && d.descricao.length > 50 ? d.descricao.substring(0,50)+'…' : (d.descricao || '-') %>
+                </td>
+                <td><%= d.data_denuncia ? moment(d.data_denuncia).format('DD/MM/YYYY') : '-' %></td>
+                <td><%= d.status ? d.status.charAt(0).toUpperCase() + d.status.slice(1) : '-' %></td>
+                <td>
+                  <div class="den-actions">
+                    <% if (d.status !== 'arquivada' && d.status !== 'resolvida') { %>
+                      <% if (isExclusao) { %>
+                        <form action="/adm/reativar" method="POST" style="display:contents;">
+                          <input type="hidden" name="id_usuario" value="<%= d.id_cliente %>">
+                          <input type="hidden" name="id_denuncia" value="<%= d.id_denuncia %>">
+                          <button type="submit" class="btn btn-edit">
+                            <i class="fa-solid fa-rotate-left"></i> Reativar
+                          </button>
+                        </form>
+                        <form action="/adm/excluir-permanente" method="POST" style="display:contents;"
+                              onsubmit="return confirm('Excluir permanentemente a conta de <%= d.denunciante %>? Esta ação é irreversível.')">
+                          <input type="hidden" name="id_usuario" value="<%= d.id_cliente %>">
+                          <input type="hidden" name="id_denuncia" value="<%= d.id_denuncia %>">
+                          <button type="submit" class="btn btn-danger">
+                            <i class="fa-solid fa-user-xmark"></i> Excluir
+                          </button>
+                        </form>
+                      <% } else { %>
+                        <form action="/adm/arquivar-denuncia" method="POST" style="display:contents;"
+                              onsubmit="return confirm('Arquivar esta denúncia?')">
+                          <input type="hidden" name="id_denuncia" value="<%= d.id_denuncia %>">
+                          <button type="submit" class="btn btn-edit">Arquivar</button>
+                        </form>
+                      <% } %>
+                    <% } else { %>
+                      <span style="color:#94a3b8;font-size:.85rem;">Encerrada</span>
+                    <% } %>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr><td colspan="6">Nenhuma denúncia encontrada.</td></tr>
+          <% } %>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- Tickets de Suporte -->
+    <section>
+      <h2>Tickets de Suporte</h2>
+      <style>
+        .badge-ticket {
+          display:inline-block; padding:0.2rem 0.6rem; border-radius:20px;
+          font-size:0.78rem; font-weight:600; white-space:nowrap;
+        }
+        .badge-ticket.aberto       { background:#dbeafe; color:#1d4ed8; }
+        .badge-ticket.em_andamento { background:#fef3c7; color:#92400e; }
+        .badge-ticket.pendente     { background:#ede9fe; color:#5b21b6; }
+        .badge-ticket.resolvido    { background:#d1fae5; color:#065f46; }
+        .badge-ticket.fechado      { background:#f1f5f9; color:#64748b; }
+        .ticket-actions { display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap; }
+        .ticket-actions select {
+          padding:0.25rem 0.4rem; border:1px solid #cbd5e1; border-radius:5px;
+          font-size:0.8rem; background:#fff; cursor:pointer;
+        }
+        .ticket-actions .btn { padding:0.25rem 0.6rem; font-size:0.8rem; }
+        .desc-cell {
+          cursor: pointer; max-width: 220px;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .desc-cell:hover { color: #2b4c7e; text-decoration: underline dotted; }
+
+        /* Modais */
+        #modalDenuncia {
+          display: none; position: fixed; inset: 0;
+          background: rgba(0,0,0,.45); z-index: 9999;
+          align-items: center; justify-content: center;
+        }
+        #modalDenuncia.open { display: flex; }
+        #modalTicket {
+          display: none; position: fixed; inset: 0;
+          background: rgba(0,0,0,.45); z-index: 9999;
+          align-items: center; justify-content: center;
+        }
+        #modalTicket.open { display: flex; }
+        .modal-box {
+          background: #fff; border-radius: 12px; padding: 2rem;
+          max-width: 520px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,.2);
+          position: relative; animation: fadeUp .18s ease;
+        }
+        @keyframes fadeUp {
+          from { opacity:0; transform:translateY(16px); }
+          to   { opacity:1; transform:translateY(0); }
+        }
+        .modal-box h3 { margin: 0 0 1rem; color: #2b4c7e; font-size: 1.05rem; }
+        .modal-meta {
+          display: grid; grid-template-columns: 1fr 1fr;
+          gap: 0.4rem 1rem; font-size: 0.85rem;
+          color: #475569; margin-bottom: 1rem;
+        }
+        .modal-meta span b { color: #1e293b; }
+        .modal-desc {
+          background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
+          padding: 0.9rem 1rem; font-size: 0.92rem; line-height: 1.6;
+          color: #1e293b; white-space: pre-wrap; word-break: break-word;
+          max-height: 260px; overflow-y: auto;
+        }
+        .modal-close {
+          position: absolute; top: 1rem; right: 1rem;
+          background: none; border: none; font-size: 1.3rem;
+          cursor: pointer; color: #94a3b8; line-height: 1;
+        }
+        .modal-close:hover { color: #ef4444; }
+      </style>
+      <div class="table-scroll"><table>
+        <thead>
+          <tr><th>Usuário</th><th>Tipo</th><th>Descrição</th><th>Status</th><th>Data</th><th>Ações</th></tr>
+        </thead>
+        <tbody>
+          <% if (tickets && tickets.length > 0) { %>
+            <% tickets.forEach(function(t) { %>
+              <% var statusLabel = {
+                aberto:'Aberto', em_andamento:'Em andamento',
+                pendente:'Pendente', resolvido:'Resolvido', fechado:'Fechado'
+              }[t.status] || t.status; %>
+              <tr>
+                <td><%= t.nome_usuario || 'Anônimo' %></td>
+                <td><%= t.tipo_chamada %></td>
+                <td class="desc-cell"
+                    data-descricao="<%= t.descricao %>"
+                    data-usuario="<%= t.nome_usuario || 'Anônimo' %>"
+                    data-tipo="<%= t.tipo_chamada %>"
+                    data-status="<%= statusLabel %>"
+                    data-data="<%= t.data_chamada ? moment(t.data_chamada).format('DD/MM/YYYY') : '-' %>"
+                    onclick="abrirModalTicket(this)">
+                  <%= t.descricao && t.descricao.length > 60 ? t.descricao.substring(0,60) + '…' : t.descricao %>
+                </td>
+                <td><span class="badge-ticket <%= t.status %>"><%= statusLabel %></span></td>
+                <td><%= t.data_chamada ? moment(t.data_chamada).format('DD/MM/YYYY') : '-' %></td>
+                <td>
+                  <div class="ticket-actions">
+                    <!-- Alterar status -->
+                    <form action="/adm/status-ticket" method="POST" style="display:contents;">
+                      <input type="hidden" name="id_chamada" value="<%= t.id_chamada %>">
+                      <select name="novo_status">
+                        <option value="aberto"       <%= t.status === 'aberto'       ? 'selected' : '' %>>Aberto</option>
+                        <option value="em_andamento" <%= t.status === 'em_andamento' ? 'selected' : '' %>>Em andamento</option>
+                        <option value="pendente"     <%= t.status === 'pendente'     ? 'selected' : '' %>>Pendente</option>
+                        <option value="resolvido"    <%= t.status === 'resolvido'    ? 'selected' : '' %>>Resolvido</option>
+                        <option value="fechado"      <%= t.status === 'fechado'      ? 'selected' : '' %>>Fechado</option>
+                      </select>
+                      <button type="submit" class="btn btn-edit">Salvar</button>
+                    </form>
+                    <!-- Excluir -->
+                    <form action="/adm/excluir-ticket" method="POST" style="display:contents;" onsubmit="return confirm('Excluir este ticket permanentemente?')">
+                      <input type="hidden" name="id_chamada" value="<%= t.id_chamada %>">
+                      <button type="submit" class="btn btn-danger">Excluir</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr><td colspan="6">Nenhum ticket encontrado.</td></tr>
+          <% } %>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- Modal de descrição completa do ticket -->
+    <div id="modalTicket" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+      <div class="modal-box">
+        <button class="modal-close" onclick="fecharModal()" aria-label="Fechar">&times;</button>
+        <h3 id="modalTitulo"><i class="fa-solid fa-ticket" style="margin-right:.4rem;"></i> Detalhes do Ticket</h3>
+        <div class="modal-meta">
+          <span><b>Usuário:</b> <span id="mUsuario"></span></span>
+          <span><b>Tipo:</b> <span id="mTipo"></span></span>
+          <span><b>Status:</b> <span id="mStatus"></span></span>
+          <span><b>Data:</b> <span id="mData"></span></span>
+        </div>
+        <div class="modal-desc" id="mDescricao"></div>
+      </div>
+    </div>
+
+    <!-- Modal de descrição completa da denúncia -->
+    <div id="modalDenuncia" role="dialog" aria-modal="true" aria-labelledby="modalDenTitulo">
+      <div class="modal-box">
+        <button class="modal-close" onclick="fecharModalDenuncia()" aria-label="Fechar">&times;</button>
+        <h3 id="modalDenTitulo"><i class="fa-solid fa-flag" style="margin-right:.4rem;"></i> Detalhes da Denúncia</h3>
+        <div class="modal-meta">
+          <span><b>Autor:</b> <span id="dAutor"></span></span>
+          <span><b>Motivo:</b> <span id="dMotivo"></span></span>
+          <span><b>Status:</b> <span id="dStatus"></span></span>
+          <span><b>Data:</b> <span id="dData"></span></span>
+        </div>
+        <div class="modal-desc" id="dDescricao"></div>
+      </div>
+    </div>
+
+    <!-- Gráficos -->
+    <section id="graficos">
+      <h2>Indicadores do Projeto</h2>
+      <article class="grafico"><h3>Vendas Mensais</h3><canvas id="graficoVendas"></canvas></article>
+      <article class="grafico"><h3>Usuários Ativos</h3><canvas id="graficoUsuarios"></canvas></article>
+      <article class="grafico"><h3>Distribuição de Tipos</h3><canvas id="graficoTipos"></canvas></article>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const vendas = document.getElementById("graficoVendas").getContext("2d");
+    new Chart(vendas, {
+      type: "line",
+      data: {
+        labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"],
+        datasets: [{ label: "Vendas (R$)", data: [1000, 2500, 3000, 2600, 3500, 4200], borderColor: "#2b4c7e", backgroundColor: "rgba(43,76,126,0.2)", tension: 0.4, fill: true }]
+      },
+      options: { responsive: true, plugins: { legend: { position: "bottom" } } }
+    });
+    const usuarios = document.getElementById("graficoUsuarios").getContext("2d");
+    new Chart(usuarios, {
+      type: "bar",
+      data: { labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"], datasets: [{ label: "Usuários Ativos", data: [150, 200, 300, 250, 400, 450], backgroundColor: "#234162" }] },
+      options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+    const tipos = document.getElementById("graficoTipos").getContext("2d");
+    new Chart(tipos, {
+      type: "doughnut",
+      data: { labels: ["Clientes", "Vendedores", "Admins"], datasets: [{ data: [70, 25, 5], backgroundColor: ["#234162", "#2b4c7e", "#93c5fd"] }] },
+      options: { responsive: true, plugins: { legend: { position: "right" } } }
+    });
+  </script>
+  <script>
+    function abrirModalTicket(td) {
+      document.getElementById('mUsuario').textContent   = td.dataset.usuario;
+      document.getElementById('mTipo').textContent      = td.dataset.tipo;
+      document.getElementById('mStatus').textContent    = td.dataset.status;
+      document.getElementById('mData').textContent      = td.dataset.data;
+      document.getElementById('mDescricao').textContent = td.dataset.descricao;
+      document.getElementById('modalTicket').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function fecharModal() {
+      document.getElementById('modalTicket').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.getElementById('modalTicket').addEventListener('click', function(e) {
+      if (e.target === this) fecharModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') { fecharModal(); fecharModalDenuncia(); }
+    });
+
+    function abrirModalDenuncia(td) {
+      document.getElementById('dAutor').textContent     = td.dataset.autor;
+      document.getElementById('dMotivo').textContent    = td.dataset.motivo;
+      document.getElementById('dStatus').textContent    = td.dataset.status;
+      document.getElementById('dData').textContent      = td.dataset.data;
+      document.getElementById('dDescricao').textContent = td.dataset.descricao || '-';
+      document.getElementById('modalDenuncia').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function fecharModalDenuncia() {
+      document.getElementById('modalDenuncia').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.getElementById('modalDenuncia').addEventListener('click', function(e) {
+      if (e.target === this) fecharModalDenuncia();
+    });
+  </script>
+  <script src="/js/linker.js"></script>
+
+  <footer>
+    <%- include('../partials/footer') %>
+  </footer>
+</body>
+</html>

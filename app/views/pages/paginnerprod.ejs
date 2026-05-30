@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Detahes do Produto — Marketplace Digital</title>
+  <link rel="stylesheet" href="/css/detail.css" />
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+  <%- include('../partials/menu') %>
+  </header>
+
+  <main class="container main-grid" id="main">
+    <!-- imagem / Galeria -->
+    <section class="product-media">
+      <section class="main-image">
+        <img src="/<%= produto.imagem %>" alt="<%= produto.titulo %>">
+      </section>
+
+      <section class="thumbs">
+        <img src="/<%= produto.imagem %>" alt="miniatura 1">
+      </section>
+    </section>
+
+    <!-- Informações do produto -->
+    <aside class="product-info">
+      <h1 class="product-title"><%= produto.titulo %></h1>
+      <p class="product-meta">
+        <span class="author">por <a href="#"><%= produto.nome_criador %></a></span>
+        <span class="dot">•</span>
+        <span class="format"><%= produto.tipo_produto %></span>
+      </p>
+
+      <section class="pricing">
+        <section class="price">R$ <%= parseFloat(produto.preco).toFixed(2).replace('.', ',') %></section>
+      </section>
+
+      <section class="buy-actions">
+        <form action="/carrinho/adicionar" method="POST">
+          <input type="hidden" name="id_produto" value="<%= produto.id_produto %>">
+          <input type="hidden" name="preco_unitario" value="<%= produto.preco %>">
+          <button type="submit" class="btn outline">Adicionar ao carrinho</button>
+        </form>
+      </section>
+
+      <ul class="product-highlights">
+        <li>Entrega digital imediata via link seguro</li>
+        <li>Formato: PDF + acesso a área de membros</li>
+        <li>Atualizações gratuitas por 6 meses</li>
+      </ul>
+
+      <section class="seller-card">
+        <% if (produto.foto_criador) { %>
+          <img class="seller-avatar" src="<%= produto.foto_criador %>" alt="foto de <%= produto.nome_criador %>">
+        <% } else { %>
+          <span class="seller-avatar seller-avatar-default">
+            <i class="fa-solid fa-user"></i>
+          </span>
+        <% } %>
+        <section>
+          <strong><%= produto.nome_criador %></strong>
+          <section class="seller-stats">
+            <% if (produto.qtd_avaliacoes && produto.qtd_avaliacoes > 0) { %>
+              <%= produto.qtd_avaliacoes %> avaliações • <%= parseFloat(produto.media_avaliacoes).toFixed(1) %>★
+            <% } else { %>
+              Sem avaliações ainda
+            <% } %>
+          </section>
+          <button data-link="/pgpublica?id=<%= produto.id_criador %>" class="btn small">Visitar Perfil</button>
+        </section>
+      </section>
+
+      <section class="product-actions-aux">
+        <button class="icon-btn">❤ Favoritar</button>
+        <button class="icon-btn">🔗 Compartilhar</button>
+      </section>
+    </aside>
+  
+
+  <!-- Seções: descrição, conteúdo, avaliações, FAQ -->
+  <section class="container bottom-sections">
+    <section class="tabs">
+      <nav class="tabs-nav" role="tablist" aria-label="Seções do produto">
+        <button role="tab" aria-selected="true">Descrição</button>
+        <button role="tab">Conteúdo</button>
+        <button role="tab">Avaliações</button>
+        <button role="tab">Perguntas</button>
+      </nav>
+
+      <section class="tab-panels">
+        <section class="tab-panel">
+          <h2>Descrição</h2>
+          <p>Aprenda a programar de forma prática e descomplicada! Este curso foi criado para iniciantes e também para quem deseja reforçar sua base em programação.
+            Ao longo das aulas, você vai dominar conceitos fundamentais como lógica de programação, estruturas de controle, variáveis, funções e manipulação de dados.
+          </p>
+          <h3 class="oni">O que você recebe</h3>
+          <ul>
+            <li>eBook em PDF (120 páginas)</li>
+            <li>Modelos editáveis (Planner e Checklist em .docx)</li>
+            <li>Acesso à área de membros com vídeos</li>
+            <li>Material complementar em formato de flashcards</li>
+          </ul>
+        </section>
+
+        <section class="tab-panel" hidden>
+          <h2>Conteúdo do Produto</h2>
+          <ol>
+            <li>Conceitos básicos da programação</li>
+            <li>Lógica e raciocínio computacional</li>
+            <li>Primeiros códigos na prática</li>
+            <li>Modelos de cronograma e revisão</li>
+            <li>Fundamentos da linguagem</li>
+          </ol>
+        </section>
+
+        <section class="tab-panel" hidden>
+          <h2>Avaliações</h2>
+          <section class="review">
+            <strong>João, estudante</strong>
+            <p>Recomendo para qualquer pessoa que queira entrar na área de tecnologia.. ⭐⭐⭐⭐⭐</p>
+          </section>
+          <section class="review">
+            <strong>Ana, professora</strong>
+            <p>Gostei muito da didática. Tudo é explicado passo a passo, e o suporte foi essencial para tirar minhas dúvidas ⭐⭐⭐⭐☆</p>
+          </section>
+        </section>
+
+        <section class="tab-panel" hidden>
+          <h2>Perguntas e Respostas</h2>
+          <details>
+            <summary>Recebo o PDF imediatamente após a compra?</summary>
+            <p>Sim — envio por link privado e e-mail.</p>
+          </details>
+          <details>
+            <summary>Posso usar em sala de aula?</summary>
+            <p>Uso pessoal e educacional permitido; confira a licença no produto.</p>
+          </details>
+        </section>
+      </section>
+    </section>
+
+    <!-- Produtos relacionados -->
+    <aside class="related">
+      <h3 class="oni2">Produtos relacionados</h3>
+      <ul class="related-list">
+        <li>
+          <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.0.3&s=abcd1234" alt="produto relacionado">
+          <section class="rel-title">Mini-curso: Técnicas de Memória</section>
+          <section class="rel-price">R$ 19,90</section>
+        </li>
+        <li>
+          <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.0.3&s=efgh5678" alt="produto relacionado">
+          <section class="rel-title">Templates: Planner Semanal</section>
+          <section class="rel-price">R$ 457,90</section>
+        </li>
+      </ul>
+    </aside>
+
+  
+
+
+ </section>
+</main>
+<footer>
+<%- include('../partials/footer') %>
+
+</footer>
+
+<script src="/js/linker.js"></script>
+<script>
+  // Seleciona a imagem principal e as miniaturas
+  const mainImage = document.querySelector('.main-image img');
+  const thumbs = document.querySelectorAll('.thumbs img');
+
+  // Adiciona evento de clique em cada miniatura
+  thumbs.forEach(thumb => {
+    thumb.addEventListener('click', () => {
+      // Troca o src da imagem principal pela miniatura clicada
+      mainImage.src = thumb.src;
+
+      // Remove destaque anterior
+      thumbs.forEach(t => t.classList.remove('active-thumb'));
+
+      // Adiciona destaque à miniatura atual
+      thumb.classList.add('active-thumb');
+    });
+  });
+</script>
+
+  </body>
+
+  
+
+</html>

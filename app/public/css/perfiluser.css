@@ -1,0 +1,174 @@
+/* ========== RESET ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg1: #e9e1ce;
+  --bg2: #f3ecd8;
+}
+
+/* ========== BASE (MOBILE FIRST) ========== */
+body {
+  background: linear-gradient(180deg, var(--bg1), var(--bg2), #374147);
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-top: 190px;
+}
+
+/* CONTAINER GERAL */
+.layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+}
+
+/* ========== SIDEBAR ========== */
+
+/* ========== CONTEÚDO ========== */
+.content {
+  flex: 1;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+   margin-top: 70px; /* espaço para o menu fixo */
+  padding: 1.5rem;
+}
+
+/* ========== CARDS ========== */
+.card {
+  background: #ffffff8f;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.card-header h1 {
+  font-size: 20px;
+  margin-bottom: 6px;
+  color: #0b1220;
+}
+
+.subtext {
+  font-size: 14px;
+  color: #000000;
+  margin-bottom: 15px;
+}
+
+/* ========== INFO ========== */
+.info p {
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+.info strong {
+  color: #1a237e;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+/* ========== BOTÕES ========== */
+.btn,
+.btn-accent {
+  background: #ad7b24;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.btn-accent {
+  padding: 10px 22px;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
+.btn:hover,
+.btn-accent:hover {
+  background: #0b1220;
+  transform: scale(1.05);
+}
+
+/* ========== REDES SOCIAIS ========== */
+.socials {
+  display: flex;
+  gap: 14px;
+  margin: 8px 0 18px;
+}
+
+.socials a {
+  font-size: 22px;
+  color: #c5cae9;
+  transition: 0.3s;
+}
+
+.socials a:hover {
+  color: #fff;
+  transform: scale(1.2);
+}
+
+/* ========= TABLET (769px - 1199px) ========= */
+@media (min-width: 769px) and (max-width: 1199px) {
+  .layout {
+    flex-direction: row;
+  }
+
+  .content {
+    padding: 30px;
+    border-left: 1px solid #1f2a45;
+  }
+}
+
+/* ========= DESKTOP (a partir de 1200px) ========= */
+@media (min-width: 1200px) {
+  body {
+    padding-top: 40px;
+  }
+
+  .layout {
+    flex-direction: row;
+  }
+
+  .content {
+    padding: 40px;
+    border-left: 1px solid #1f2a45;
+  }
+
+  .card-header h1 {
+    font-size: 22px;
+  }
+}
+
+
+
+
+

@@ -1,0 +1,126 @@
+body {
+  background-color: #276278;
+  margin: 0;
+  padding: 0;
+}
+
+header, main, section, footer, nav, article, aside {
+  background-color: transparent;
+}
+
+/* ===== BASE / MOBILE FIRST ===== */
+.ImgInicial {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  overflow: hidden;
+  z-index: 1;
+  text-align: center;
+}
+
+.ImgInicial img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Overlay com conteúdo centralizado */
+.ImgInicial-Conteudo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  width: 90%;
+  max-width: 800px;
+  padding: 1rem;
+}
+
+.frase-principal {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-bottom: 1rem;
+}
+
+.subfrases p {
+  margin: 0.3rem 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.ImgInicial-btn {
+  margin-top: 1.8rem;
+  padding: 0.85rem 1.5rem;
+  background-color: #003757;
+  color: white;
+  border: none;
+  border-radius: 9px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100%;
+  max-width: 340px;
+  font-size: 1rem;
+}
+
+.ImgInicial-btn:hover {
+  background-color: #014e7a;
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+/* ===== TABLET (≥ 600px) ===== */
+@media (min-width: 600px) {
+  .ImgInicial {
+    height: 380px;
+  }
+
+  .frase-principal {
+    font-size: 2rem;
+  }
+
+  .subfrases p {
+    font-size: 1.1rem;
+  }
+
+  .ImgInicial-btn {
+    font-size: 1.05rem;
+    padding: 1rem 2rem;
+    max-width: 400px;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+  }
+}
+
+/* ===== DESKTOP (≥ 1024px) ===== */
+@media (min-width: 1024px) {
+  .ImgInicial {
+    height: 500px;
+  }
+
+  .frase-principal {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .subfrases p {
+    font-size: 1.4rem;
+  }
+
+  .ImgInicial-btn {
+    margin-top: 3rem;
+    padding: 1.2rem 2rem;
+    max-width: 500px;
+    font-size: 1.15rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+}

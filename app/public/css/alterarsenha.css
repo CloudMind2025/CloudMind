@@ -1,0 +1,200 @@
+/* ========== RESET E VARIÁVEIS ========== */
+:root {
+  --bg1: #e9e1ce;
+  --bg2: #f3ecd8;
+}
+
+/* ========== BASE (MOBILE FIRST) ========== */
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(180deg, var(--bg1), var(--bg2), #374147);
+  color: #151d31;
+  display: block;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-top: 280px ;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+}
+
+
+/* ===== CONTEÚDO ===== */
+.change-password {
+  flex: 1;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* ===== CABEÇALHO ===== */
+.change-password header {
+  margin-bottom: 10px;
+}
+
+.change-password h1 {
+  font-size: 20px;
+  margin-bottom: 5px;
+  color: #151d35;
+}
+
+/* ===== CARD ===== */
+.card {
+  background: #ffffff8f;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== FORMULÁRIO ===== */
+.password-form {
+  display: grid;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+input[type="password"] {
+  background: #ced1da;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  color: #101830;
+  font-size: 15px;
+  transition: 0.3s;
+}
+
+input[type="password"]:focus {
+  outline: 2px solid #0d1731;
+}
+
+.hint {
+  font-size: 13px;
+  color: #07090e;
+  margin-top: 5px;
+}
+
+/* ===== BOTÃO ===== */
+.btn {
+  background: #ad7b24;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+  width: fit-content;
+}
+
+.btn:hover {
+  background: #0b1220;
+  transform: scale(1.05);
+}
+
+/* ===== DICAS ===== */
+.tips {
+  margin-top: 20px;
+  background: linear-gradient(185deg, #15202c, #18343b);
+  border-radius: 14px;
+  padding: 20px 25px;
+}
+
+.tips h2 {
+  font-size: 18px;
+  color: #9fb5ff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.tips ul {
+  list-style: disc;
+  margin-left: 20px;
+  color: #cfd8ff;
+  font-size: 14px;
+}
+
+/* ========= TABLET (769px - 1199px) ========= */
+@media (min-width: 769px) and (max-width: 1199px) {
+  body {
+    flex-direction: row;
+    padding-top: 100px ;
+    
+  }
+
+  .container {
+    flex-direction: row;
+  }
+
+  
+  .change-password {
+    padding: 30px;
+    border-left: 1px solid #1f2a45;
+  }
+}
+
+/* ========= DESKTOP (a partir de 1200px) ========= */
+@media (min-width: 1200px) {
+  body {
+    flex-direction: row;
+    padding-top: 100px ;
+  }
+
+  .container {
+    flex-direction: row;
+  }
+  
+  .change-password {
+    padding: 40px;
+    border-left: 1px solid #1f2a45;
+  }
+
+  .card {
+    padding: 30px 35px;
+  }
+
+  .change-password h1 {
+    font-size: 22px;
+  }
+}
+
+
+input.error {
+  border-color: #e74c3c !important;
+}
+
+input.success {
+  border-color: #27ae60 !important;
+}
+
+.error-message {
+  display: block;
+  color: #e74c3c;
+  font-size: 14px;
+  margin-top: 0px;
+  text-align: left;    
+  width: 100%;          
+  padding-left: 2px;  
+}

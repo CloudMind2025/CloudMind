@@ -1,0 +1,291 @@
+/* ========== RESET ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+:root {
+  --bg1: #e9e1ce;
+  --bg2: #f3ecd8;
+}
+
+/* ========== BASE (MOBILE FIRST) ========== */
+body {
+  display: block;
+  flex-direction: column;
+  background: linear-gradient(180deg, var(--bg1), var(--bg2), #374147);
+  color: #e0e0e0;
+  min-height: 100vh;
+
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ========== CONTEÚDO PRINCIPAL ========== */
+.main {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  width: 100%;
+  max-width: 100%;
+  padding-top: 270px;
+}
+
+.card {
+  background: linear-gradient(185deg, #15202c, #18343b);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  width: 100%;
+}
+
+/* TOPO */
+
+.top-left h2 {
+  font-size: 18px;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+
+.top {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .top-right {
+    flex-direction: row;
+    justify-content: flex-end;
+    width: auto;
+  }
+
+
+
+
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #182c3d;
+  padding: 8px 12px;
+  border-radius: 8px;
+  width: 100%;
+
+}
+
+.search-bar input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  width: 100%;
+  font-size: 14px;
+}
+
+.search-bar i {
+  color: #aaa;
+  flex-shrink: 0;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn {
+  padding: 10px 16px;
+  background: #b88b32;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+  justify-content: right;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* ========== TABELAS ========== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  word-wrap: break-word;
+}
+
+th,
+td {
+  padding: 10px 6px;
+  text-align: left;
+  font-size: 13px;
+}
+
+th {
+  color: #b0bec5;
+  border-bottom: 1px solid #2e3a45;
+}
+
+td {
+  border-bottom: 1px solid #2e3a45;
+}
+
+.status {
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #214c5e;
+  color: #fff;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.status.draft {
+  background: #555;
+}
+
+.actions-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.actions-cell form {
+  margin: 0;
+}
+
+.edit-btn {
+  background: #b88b32;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  font-size: 13px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ========== GRIDS ========== */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+canvas {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 260px;
+}
+
+/* ========= TELAS PEQUENAS (ATÉ 480px) ========= */
+@media (max-width: 480px) {
+  .main {
+    padding-top: 310px;
+  }
+
+  .top {
+    align-items: stretch;
+  }
+
+  .buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  th,
+  td {
+    font-size: 12px;
+    padding: 8px 5px;
+  }
+}
+
+/* ========= TABLET (769px - 1199px) ========= */
+@media (min-width: 769px) and (max-width: 1199px) {
+  body {
+    flex-direction: row;
+    padding-top: 100px;
+  }
+
+  .main {
+    padding: 30px;
+    border-left: 1px solid #1f2a45;
+  }
+
+  .top {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .top-right {
+    flex-direction: row;
+    justify-content: flex-end;
+    width: auto;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  canvas {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 300px;
+  }
+}
+
+/* ========= DESKTOP (a partir de 1200px) ========= */
+@media (min-width: 1200px) {
+  body {
+    flex-direction: row;
+    padding-top: 100px;
+  }
+
+  .main {
+    padding: 40px;
+    border-left: 1px solid #1f2a45;
+  }
+
+  .grid {
+    grid-template-columns: 2fr 1fr;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .top {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}

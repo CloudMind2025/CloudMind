@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil do Vendedor</title>
+  <link rel="stylesheet" href="/css/perfilvend.css">
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  
+<header>
+  
+   <%- include('../partials/menu') %>
+
+  </header>
+  <!-- Container principal -->
+  <main class="container">
+    <!-- Seção de informações -->
+    <section class="profile-card">
+      <section class="profile-header">
+        <img src="/image/joao.jpg" alt="Foto do vendedor" class="profile-img">
+        <section class="profile-info">
+          <h2 class="seller-name">João Martins</h2>
+          <p class="seller-tag">@joaomartins_loja</p>
+          <section class="socials">
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-facebook"></i></a>
+            <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+          </section>
+        </section>
+      </section>
+      <section class="bio">
+        <h3>Biografia</h3>
+        <p>Olá! Sou João, apaixonado por eletrônicos e tecnologia. Trabalho com vendas há mais de 5 anos e adoro oferecer produtos de qualidade e atendimento personalizado a cada cliente.</p>
+      </section>
+    </section>
+
+    <!-- Seção de produtos -->
+    <section class="product-section">
+      <section class="section-header">
+        <h2><i class="fa-solid fa-box"></i> Produtos à Venda</h2>
+        <button data-link="/cdstraprod" class="btn-new"><i class="fa-solid fa-plus"></i> Novo Produto</button>
+      </section>
+
+      <section class="products-grid">
+        <!-- Produto 1 -->
+        <section class="product-card">
+          <img src="image/CursoProgm1.jpg" alt="Produto">
+          <section class="product-info">
+            <h3>Curso de Programação</h3>
+            <p class="price">R$ 249,90</p>
+            <button data-link="/paginnerprod" class="btn-view">Ver Detalhes</button>
+          </section>
+        </section>
+
+        <!-- Produto 2 -->
+        <section class="product-card">
+          <img src="image/webdesiguini.png" alt="Produto">
+          <section class="product-info">
+            <h3>Curso de Web Design</h3>
+            <p class="price">R$ 189,90</p>
+            <button data-link="/paginnerprod" class="btn-view">Ver Detalhes</button>
+          </section>
+        </section>
+
+        <!-- Produto 3 -->
+        <section class="product-card">
+          <img src="image/frontend.png" alt="Produto">
+          <section class="product-info">
+            <h3>Ebook: Domine o Front End</h3>
+            <p class="price">R$ 299,90</p>
+            <button data-link="/paginnerprod" class="btn-view">Ver Detalhes</button>
+          </section>
+        </section>
+  <!-- Produto 1 -->
+        <section class="product-card">
+          <img src="image/CursoProgm1.jpg" alt="Produto">
+          <section class="product-info">
+            <h3>Curso de Programação</h3>
+            <p class="price">R$ 249,90</p>
+            <button data-link="/paginnerprod" class="btn-view">Ver Detalhes</button>
+          </section>
+        </section>
+
+        <!-- Produto 2 -->
+        <section class="product-card">
+          <img src="image/webdesiguini.png" alt="Produto">
+          <section class="product-info">
+            <h3>Curso de Web Design</h3>
+            <p class="price">R$ 189,90</p>
+            <button data-link="/paginnerprod" class="btn-view">Ver Detalhes</button>
+          </section>
+        </section>
+
+        <!-- Produto 3 -->
+        <section class="product-card">
+          <img src="image/frontend.png" alt="Produto">
+          <section class="product-info">
+            <h3>Ebook: Domine o Front End</h3>
+            <p class="price">R$ 299,90</p>
+            <button data-link="/paginnerprod" class="btn-view">Ver Detalhes</button>
+          </section>
+        </section>
+  </main>
+
+  
+  <footer>
+<%- include('../partials/footer') %>
+
+</footer>
+ 
+<script src="/js/linker.js"></script>
+
+</body>
+</html>

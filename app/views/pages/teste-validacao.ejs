@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste de Validação</title>
+  <link rel="stylesheet" href="/css/alertas.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Teste de Validação - Mensagens nos Campos</h1>
+  
+  <form method="POST" action="/teste-validacao">
+    <div class="form-group">
+      <label for="nome">Nome Completo</label>
+      <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo">
+    </div>
+    
+    <div class="form-group">
+      <label for="email">E-mail</label>
+      <input type="email" id="email" name="email" placeholder="Digite seu e-mail">
+    </div>
+    
+    <div class="form-group">
+      <label for="senha">Senha</label>
+      <input type="password" id="senha" name="senha" placeholder="Digite sua senha">
+    </div>
+    
+    <div class="form-group">
+      <label for="confirmar-senha">Confirmar Senha</label>
+      <input type="password" id="confirmar-senha" name="confirmar-senha" placeholder="Confirme sua senha">
+    </div>
+    
+    <button type="submit">Testar Validação</button>
+  </form>
+  
+  <%- include('../partials/erros') %>
+</body>
+</html>

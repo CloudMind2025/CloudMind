@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alterar Senha - Painel do Usuário</title>
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/alterarsenha.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header>
+    <%- include('../partials/menu') %>
+  </header>
+
+  <main class="container">
+    <%- include('../partials/sidebar') %>
+
+    <section class="change-password">
+      <%- include('../partials/btnV') %>
+
+      <header>
+        <h1>Alterar Senha</h1>
+        <p>Atualize sua senha com segurança. Recomendamos usar uma senha forte e única.</p>
+      </header>
+
+      <% if (resultado) { %>
+        <p class="msg-sucesso"><i class="fa-solid fa-circle-check"></i> <%= resultado %></p>
+      <% } %>
+
+      <% if (listaErros && listaErros.length > 0) { %>
+        <ul class="msg-erros">
+          <% listaErros.forEach(function(err) { %>
+            <li><%= err.msg %></li>
+          <% }) %>
+        </ul>
+      <% } %>
+
+      <section class="card">
+        <form class="password-form" action="/alterarsenha" method="POST">
+
+          <section class="form-group">
+            <label for="senha_atual">Senha atual</label>
+            <input type="password" id="senha_atual" name="senha_atual" placeholder="Digite sua senha atual">
+            <span></span>
+          </section>
+
+          <section class="form-group">
+            <label for="nova_senha">Nova senha</label>
+            <input type="password" id="nova_senha" name="nova_senha" placeholder="Digite a nova senha">
+            <small class="hint">Use no mínimo 8 caracteres, com letras, números e símbolos.</small>
+          </section>
+
+          <section class="form-group">
+            <label for="confirmar_senha">Confirmar nova senha</label>
+            <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Repita a nova senha">
+          </section>
+
+          <button type="submit" class="btn"><i class="fa-solid fa-key"></i> Alterar Senha</button>
+        </form>
+      </section>
+
+      <section class="tips">
+        <h2><i class="fa-solid fa-lock"></i> Dicas de segurança</h2>
+        <ul>
+          <li>Não reutilize senhas usadas em outros sites.</li><br>
+          <li>Evite usar informações pessoais (como datas ou nomes).</li><br>
+          <li>Ative a autenticação em duas etapas (2FA) para maior proteção.</li><br>
+        </ul>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <%- include('../partials/footer') %>
+  </footer>
+
+  <script src="/js/linker.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/js/validaF_alterarsenha.js"></script>
+
+</body>
+</html>

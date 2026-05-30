@@ -1,0 +1,39 @@
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+
+.acoes {
+  background-color: #003e5a;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 6rem 3rem;
+  border-radius: 12px;
+  margin: 2rem;
+}
+
+.acoes article {
+  text-align: center;
+  color: white;
+  max-width: 200px;
+}
+
+.acoes article img {
+  width: 80px;
+  height: auto;
+}
+
+.acoes article p {
+  font-size: 0.9rem;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .acoes {
+    flex-direction: column;
+    gap: 2rem;
+  }
+}

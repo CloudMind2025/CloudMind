@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CloudMind — Marketplace de Produtos Digitais</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/w.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/menu.css">
+
+  <meta name="description" content="Marketplace para criadores e estudantes — ebooks, cursos, templates e mais." />
+</head>
+<body>
+  
+   <header>
+  
+  <%- include('../partials/menu') %>
+
+  </header>
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <article class="hero-card reveal">
+        <p class="kicker">Para criadores & estudantes</p>
+        <h1>Venda seus conhecimentos. Compre conteúdos práticos.</h1>
+        <p class="lead">Ebooks, cursos, templates, flashcards e mais — tudo pensado para quem quer aprender ou ganhar com criação digital. Comissão justa, divulgação fácil e entrega segura.</p>
+        <section class="hero-actions">
+          <button data-link="/cadastro" class="btn3" id="cta-primary">COMECE AGORA</button>
+          <button class="btn secundary" id="cta-secundary">Ver o Marketplace</button>
+        </section>
+        <ul class="stats">
+          <li><small>Produtos</small><strong>+1.200</strong></li>
+          <li><small>Vendedores</small><strong>+4.500</strong></li>
+          <li><small>Média de Nota</small><strong>4.7 ★</strong></li>
+        </ul><br>
+        <p class="slogan">"Você baixou um planner hoje — que tal vender o seu amanhã?"</p>
+      </article>
+
+      <figure class="hero-media reveal floaty" aria-hidden="true">
+        <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=2c3a5c4a0f5e0c9f9a2b6b8b8b7c7d" alt="Pessoas usando laptop e marketing digital"/>
+      </figure>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features" aria-label="Diferenciais">
+      <article class="feature reveal">
+        <span class="icon">★</span>
+        <section>
+          <h4>Comissão justa</h4>
+          <p>Taxa sugerida: 10% — projetada para remunerar criadores e manter a plataforma acessível.</p>
+        </section>
+      </article>
+
+      <article class="feature reveal">
+        <span class="icon">🔒</span>
+        <section>
+          <h4>Entrega segura</h4>
+          <p>Links privados e entrega por e-mail com proteção contra compartilhamento não autorizado.</p>
+        </section>
+      </article>
+
+      <article class="feature reveal">
+        <span class="icon">🚀</span>
+        <section>
+          <h4>Crescimento & comunidade</h4>
+          <p>Gamificação, selos e ferramentas de divulgação para destacar novos criadores.</p>
+        </section>
+      </article>
+    </section>
+
+    <!-- CATEGORIES -->
+    <section class="cat-wrap" aria-labelledby="cat-title">
+      <header class="cat-title">
+        <h3 id="cat-title">Categorias populares</h3>
+        <button data-link="/PProdutos" class="ver">Ver tudo</button>
+      </header><br>
+      <section class="carousel" id="carousel" role="list">
+        <article class="card reveal" role="listitem">
+          <h5>eBooks</h5>
+          <p>Guias, apostilas e etc prontos para download imediato.</p>
+          <img class="cardimg" src="image/ebook.png" alt="" >
+        </article>
+        <article class="card reveal" role="listitem">
+          <h5>Cursos em vídeo</h5>
+          <p>Minicursos e aulas gravadas — com aulas curtas e diretas.</p>
+          <img class="cardimg" src="image/cursos.png" alt="" >
+        </article>
+        <article class="card reveal" role="listitem">
+          <h5>Templates</h5>
+          <p>Currículos, planners e apresentações editáveis.</p>
+          <img class="cardimg" src="image/templi.png" alt="" >
+        </article>
+        <article class="card reveal" role="listitem">
+          <h5>Flashcards & Mapas</h5>
+          <p>Resumo rápido para estudar para ENEM e provas.</p>
+        <img class="cardimg" src="image/flscard.png" alt="" >
+        </article>
+        <article class="card reveal" role="listitem">
+          <h5>Audiobooks</h5>
+          <p>Leituras e narrações perfeitas para aprender ouvindo.</p>
+          <img class="cardimg" src="image/audiobook.png" alt="" >
+        </article>
+      </section>
+    </section>
+
+    <!-- SELLERS CTA -->
+    <section class="cta-sellers reveal" id="vender">
+      <section>
+        <h3>Você não precisa ser famoso para publicar</h3>
+        <p>Crie seu perfil em minutos e comece a vender. Nós ajudamos na divulgação e no processo de entrega.</p>
+      </section>
+      <button class="btn2" id="start-selling">Quero vender</button>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials">
+      <h3>O que falam sobre a plataforma</h3>
+      <section class="depoimentos">
+        <blockquote class="card reveal">
+          "Plataforma simples — vendi meu primeiro curso em uma semana."
+          <p>— Marina, professora</p>
+        </blockquote>
+        <blockquote class="card reveal">
+          "Encontrei ótimos materiais para estudar para o ENEM."
+          <p>— Rafael, estudante</p>
+        </blockquote>
+        <blockquote class="card reveal">
+          "A comissão é justa e o suporte é rápido."
+          <p>— Luana, designer</p>
+        </blockquote>
+      </section>
+    </section>
+  </main>
+
+
+
+  <script>
+    // Small interactive behavior: reveal on scroll + simple keyboard focus + CTA bindings
+    document.addEventListener('DOMContentLoaded',()=>{
+      const revealEls = document.querySelectorAll('.reveal')
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting) e.target.classList.add('visible')
+        })
+      },{threshold:0.12})
+      revealEls.forEach(el=>io.observe(el))
+
+      // Simple carousel auto-scroll
+      const carousel = document.getElementById('carousel')
+      let auto = true
+      if(carousel){
+        let speed = 1 // pixels per frame
+        function frame(){
+          if(auto){
+            carousel.scrollLeft += speed
+            // loop
+            if(carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 2) carousel.scrollLeft = 0
+          }
+          requestAnimationFrame(frame)
+        }
+        requestAnimationFrame(frame)
+
+        carousel.addEventListener('mouseenter',()=>auto=false)
+        carousel.addEventListener('mouseleave',()=>auto=true)
+      }
+
+      // CTA focus trap-like accessible hint
+      document.getElementById('cta-primary').addEventListener('click', function() {
+    window.location.href = '/cadastro';
+      });
+           document.getElementById('cta-secundary').addEventListener('click', function() {
+    window.location.href = '/PProdutos';
+      });
+                 document.getElementById('start-selling').addEventListener('click', function() {
+    window.location.href = '/cadastro';
+      });
+      // keyboard shortcut: "v" -> ir para vender
+      document.addEventListener('keydown', (e)=>{
+        if(e.key.toLowerCase() === 'v'){
+          document.getElementById('start-selling').scrollIntoView({behavior:'smooth',block:'center'})
+          document.getElementById('start-selling').classList.add('pulse')
+          setTimeout(()=>document.getElementById('start-selling').classList.remove('pulse'),900)
+        }
+      })
+    })
+  </script>
+  <footer>
+
+        <%- include('../partials/footer') %>
+
+  </footer>
+
+  <script src="/js/linker.js"></script>
+  
+</body>
+
+
+</html>

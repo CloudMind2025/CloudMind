@@ -1,0 +1,163 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter';
+}
+
+/* Barra de navegação principal */
+.menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 100%;
+  z-index: 1000;
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  backdrop-filter: blur(6px);
+  background: linear-gradient(175deg, #0b1220, #728e9e);
+
+}
+
+.logo img {
+  height: 50px;
+}
+
+/* Links do menu */
+.menu-links {
+  display: flex;
+  list-style: none;
+  gap: 3rem;
+}
+
+.menu-links li a {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color 0.4s ease;
+}
+
+.menu-links li a:hover {
+  color: #003757;
+}
+
+/* Ícones à direita */
+.menu-direita {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.menu-direita img {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  
+  
+ 
+}
+
+/* Botão hamburger */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+/* Menu mobile escondido */
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  background: linear-gradient(175deg, #0b1220, #728e9e);
+  padding: 1rem 2rem;
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+}
+
+.mobile-menu a {
+  padding: 0.75rem 0;
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  .menu-links {
+    display: none;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .mobile-menu.show {
+    display: flex;
+  }
+}
+
+/* Avatar do usuário no menu */
+.menu-user-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.menu-user-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.menu-direita .menu-avatar-img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  transition: border-color 0.3s;
+}
+
+.menu-user-link:hover .menu-avatar-img {
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+.menu-user-badge {
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 1px 5px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.menu-badge-admin {
+  background: rgba(220, 53, 69, 0.85);
+  color: #fff;
+}
+
+.menu-badge-criador {
+  background: rgba(255, 185, 0, 0.85);
+  color: #111;
+}
+
+.menu-badge-cliente {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.8);
+}

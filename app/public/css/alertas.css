@@ -1,0 +1,91 @@
+/* Estilos para alertas de validação */
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-family: 'Inter', sans-serif;
+}
+
+.alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.alert h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.alert ul {
+  margin-bottom: 0;
+  padding-left: 20px;
+}
+
+.alert li {
+  margin-bottom: 5px;
+}
+
+.alert i {
+  margin-right: 8px;
+}
+
+/* Estilos para mensagens de erro nos campos */
+.mensagem-erro {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 5px;
+  display: block;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.mensagem-erro i {
+  margin-right: 5px;
+  font-size: 0.8rem;
+}
+
+/* Estilos para campos com erro */
+.campo-erro {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+  background-color: #fff5f5 !important;
+}
+
+.campo-erro:focus {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+/* Animação para as mensagens */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilos para campos com erro em diferentes tipos de formulário */
+.form-group .campo-erro,
+.form-box .campo-erro,
+.dados-form .campo-erro,
+.password-form .campo-erro,
+.public-form .campo-erro,
+.ticket-form .campo-erro,
+.product-form .campo-erro {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+/* Estilos específicos para labels quando o campo tem erro */
+.campo-erro + label,
+label:has(+ .campo-erro) {
+  color: #dc3545 !important;
+  font-weight: 600;
+}

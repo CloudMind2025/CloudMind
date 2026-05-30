@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meus Downloads</title>
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/meusdowloads.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header>
+  
+   <%- include('../partials/menu') %>
+
+  </header>
+  <section class="layout">
+     <%- include('../partials/sidebar') %>
+
+
+    <!-- Conteúdo -->
+    <main class="main">
+       <%- include('../partials/btnV') %>
+      <header class="page-header">
+        <h1>Meus Downloads</h1>
+        <p>Acesse seus arquivos já adquiridos, disponíveis para baixar novamente.</p>
+      </header>
+
+      <section class="downloads-lista">
+        <!-- Item -->
+        <article class="card-download">
+          <i class="fa-solid fa-file-pdf icone"></i>
+          <section class="detalhes">
+            <h2>Manual do Produto</h2>
+            <p><strong>Formato:</strong> PDF</p>
+            <p><strong>Data:</strong> 02/10/2025</p>
+          </section>
+          <section class="acoes">
+            <button class="btn"><i class="fa-solid fa-download"></i> Baixar</button>
+            <button class="btn secundario"><i class="fa-solid fa-eye"></i> Visualizar</button>
+          </section>
+        </article>
+
+        <article class="card-download">
+          <i class="fa-solid fa-file-zipper icone"></i>
+          <section class="detalhes">
+            <h2>Pacote de Imagens</h2>
+            <p><strong>Formato:</strong> ZIP</p>
+            <p><strong>Data:</strong> 15/09/2025</p>
+          </section>
+          <section class="acoes">
+            <button class="btn"><i class="fa-solid fa-download"></i> Baixar</button>
+            <button class="btn secundario"><i class="fa-solid fa-eye"></i> Detalhes</button>
+          </section>
+        </article>
+
+        <article class="card-download">
+          <i class="fa-solid fa-file-audio icone"></i>
+          <section class="detalhes">
+            <h2>Audiobook - Capítulo 1</h2>
+            <p><strong>Formato:</strong> MP3</p>
+            <p><strong>Data:</strong> 01/09/2025</p>
+          </section>
+          <section class="acoes">
+            <button class="btn"><i class="fa-solid fa-download"></i> Baixar</button>
+            <button class="btn secundario"><i class="fa-solid fa-play"></i> Reproduzir</button>
+          </section>
+        </article>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         <article class="card-download">
+          <i class="fa-solid fa-file-pdf icone"></i>
+          <section class="detalhes">
+            <h2>Manual do Produto</h2>
+            <p><strong>Formato:</strong> PDF</p>
+            <p><strong>Data:</strong> 02/10/2025</p>
+          </section>
+          <section class="acoes">
+            <button class="btn"><i class="fa-solid fa-download"></i> Baixar</button>
+            <button class="btn secundario"><i class="fa-solid fa-eye"></i> Visualizar</button>
+          </section>
+        </article>
+
+        <article class="card-download">
+          <i class="fa-solid fa-file-zipper icone"></i>
+          <section class="detalhes">
+            <h2>Pacote de Imagens</h2>
+            <p><strong>Formato:</strong> ZIP</p>
+            <p><strong>Data:</strong> 15/09/2025</p>
+          </section>
+          <section class="acoes">
+            <button class="btn"><i class="fa-solid fa-download"></i> Baixar</button>
+            <button class="btn secundario"><i class="fa-solid fa-eye"></i> Detalhes</button>
+          </section>
+        </article>
+
+        <article class="card-download">
+          <i class="fa-solid fa-file-audio icone"></i>
+          <section class="detalhes">
+            <h2>Audiobook - Capítulo 1</h2>
+            <p><strong>Formato:</strong> MP3</p>
+            <p><strong>Data:</strong> 01/09/2025</p>
+          </section>
+          <section class="acoes">
+            <button class="btn"><i class="fa-solid fa-download"></i> Baixar</button>
+            <button class="btn secundario"><i class="fa-solid fa-play"></i> Reproduzir</button>
+          </section>
+        </article>
+      </section>
+    </main>
+  </section>
+  <footer>
+
+        <%- include('../partials/footer') %>
+
+  </footer>
+
+  <script src="/js/linker.js"></script>
+  
+</body>
+</html>

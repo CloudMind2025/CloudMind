@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Favoritos</title>
+  <link rel="stylesheet" href="/css/favoritos.css">
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <%- include('../partials/menu') %>
+  </header>
+  <section class="layout">
+    <%- include('../partials/sidebar') %>
+
+    <main class="main">
+      <%- include('../partials/btnV') %>
+      <header class="page-header">
+        <h1>Meus Favoritos</h1>
+        <p>Veja os produtos que você salvou como favoritos e acesse rapidamente.</p>
+      </header>
+
+      <section class="favoritos-lista">
+
+        <% if (favoritos && favoritos.length > 0) { %>
+          <% favoritos.forEach(function(fav) { %>
+            <article class="card-favorito">
+              <img src="/<%= fav.imagem %>" alt="<%= fav.titulo %>">
+              <section class="info">
+                <h2><%= fav.titulo %></h2>
+                <p><%= fav.descricao || '' %></p>
+                <span class="preco">R$ <%= parseFloat(fav.preco).toFixed(2).replace('.', ',') %></span>
+                <section class="acoes">
+                  <button class="btn" onclick="window.location='/pprodutos1?id=<%= fav.id_produto %>'">
+                    <i class="fa-solid fa-eye"></i> Ver detalhes
+                  </button>
+                  <form action="/favoritos/remover" method="POST" style="display:inline;">
+                    <input type="hidden" name="id_produto" value="<%= fav.id_produto %>">
+                    <button type="submit" class="btn remover">
+                      <i class="fa-solid fa-trash"></i> Remover
+                    </button>
+                  </form>
+                </section>
+              </section>
+            </article>
+          <% }) %>
+        <% } else { %>
+          <p style="padding: 20px; color: #888;">Você ainda não tem produtos favoritos.</p>
+        <% } %>
+
+      </section>
+    </main>
+  </section>
+
+  <footer>
+    <%- include('../partials/footer') %>
+  </footer>
+  <script src="/js/linker.js"></script>
+</body>
+</html>

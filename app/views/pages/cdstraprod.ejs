@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/css/cdstraprod.css">
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+   <link rel="stylesheet" href="/css/footer.css">
+  
+  <title>Vender Produto — Painel do Vendedor</title>
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Link para o CSS (coloque o arquivo ao lado) -->
+  
+</head>
+<body>
+
+  <header>
+  
+   <%- include('../partials/menu') %>
+
+  </header>
+  <%- include('../partials/sidebar') %>
+
+ 
+
+  
+
+
+  <!-- MAIN -->
+  <main class="main" id="main">
+     <%- include('../partials/btnV') %>
+
+    <% if (locals.listaErros && listaErros.length > 0) { %>
+      <div style="background:#fee2e2;border-left:4px solid #dc2626;border-radius:8px;padding:.9rem 1.2rem;margin-bottom:1rem;">
+        <strong style="color:#991b1b;"><i class="fa-solid fa-triangle-exclamation"></i> Corrija os erros abaixo:</strong>
+        <ul style="margin:.5rem 0 0 1.2rem;color:#7f1d1d;font-size:.9rem;">
+          <% listaErros.forEach(function(e){ %><li><%= e.msg %></li><% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+    <section class="page-header">
+      <h1>Publicar novo produto</h1>
+      <p class="muted">Complete as informações abaixo para publicar seu produto. Campos marcados com <span aria-hidden="true">*</span> são obrigatórios.</p>
+    </section><br>
+
+    <form id="product-form" class="product-form" action="/cdstraprod" method="POST" enctype="multipart/form-data" novalidate>
+      <section class="form-grid">
+        <!-- COLUNA PRINCIPAL -->
+        <section class="panel panel-left">
+          <!-- Dados básicos -->
+          <fieldset>
+            <legend>Dados principais</legend>
+
+            <label for="title">Título do produto <span class="required">*</span>
+              <input id="title" name="titulo" type="text" placeholder="Ex.: Curso ‘Frontend do Zero’" required>
+            </label>
+
+            <section class="inline-row">
+              <label for="category">Categoria <span class="required">*</span>
+                <select id="category" name="id_categoria" required>
+                  <option value="">Selecione</option>
+                  <option value="1">Ebook</option>
+                  <option value="2">Audiobook</option>
+                  <option value="3">Curso</option>
+                  <option value="4">Template</option>
+                  <option value="5">Assets</option>
+                </select>
+              </label>
+
+              <label for="sku">SKU / Código
+                <input id="sku" name="sku" type="text" placeholder="Opcional">
+              </label>
+            </section>
+
+            <section class="inline-row">
+              <label for="price">Preço (R$) <span class="required">*</span>
+                <input id="price" name="preco" inputmode="decimal" type="text" placeholder="0,00" required>
+              </label>
+
+              <label for="stock">Quantidade em estoque
+                <input id="stock" name="estoque" type="number" min="0" value="1">
+              </label>
+            </section>
+
+            <label for="short-desc">Resumo / Subtítulo
+              <input id="short-desc" name="resumo" type="text" placeholder="Linha curta que aparece na listagem">
+            </label>
+
+            <label for="description">Descrição completa <span class="required">*</span>
+              <textarea id="description" name="descricao" rows="8" placeholder="Detalhe conteúdo, o que inclui, público-alvo, formato..." required></textarea>
+            </label>
+          </fieldset>
+
+          <!-- Imagens e mídia -->
+          <fieldset>
+            <legend>Imagens & Mídia</legend>
+
+            <label for="images" class="file-drop">
+              <span class="muted">Escolha a imagem principal do produto (JPG ou PNG, até 3MB)</span>
+              <input id="images" name="imagem" type="file" accept="image/*" required>
+            </label>
+
+            <section id="preview-gallery" class="preview-gallery" aria-live="polite"></section>
+            <small class="muted">Formatos aceitos: JPG, PNG. Tamanho máximo sugerido: 3MB por arquivo.</small>
+          </fieldset>
+
+        
+          <fieldset>
+            <label for="type">Tipo de produto <span class="required">*</span>
+              <select id="type" name="tipo_produto" required>
+                <option value="">Selecione</option>
+                <option value="ebook">Ebook</option>
+                <option value="audiobook">Audiobook</option>
+                <option value="curso">Curso</option>
+                <option value="template">Template</option>
+                <option value="assets">Assets</option>
+              </select>
+            </label>
+          </fieldset>
+        </section>
+
+        <!-- COLUNA LATERAL (Resumo / Ações) -->
+        <aside class="panel panel-right" aria-label="Ações do produto">
+          <section class="card summary-card">
+            <h2>Resumo</h2>
+
+            <dl class="summary-line">
+              <dt>Preço (R$)</dt>
+              <dd id="summary-price">0,00</dd>
+            </dl>
+
+            <dl class="summary-line">
+              <dt>Estoque</dt>
+              <dd id="summary-stock">0</dd>
+            </dl>
+
+            
+
+            <section class="actions">
+              <button type="submit" class="btn primary" id="publish-btn" title="Publicar"> <i class="fa-solid fa-check"></i> Publicar Produto</button>
+              <button type="button" class="btn ghost" id="save-btn" title="Salvar rascunho"> <i class="fa-regular fa-save"></i> Salvar como rascunho</button>
+              <button type="button" class="btn ghost" id="preview-btn" title="Pré-visualizar"> <i class="fa-solid fa-eye"></i> Pré-visualizar</button>
+            </section>
+
+            <hr>
+
+            <section class="muted small">
+              <p><strong>Nota:</strong> O produto ficará disponível conforme o status selecionado. Você pode editar a qualquer momento.</p>
+            </section>
+          </section><br>
+
+          <section class="card help-card">
+            <h3><i class="fa-solid fa-lightbulb"></i> Dicas rápidas</h3>
+            <ul>
+              <li>Use imagens nítidas e capa principal .</li>
+              <li>Descreva benefícios e formato do produto.</li>
+              
+            </ul>
+          </section>
+        </aside>
+      </section>
+    </form>
+  </main>
+
+
+
+  <footer>
+    <%- include('../partials/footer') %>
+  </footer>
+
+  <script src="/js/linker.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/validaF_cdstraprod.js"></script>
+  
+</body>
+</html>

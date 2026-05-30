@@ -1,0 +1,197 @@
+/* ========== RESET ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg1: #e9e1ce;
+  --bg2: #f3ecd8;
+}
+
+/* ========== BASE (MOBILE FIRST) ========== */
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(180deg, var(--bg1), var(--bg2), #374147);
+  color: #15203d;
+  display: block;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-top: 260px;
+}
+
+/* CONTAINER GERAL */
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+}
+
+
+
+/* ========== CONTEÚDO ========== */
+.public-page {
+  flex: 1;
+  padding: 25px;
+  border-left: none;
+}
+
+.public-page header {
+  margin-bottom: 25px;
+}
+
+.public-page h1 {
+  color: #151b30;
+}
+
+.public-form {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 14px;
+  display: grid;
+  gap: 25px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+/* ========== FORM ========== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+input,
+textarea {
+  background: #ced1da;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  color: #151d35;
+  font-size: 15px;
+  transition: 0.3s;
+}
+
+input:focus,
+textarea:focus {
+  outline: 2px solid #151c31;
+}
+
+textarea {
+  resize: none;
+}
+
+.hint {
+  font-size: 13px;
+  color: #151f35;
+  margin-top: 5px;
+}
+
+/* ========== BOTÕES ========== */
+.btn {
+  background: #ad7b24;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+  width: fit-content;
+}
+
+.btn:hover {
+  background: #0b1220;
+  transform: scale(1.05);
+}
+
+/* ===========================
+   TABLET (769px - 1199px)
+=========================== */
+@media (min-width: 769px) and (max-width: 1199px) {
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+     padding-top: 100px;
+  }
+
+  .container {
+    flex: 1; /* ocupa todo o espaço disponível */
+    display: flex;
+    flex-direction: column;
+  }
+
+  footer {
+    margin-top: auto; /* empurra o footer pro fim da tela */
+  }
+
+  .dados {
+    padding: 30px;
+    border-left: 1px solid #1f2a45;
+  }
+
+  .dados-form {
+    max-width: 700px;
+  }
+}
+
+
+/* ===========================
+   DESKTOP (a partir de 1200px)
+=========================== */
+@media (min-width: 1200px) {
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+     padding-top: 100px;
+  }
+
+  .container {
+    flex: 1; /* Faz o conteúdo ocupar o espaço acima do footer */
+    display: flex;
+    flex-direction: column;
+  }
+
+  footer {
+    margin-top: auto; /* Empurra o footer pro fim da tela */
+  }
+
+  .dados {
+    padding: 40px;
+    border-left: 1px solid #1f2a45;
+  }
+
+  .dados-form {
+    max-width: 1800px;
+  }
+
+  .dados header h1 {
+    font-size: 22px;
+  }
+}
+
+
+input.error {
+  border-color: #e74c3c !important;
+}
+
+input.success {
+  border-color: #27ae60 !important;
+}
+
+.error-message {
+  display: block;
+  color: #e74c3c;
+  font-size: 14px;
+  margin-top: 0px;
+  text-align: left;    
+  width: 100%;          
+  padding-left: 2px;  
+}

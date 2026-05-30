@@ -1,0 +1,354 @@
+/* vender-produto.css — Mobile-first (formulário de publicação de produto) */
+
+/* =========================================================
+   VARIÁVEIS
+========================================================= */
+:root {
+  --bg1: #e9e1ce;
+  --bg2: #f3ecd8;
+  --panel-1: #234162;
+  --panel-2: #18343b;
+  --card-bg: linear-gradient(185deg, var(--panel-1), var(--panel-2));
+  --muted: #6f7b86;
+  --text: #112146;
+  --white: #fff;
+  --accent: #2563eb;
+  --gold: #c69b3c;
+  --radius: 12px;
+  --gap: 14px;
+  --max-width: 1200px;
+}
+
+/* =========================================================
+   RESET
+========================================================= */
+* { box-sizing: border-box; }
+
+
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(180deg, var(--bg1), var(--bg2), #374147);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+   padding-top: 280px;
+}
+
+/* =========================================================
+   UTILITÁRIOS
+========================================================= */
+.muted { color: var(--muted); }
+.small { font-size: 0.9rem; }
+.required { color: #d33; font-weight: 700; }
+
+
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   CONTEÚDO PRINCIPAL
+========================================================= */
+.main {
+  max-width: var(--max-width);
+  margin: 18px auto;
+  padding: 0 16px;
+ 
+}
+
+
+
+/* =========================================================
+   FORMULÁRIO
+========================================================= */
+.product-form { display: block; }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+/* Painéis */
+.panel {
+  background: rgba(255,255,255,0.98);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 8px 24px rgba(13,18,26,0.06);
+}
+
+.panel-right { order: 0; }
+
+/* Fieldsets */
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0 0 12px;
+}
+
+legend {
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+/* Inputs e selects */
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+
+label input[type="text"],
+label input[type="number"],
+label input[type="search"],
+label select,
+label textarea,
+.promo-row input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(13,18,26,0.06);
+  margin-top: 6px;
+  font-size: 0.95rem;
+  background: transparent;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 90px;
+  border: 1px #080808;
+}
+
+/* Linhas inline */
+.inline-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+/* =========================================================
+   UPLOAD / IMAGENS
+========================================================= */
+.file-drop {
+  display: block;
+  border: 1px dashed rgba(13,18,26,0.08);
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  background: rgba(255,255,255,0.98);
+}
+
+.file-drop input { display: none; }
+
+.file-drop.dragover {
+  background: rgba(37,99,235,0.06);
+  border-color: rgba(37,99,235,0.3);
+}
+
+/* Galeria */
+.preview-gallery {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.preview-item {
+  width: 100px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(13,18,26,0.04);
+  position: relative;
+  padding: 6px;
+}
+
+.preview-item img {
+  width: 100%;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.preview-item figcaption {
+  display: block;
+  font-size: 11px;
+  margin-top: 6px;
+  color: var(--muted);
+}
+
+.preview-item .remove-img {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+/* =========================================================
+   CARDS DE RESUMO / AJUDA
+========================================================= */
+.summary-card h2 { margin: 0 0 6px; }
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(13,18,26,0.03);
+}
+
+.summary-line.total { font-weight: 700; }
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.help-card h3 { margin: 0 0 6px; }
+
+.help-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+}
+
+/* =========================================================
+   MODAL DE PRÉ-VISUALIZAÇÃO
+========================================================= */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(2,6,23,0.5);
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.modal-panel {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: auto;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border: 0;
+  background: transparent;
+  font-size: 1.25rem;
+  padding: 8px;
+}
+
+/* =========================================================
+   CARTÃO DE PRÉ-VISUALIZAÇÃO
+========================================================= */
+.preview-card h2 { margin: 0 0 6px; }
+.preview-card .pv-meta { color: var(--muted); margin-bottom: 10px; }
+.preview-card .pv-images img { max-width: 180px; margin-right: 8px; border-radius: 8px; }
+.preview-card .pv-desc { color: #222; }
+
+/* =========================================================
+   BOTÕES
+========================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 0;
+  cursor: pointer;
+}
+
+.btn.small { padding: 8px 10px; font-size: 0.95rem; }
+.btn.ghost { background: transparent; border: 1px solid rgba(13,18,26,0.06); }
+.btn.primary {
+  background: var(--gold);
+  color: #080808;
+  font-weight: 700;
+  border: 0;
+}
+.btn.primary i { margin-right: 6px; }
+
+
+footer {
+  position: relative;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+
+
+
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+/* Tablet — ≥768px */
+@media (min-width: 768px) {
+ .main{
+   padding-top:50px
+ }
+
+ 
+
+
+
+  .form-grid {
+    
+    align-items: start;
+    gap: 20px;
+  }
+
+ 
+}
+
+/* Desktop — ≥1200px */
+@media (min-width: 1200px) {
+ 
+  .main { margin-left: 20px; max-width: calc(100% - 220px); padding-top:50px}
+  .form-grid { grid-template-columns: 2fr 420px; }
+  .preview-item { width: 120px; }
+  .preview-item img { height: 80px; }
+  
+}
+
+
+input.error {
+  border-color: #e74c3c !important;
+}
+
+input.success {
+  border-color: #27ae60 !important;
+}
+
+.error-message {
+  display: block;
+  color: #e74c3c;
+  font-size: 14px;
+  margin-top: 0px;
+  text-align: left;    
+  width: 100%;          
+  padding-left: 2px;  
+}

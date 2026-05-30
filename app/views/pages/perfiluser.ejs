@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Perfil</title>
+  <link rel="stylesheet" href="/css/perfiluser.css">
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <header>
+    <%- include('../partials/menu') %>
+  </header>
+
+  <section class="layout">
+    <%- include('../partials/sidebar') %>
+
+    <main class="content">
+
+      <!-- Dados Pessoais -->
+      <section class="card">
+        <header class="card-header">
+          <h1>Dados Pessoais</h1>
+        </header>
+        <section class="info">
+          <section class="info-row">
+            <p><strong>Nome:</strong> <%= cliente ? cliente.nome : '-' %></p>
+            <button data-link="/editardados" class="btn"><i class="fa-solid fa-pen"></i> Editar</button>
+          </section>
+          <p><strong>E-mail:</strong>
+            <% if (cliente && cliente.email) { %>
+              <a href="mailto:<%= cliente.email %>"><%= cliente.email %></a>
+            <% } else { %>
+              -
+            <% } %>
+          </p>
+          <p><strong>Membro desde:</strong>
+            <%= cliente && cliente.data_cadastro ? moment(cliente.data_cadastro).format('DD/MM/YYYY') : '-' %>
+          </p>
+        </section>
+      </section>
+
+      <!-- Privacidade e Segurança -->
+      <section class="card">
+        <header class="card-header">
+          <h1>Privacidade e Segurança</h1>
+        </header>
+        <section class="info">
+          <p>Altere sua senha, encerre sua conta e tenha acesso aos dados de segurança.</p>
+          <button data-link="/alterarsenha" class="btn-accent"><i class="fa-solid fa-shield-halved"></i> Alterar Senha</button>
+        </section>
+      </section>
+
+      <!-- Configurações -->
+      <section class="card">
+        <header class="card-header">
+          <h1>Configurações</h1>
+        </header>
+        <section class="info">
+          <p>Configure as funções do site como preferir.</p>
+          <button data-link="/config" class="btn-accent"><i class="fa-solid fa-sliders"></i> Acessar</button>
+        </section>
+      </section>
+
+    </main>
+  </section>
+
+  <footer>
+    <%- include('../partials/footer') %>
+  </footer>
+
+  <script src="/js/linker.js"></script>
+
+</body>
+</html>

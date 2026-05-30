@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/menu.css">
+  <link rel="stylesheet" href="css/slider.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/barraspesquisa.css">
+  <link rel="stylesheet" href="/css/pprodutos1.css">
+
+
+
+  <title>Sessão de Produtos</title>
+</head>
+
+<body>
+  <header>
+
+  <%- include('../partials/menu') %>
+  
+    </header>
+  
+    <section class="busca-area">
+  <figure class="avatar">
+    <img src="image/Avatar.png" alt="Avatar personagem">
+  </figure>
+
+  <section class="conteudo-busca">
+    <header>
+      <h2>O que você procura hoje?</h2>
+      <p>Explore nosso catálogo e<br>ache o que precisa</p>
+    </header>
+
+    <form class="barra-pesquisa" role="search">
+      <input type="search" placeholder="Pesquisar..." aria-label="Pesquisar">
+     
+        
+      </button>
+    </form>
+
+    <nav class="botoes-filtros">
+      <button type="button">OFERTAS</button>
+      <button type="button">EBOOKS</button>
+      <button type="button">CURSO</button>
+      <button type="button">AUDIOBOOK</button>
+      <button type="button">CATEGORIAS</button>
+    </nav>
+
+  </section>
+
+</section>
+
+
+
+<section class="vendas-section">
+
+  <section class="destaque">
+  <h1>Mais vendidos:</h1>
+</section>
+
+<% if (produto) { %>
+  <section class="produto-detalhe">
+    <article class="produto-card detalhe">
+      <img src="/<%= produto.imagem %>" alt="<%= produto.titulo %>">
+      <div class="produto-info">
+        <h2><%= produto.titulo %></h2>
+        <p class="preco">R$ <%= parseFloat(produto.preco).toFixed(2).replace('.', ',') %></p>
+        <p><%= produto.descricao %></p>
+        <form action="/carrinho/adicionar" method="POST">
+          <input type="hidden" name="id_produto" value="<%= produto.id_produto %>">
+          <input type="hidden" name="preco_unitario" value="<%= produto.preco %>">
+          <button type="submit">Adicionar ao carrinho</button>
+        </form>
+      </div>
+    </article>
+  </section>
+<% } %>
+      <p class="preco">R$ 39,90</p>
+      <section class="avaliacao">⭐⭐⭐⭐☆ (120)</section>
+       <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/CursoProgm1.jpg" alt="Curso de Programação">
+      <h3>Curso de Programação</h3>
+      <p class="preco">R$ 89,00</p>
+      <section class="avaliacao">⭐⭐⭐⭐⭐ (250)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/soluçãoweb.png" alt="Ebook Crescimento">
+      <h3>Curso Solução Web</h3>
+      <p class="preco">R$ 29,90</p>
+      <section class="avaliacao">⭐⭐⭐⭐ (90)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/frontend.png" alt="Nutrição Audiobook">
+      <h3>Ebook:Domine o Front-End</h3>
+      <p class="preco">R$ 45,50</p>
+      <section class="avaliacao">⭐⭐⭐⭐☆ (135)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/webdesiguini.png" alt="Produto Extra">
+      <h3>Curso de Web Design</h3>
+      <p class="preco">R$ 59,90</p>
+      <section class="avaliacao">⭐⭐⭐⭐⭐ (80)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+
+    <section class="produto-card">
+      <img src="image/js.png" alt="Produto Extra">
+      <h3>Ebook:JavaScript</h3>
+      <p class="preco">R$ 59,90</p>
+      <section class="avaliacao">⭐⭐⭐⭐⭐ (80)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+  </section>
+
+
+
+<!-------------------------------------Segunda-Linha--------------------------------------->
+<section class="vendas-grid2">
+    <section class="produto-card">
+      <img src="image/metodoenem.png" alt="Produto 1">
+      <h3>Audiobook: Métodos para o ENEM</h3>
+
+      <p class="preco">R$ 39,90</p>
+      <section class="avaliacao">⭐⭐⭐⭐☆ (120)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/CursoProgm1.jpg" alt="Curso de Programação">
+      <h3>Curso de Programação</h3>
+      <p class="preco">R$ 89,00</p>
+      <section class="avaliacao">⭐⭐⭐⭐⭐ (250)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/soluçãoweb.png" alt="Ebook Crescimento">
+      <h3>Curso Solução Web</h3>
+      <p class="preco">R$ 29,90</p>
+      <section class="avaliacao">⭐⭐⭐⭐ (90)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/frontend.png" alt="Nutrição Audiobook">
+      <h3>Ebook:Domine o Front-End</h3>
+      <p class="preco">R$ 45,50</p>
+      <section class="avaliacao">⭐⭐⭐⭐☆ (135)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/webdesiguini.png" alt="Produto Extra">
+      <h3>Curso de Web Design</h3>
+      <p class="preco">R$ 59,90</p>
+      <section class="avaliacao">⭐⭐⭐⭐⭐ (80)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+
+    <section class="produto-card">
+      <img src="image/js.png" alt="Produto Extra">
+      <h3>Ebook:JavaScript</h3>>
+      <p class="preco">R$ 59,90</p>
+      <section class="avaliacao">⭐⭐⭐⭐⭐ (80)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+  </section>
+
+  <section class="Novidade">
+  <h1>Top promoções:</h1>
+</section>
+
+
+
+
+
+<section class="vendas-grid4">
+    <section class="produto-card">
+      <img src="image/metodoenem.png" alt="Produto 1">
+      <h3>Audiobook: Métodos para o ENEM</h3>
+      <p class="preco">R$ 39,90</p>
+      <section class="avaliacao">⭐⭐⭐⭐☆ (120)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/CursoProgm1.jpg" alt="Curso de Programação">
+      <h3>Curso de Programação</h3>
+      <p class="preco">R$ 89,00</p>
+      <section class="avaliacao">⭐⭐⭐⭐⭐ (250)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/soluçãoweb.png" alt="Ebook Crescimento">
+      <h3>Curso Solução Web</h3>
+      <p class="preco">R$ 29,90</p>
+      <section class="avaliacao">⭐⭐⭐⭐ (90)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/frontend.png" alt="Nutrição Audiobook">
+      <h3>Ebook:Domine o Front-End</h3>
+      <p class="preco">R$ 45,50</p>
+      <section class="avaliacao">⭐⭐⭐⭐☆ (135)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/webdesiguini.png" alt="Produto Extra">
+      <h3>Curso de Web Design</h3>
+      <p class="preco">R$ 59,90</p>
+      <section class="avaliacao">⭐⭐⭐⭐⭐ (80)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/js.png" alt="Produto Extra">
+      <h3>Ebook:JavaScript</h3>
+      <p class="preco">R$ 59,90</p>
+      <section class="avaliacao">⭐⭐⭐⭐⭐ (80)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+  </section>
+
+<section class="vendas-grid4">
+    <section class="produto-card">
+      <img src="image/metodoenem.png" alt="Produto 1">
+      <h3>Audiobook: Métodos para o ENEM</h3>
+      <p class="preco">R$ 39,90</p>
+      <section class="avaliacao">⭐⭐⭐⭐☆ (120)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/CursoProgm1.jpg" alt="Curso de Programação">
+      <h3>Curso de Programação</h3>
+      <p class="preco">R$ 89,00</p>
+      <section class="avaliacao">⭐⭐⭐⭐⭐ (250)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/soluçãoweb.png" alt="Ebook Crescimento">
+      <h3>Curso Solução Web</h3>
+      <p class="preco">R$ 29,90</p>
+      <section class="avaliacao">⭐⭐⭐⭐ (90)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/frontend.png" alt="Nutrição Audiobook">
+      <h3>Ebook:Domine o Front-End</h3>
+      <p class="preco">R$ 45,50</p>
+      <section class="avaliacao">⭐⭐⭐⭐☆ (135)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+    <section class="produto-card">
+      <img src="image/webdesiguini.png" alt="Produto Extra">
+      <h3>Curso de Web Design</h3>
+      <p class="preco">R$ 59,90</p>
+      <section class="avaliacao">⭐⭐⭐⭐⭐ (80)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+
+  <section class="produto-card">
+      <img src="image/js.png" alt="Produto Extra">
+      <h3>Ebook:JavaScript</h3>
+      <p class="preco">R$ 59,90</p>
+      <section class="avaliacao">⭐⭐⭐⭐⭐ (80)</section>
+      <button data-link="/paginnerprod">Adicionar ao carrinho</button>
+    </section>
+
+
+  </section>
+
+
+ <nav class="paginacao">
+  <ul>
+    <li><a href="/PProdutos" >1</a></li>
+    <li><a href="#" class="ativo">2</a></li>
+    <li><a href="#">3</a></li>
+    <li class="pontinhos">...</li>
+    <li><a href="#">5</a></li>
+    <li><a href="#" class="proximo">Próximo</a></li>
+  </ul>
+</nav>
+
+
+
+
+
+
+
+
+
+
+</section>
+
+
+
+
+
+
+</section>
+
+
+
+</section>
+
+
+
+</section>
+
+
+</section>
+
+    
+  </section>
+  
+</section>
+
+
+
+<footer>
+      <%- include('../partials/footer') %>
+</footer>
+
+<script src="/js/linker.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/validaF_barrapesquisa.js"></script>
+
+
+
+</body>
+
+</html>
+
+</html>
+
+
+
+

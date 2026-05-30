@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página Pública - Configurações</title>
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/pgpublica.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+  
+   <%- include('../partials/menu') %>
+
+  </header>
+  <%- include('../partials/sidebar') %>
+  <main class="container">
+    
+
+    <!-- Conteúdo -->
+    <section class="public-page">
+            <%- include('../partials/btnV') %>
+
+      <header>
+        <h1>Página Pública</h1>
+        <p>Edite as informações que serão exibidas em sua página pública de produtos.</p>
+      </header>
+
+      <form class="public-form">
+        <section class="form-group">
+          <label for="nome-publico">Nome Público</label>
+          <input type="text" id="nome-publico" name="nome-publico" placeholder="Ex: Rodrigo K. Store">
+        </section>
+
+        <section class="form-group">
+          <label for="redes">Redes Sociais</label>
+          <input type="text" id="redes" name="redes" placeholder="Ex: @rodrigok | https://instagram.com/rodrigok">
+        </section>
+
+        <section class="form-group">
+          <label for="bio">Biografia</label>
+          <textarea id="bio" name="bio" rows="5" maxlength="300" placeholder="Fale um pouco sobre você e seus produtos..."></textarea>
+          <small class="hint">Máximo de 300 caracteres</small>
+        </section>
+
+        <button type="submit" class="btn"><i class="fa-solid fa-save"></i> Salvar Alterações</button>
+      </form>
+    </section>
+  </main>
+
+   <footer>
+<%- include('../partials/footer') %>
+
+</footer>
+ 
+<script src="/js/linker.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/validaF_pgpublica.js"></script>
+
+</body>
+</html>

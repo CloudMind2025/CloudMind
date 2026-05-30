@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/menu.css">
+  <link rel="stylesheet" href="css/sessao.css">
+  <link rel="stylesheet" href="css/novi.css">
+  <link rel="stylesheet" href="css/slider.css">
+  <link rel="stylesheet" href="css/faq.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/barraspesquisa.css">
+  <title>Sessão de Produtos</title>
+</head>
+<body>
+  <header>
+    <%- include('../partials/menu') %>
+  </header>
+
+  <section class="busca-area">
+    <figure class="avatar">
+      <img src="image/Avatar.png" alt="Avatar personagem">
+    </figure>
+    <section class="conteudo-busca">
+      <header>
+        <h2>O que você procura hoje?</h2>
+        <p>Explore nosso catálogo e<br>ache o que precisa</p>
+      </header>
+      <form class="barra-pesquisa" role="search">
+        <input type="search" placeholder="Pesquisar..." aria-label="Pesquisar">
+      </form>
+      <nav class="botoes-filtros">
+        <button type="button">OFERTAS</button>
+        <button type="button">EBOOKS</button>
+        <button type="button">CURSO</button>
+        <button type="button">AUDIOBOOK</button>
+        <button type="button">CATEGORIAS</button>
+      </nav>
+    </section>
+  </section>
+
+  <section class="vendas-section">
+    <section class="destaque">
+      <h1>Destaques</h1>
+    </section>
+
+    <section class="vendas-grid">
+      <% if (produtos && produtos.length > 0) { %>
+        <% produtos.forEach(function(p) { %>
+          <article class="produto-card"
+                   onclick="window.location='/paginnerprod?id=<%= p.id_produto %>'"
+                   style="cursor:pointer;">
+            <img src="/<%= p.imagem %>" alt="<%= p.titulo %>">
+            <h3><%= p.titulo %></h3>
+            <p class="preco">R$ <%= parseFloat(p.preco).toFixed(2).replace('.', ',') %></p>
+            <section class="avaliacao">⭐⭐⭐⭐☆</section>
+            <form action="/carrinho/adicionar" method="POST"
+                  onclick="event.stopPropagation()">
+              <input type="hidden" name="id_produto"     value="<%= p.id_produto %>">
+              <input type="hidden" name="preco_unitario" value="<%= p.preco %>">
+              <button type="submit">Adicionar ao carrinho</button>
+            </form>
+          </article>
+        <% }) %>
+      <% } else { %>
+        <p style="padding:20px;color:#888;">Nenhum produto disponível no momento.</p>
+      <% } %>
+    </section>
+
+    <section class="slider-container">
+      <section class="slides" id="slides">
+        <section class="slide">
+          <section class="slide-content">
+            <h2>Tenha mais facilidade para ler o que gosta.</h2>
+            <p>Quer carregar seus livros no seu bolso?</p><br><br>
+            <button>Ver produtos</button>
+          </section>
+          <img src="image/ebook.png" alt="Ebook">
+        </section>
+        <section class="slide">
+          <section class="slide-content">
+            <h2>Muito ocupado ultimamente? Sem tempo?</h2>
+            <p>Explore nossa área de Audiobooks e otimize seu tempo!</p>
+            <button>Ver produtos</button>
+          </section>
+          <img src="image/audiobook.png" alt="Audiobook">
+        </section>
+        <section class="slide">
+          <section class="slide-content">
+            <h2>Pague menos nos cursos mais bem avaliados!</h2>
+            <p>Aproveite até 70% de desconto.</p>
+            <button>Descubra mais</button>
+          </section>
+          <img src="image/Curso.png" alt="Curso">
+        </section>
+      </section>
+    </section>
+
+    <script>
+      let currentIndex = 0;
+      const slides = document.getElementById("slides");
+      const totalSlides = slides.children.length;
+      function updateSlidePosition() {
+        slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+      }
+      setInterval(() => {
+        currentIndex = (currentIndex + 1) % totalSlides;
+        updateSlidePosition();
+      }, 5000);
+      window.addEventListener('resize', updateSlidePosition);
+    </script>
+
+    <section class="faq">
+      <h2>Dúvidas Frequentes</h2>
+      <section class="faq-container">
+        <section class="faq-item">
+          <button class="faq-question">Como posso vender meus produtos digitais?</button>
+          <section class="faq-answer">
+            <p>Basta criar uma conta, acessar sua área de criador e publicar seu eBook, curso, template ou outro conteúdo. O processo é simples e rápido.</p>
+          </section>
+        </section>
+        <section class="faq-item">
+          <button class="faq-question">A plataforma é segura?</button>
+          <section class="faq-answer">
+            <p>Sim! Nossa plataforma foi desenvolvida com foco total na segurança de criadores e compradores.</p>
+          </section>
+        </section>
+        <section class="faq-item">
+          <button class="faq-question">Quais tipos de produtos posso vender?</button>
+          <section class="faq-answer">
+            <p>Você pode vender eBooks, cursos, templates, mapas mentais, flashcards, audiobooks, checklists e muito mais!</p>
+          </section>
+        </section>
+        <section class="faq-item">
+          <button class="faq-question">Como recebo o pagamento das vendas?</button>
+          <section class="faq-answer">
+            <p>Você recebe diretamente na sua conta cadastrada após a confirmação da compra, de forma segura e transparente.</p>
+          </section>
+        </section>
+        <section class="faq-item">
+          <button class="faq-question">Há taxas para vender na plataforma?</button>
+          <section class="faq-answer">
+            <p>Sim, cobramos uma pequena taxa administrativa por venda para manter a plataforma funcionando e segura.</p>
+          </section>
+        </section>
+        <section class="faq-item">
+          <button class="faq-question">Posso vender produtos gratuitos?</button>
+          <section class="faq-answer">
+            <p>Sim! Você pode disponibilizar produtos gratuitos como forma de atrair clientes e aumentar sua base de seguidores.</p>
+          </section>
+        </section>
+      </section>
+      <script>
+        document.querySelectorAll(".faq-item").forEach((item) => {
+          item.querySelector(".faq-question").addEventListener("click", () => {
+            document.querySelectorAll(".faq-item").forEach(el => { if (el !== item) el.classList.remove("active"); });
+            item.classList.toggle("active");
+          });
+        });
+      </script>
+    </section>
+
+    <nav class="paginacao">
+      <ul>
+        <li><a href="#" class="ativo">1</a></li>
+        <li><a href="#" class="proximo">Próximo</a></li>
+      </ul>
+    </nav>
+
+  </section>
+
+  <footer>
+    <%- include('../partials/footer') %>
+  </footer>
+
+  <script src="/js/linker.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/js/validaF_barrapesquisa.js"></script>
+</body>
+</html>

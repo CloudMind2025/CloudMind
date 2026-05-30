@@ -1,0 +1,298 @@
+/* ========== RESET ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg1: #e9e1ce;
+  --bg2: #f3ecd8;
+}
+
+/* ========== BASE (MOBILE FIRST) ========== */
+body {
+  font-family: "Segoe UI", "Inter", Arial, sans-serif;
+  background: linear-gradient(180deg, var(--bg1), var(--bg2), #374147);
+  color: #333;
+  display: block;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-top: 280px;
+  
+}
+
+/* CONTAINER GERAL */
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ========== CONTEÚDO ========== */
+.main {
+  flex: 1;
+  padding: 2rem;
+  
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  font-size: 1.8rem;
+  margin: 0 0 .3rem;
+}
+
+.page-header p {
+  color: #555;
+}
+
+/* ========== LISTA DE DOWNLOADS ========== */
+.downloads-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  align-items: flex-start;
+  width: 100%;
+  padding-left: 2%;
+}
+
+/* ========== CARD DE DOWNLOAD (MOBILE FIRST) ========== */
+.card-download {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffffcc;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+  width: 95%;
+}
+
+.card-download:hover {
+  transform: translateY(-3px);
+}
+
+.card-download .icone {
+  font-size: 2rem;
+  margin-right: 0.8rem;
+  color: #1976d2;
+}
+
+.card-download .detalhes {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.card-download h2 {
+  font-size: 1.1rem;
+  margin: 0 0 .3rem;
+}
+
+.card-download p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* ========== BOTÕES AO LADO DIREITO (BASE MOBILE) ========== */
+.acoes {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.4rem;
+  width: auto;
+}
+
+.btn {
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background: #ac7742;
+  color: #fff;
+  transition: background 0.2s, transform 0.2s;
+  font-size: 0.8rem;
+}
+
+.btn:hover {
+  background: #0b1220;
+  transform: scale(1.05);
+}
+
+.btn.secundario {
+  background: #ccc;
+  color: #333;
+}
+
+.btn.secundario:hover {
+  background: #bbb;
+}
+
+/* ========== RESPONSIVIDADE ========== */
+
+/* TABLET (769px - 1199px) */
+@media (min-width: 769px) and (max-width: 1199px) {
+  body {
+    flex-direction: row;
+    padding-top: 100px;
+  }
+
+  .layout {
+    flex-direction: row;
+  }
+
+  .main {
+    padding: 2.5rem;
+    border-left: 1px solid #1f2a45;
+  }
+
+  .downloads-lista {
+    width: 98%;
+    padding-left: 1rem;
+  }
+
+  .card-download {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 97%;
+  }
+
+  .acoes {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.8rem;
+  }
+}
+
+/* DESKTOP (+1200px) */
+@media (min-width: 1200px) {
+  body {
+    flex-direction: row;
+    padding-top: 100px;
+  }
+
+  .layout {
+    flex-direction: row;
+  }
+
+  .main {
+    padding: 3rem 2rem;
+    border-left: 1px solid #1f2a45;
+  }
+
+  .downloads-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+    width: 100%;
+    padding-left: 1rem;
+  }
+
+  .card-download {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 97%;
+  }
+
+  .acoes {
+    flex-direction: row;
+    gap: 1rem;
+  }
+}
+
+
+
+
+/* ========== TABLET (769px - 1199px) ========== */
+@media (min-width: 769px) and (max-width: 1199px) {
+  body {
+    flex-direction: row;
+    padding-top: 100px;
+  }
+
+  .layout {
+    flex-direction: row;
+  }
+
+  .main {
+    padding: 2.5rem;
+    border-left: 1px solid #1f2a45;
+  }
+
+  .downloads-lista {
+    width: 98%;
+    padding-left: 1rem;
+  }
+
+  .card-download {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 97%;
+    margin-left: 0;
+  }
+
+  .card-download .icone {
+    margin-bottom: 0;
+    margin-right: 1rem;
+    font-size: 2.3rem;
+  }
+
+  .acoes {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* ========== DESKTOP (+1200px) ========== */
+@media (min-width: 1200px) {
+  body {
+    flex-direction: row;
+    padding-top: 100px;
+  }
+
+  .layout {
+    flex-direction: row;
+  }
+
+  .main {
+    padding: 3rem 2rem;
+    border-left: 1px solid #1f2a45;
+  }
+
+  .downloads-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+    width: 100%;
+    padding-left: 1rem;
+  }
+
+  .card-download {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 97%;
+    margin-left: 0;
+  }
+
+  .acoes {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .btn {
+    font-size: 0.95rem;
+    padding: 0.6rem 1.2rem;
+  }
+}
