@@ -1,0 +1,40 @@
+<%
+  const info = tipoProduto(p.tipo_produto);
+  const ehMeu = locals.idUsuario != null && Number(p.id_criador) === Number(locals.idUsuario);
+  const qtdNotas = Number(p.qtd_notas);
+%>
+<article class="produto-card<%= locals.destaque ? ' produto-card--destaque' : '' %>">
+  <div class="produto-card-midia">
+    <% if (p.imagem) { %>
+      <img src="<%= urlMidia(p.imagem) %>" alt="" loading="lazy" decoding="async" width="400" height="300">
+    <% } else { %>
+      <span class="sem-imagem" aria-hidden="true"><i class="fa-solid <%= info.icone %>"></i></span>
+    <% } %>
+    <% if (locals.selo) { %><span class="produto-card-selo"><%= selo %></span><% } %>
+  </div>
+  <span class="produto-card-tipo"><i class="fa-solid <%= info.icone %>" aria-hidden="true"></i> <%= info.rotulo %></span>
+  <h3><a href="/paginnerprod?id=<%= p.id_produto %>"><%= p.titulo %></a></h3>
+  <% if (locals.mostrarVendedor) { %>
+    <p class="produto-card-vendedor">por <a href="/perfilvend?id=<%= p.id_criador %>"><%= p.nome_criador %></a></p>
+  <% } %>
+  <% if (locals.mostrarResumo && p.resumo) { %>
+    <p class="produto-card-resumo"><%= p.resumo %></p>
+  <% } %>
+  <% if (qtdNotas > 0) { %>
+    <p class="cm-nota">
+      <span class="cm-estrelas" aria-hidden="true"><% estrelas(p.media_notas).forEach(function (e) { %><i class="<%= e === 'cheia' ? 'fa-solid fa-star' : e === 'meia' ? 'fa-solid fa-star-half-stroke' : 'fa-regular fa-star' %>"></i><% }) %></span>
+      <span><%= formatarNota(p.media_notas) %> <span class="cm-sr">de 5</span> (<%= qtdNotas %>)</span>
+    </p>
+  <% } else { %>
+    <p class="cm-nota cm-nota--vazia">Sem avaliações</p>
+  <% } %>
+  <p class="preco"><span class="cm-sr">Preço: </span><%= formatarPreco(p.preco) %></p>
+  <% if (ehMeu) { %>
+    <p class="produto-card-dono"><i class="fa-solid fa-store" aria-hidden="true"></i> Seu produto</p>
+  <% } else { %>
+    <form action="/carrinho/adicionar" method="POST" data-enviando="Adicionando…">
+      <input type="hidden" name="id_produto" value="<%= p.id_produto %>">
+      <button type="submit"><span>Adicionar ao carrinho</span><span class="cm-sr"> — <%= p.titulo %></span></button>
+    </form>
+  <% } %>
+</article>

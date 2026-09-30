@@ -1,0 +1,45 @@
+<aside class="pd-rating pd-surface" aria-labelledby="pd-rating-titulo">
+  <h2 id="pd-rating-titulo" class="pd-rating-title">Avaliações</h2>
+
+  <% if (resumoAvaliacoes === null) { %>
+    <p class="pd-alert pd-alert--erro" role="alert">
+      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+      Não foi possível carregar as avaliações agora.
+    </p>
+  <% } else if (resumoAvaliacoes.total === 0) { %>
+    <div class="pd-empty">
+      <i class="fa-regular fa-star" aria-hidden="true"></i>
+      <p>Ainda não há avaliações para este produto.</p>
+      <% if (jaComprou && !ehDono) { %>
+        <p><a class="pd-link" href="#avaliar">Seja o primeiro a avaliar</a></p>
+      <% } %>
+    </div>
+  <% } else { %>
+    <% const r = resumoAvaliacoes; %>
+    <div class="pd-rating-score">
+      <p class="pd-rating-value" aria-hidden="true"><%= formatarNota(r.media) %></p>
+      <div>
+        <span class="pd-stars" aria-hidden="true">
+          <% estrelas(r.media).forEach(function (e) { %><i class="<%= e === 'cheia' ? 'fa-solid fa-star' : e === 'meia' ? 'fa-solid fa-star-half-stroke' : 'fa-regular fa-star' %>"></i><% }) %>
+        </span>
+        <p class="pd-sr">Nota média <%= formatarNota(r.media) %> de 5.</p>
+        <p class="pd-muted"><%= r.total %> <%= r.total === 1 ? 'avaliação' : 'avaliações' %></p>
+      </div>
+    </div>
+
+    <ul class="pd-rating-bars" aria-label="Distribuição das notas">
+      <% [5, 4, 3, 2, 1].forEach(function (n) {
+           const qtd = r.distribuicao[n] || 0;
+           const pct = Math.round((qtd / r.total) * 100); %>
+        <li>
+          <span class="pd-bar-label" aria-hidden="true"><%= n %> <i class="fa-solid fa-star"></i></span>
+          <span class="pd-bar" aria-hidden="true"><span style="width: <%= pct %>%"></span></span>
+          <span class="pd-bar-count" aria-hidden="true"><%= qtd %></span>
+          <span class="pd-sr"><%= n %> <%= n === 1 ? 'estrela' : 'estrelas' %>: <%= qtd %> (<%= pct %>%)</span>
+        </li>
+      <% }) %>
+    </ul>
+
+    <a class="pd-btn pd-btn--ghost pd-btn--block" href="#avaliacoes">Ver todas as avaliações</a>
+  <% } %>
+</aside>

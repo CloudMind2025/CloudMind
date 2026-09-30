@@ -1,0 +1,89 @@
+.config-form { display: grid; gap: 16px; max-width: 560px; }
+
+.config-form label { font-weight: 700; color: var(--cm-navy); font-size: 0.92rem; }
+
+.config-form select {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1.5px solid rgba(17, 33, 70, 0.22);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--cm-texto);
+}
+
+.notifications {
+  border: 1.5px solid var(--cm-linha);
+  border-radius: 10px;
+  padding: 12px 16px 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.notifications legend { padding: 0 6px; font-weight: 700; color: var(--cm-navy); font-size: 0.92rem; }
+
+.notifications label { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+.notifications input { width: 18px; height: 18px; accent-color: var(--cm-dourado); }
+
+.security-options { display: grid; gap: 12px; }
+
+.security-options > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: var(--cm-afundado);
+}
+
+.security-options h3 { font-size: 0.98rem; color: var(--cm-navy); }
+
+.switch { position: relative; display: inline-block; width: 52px; height: 30px; flex-shrink: 0; }
+.switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 1; }
+.slider { position: absolute; inset: 0; background-color: #8a94a3; border-radius: 34px; transition: 0.3s; }
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  top: 4px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+.switch input:checked + .slider { background-color: var(--cm-ok); }
+.switch input:checked + .slider::before { transform: translateX(22px); }
+.switch input:focus-visible + .slider { outline: 3px solid var(--cm-link); outline-offset: 2px; }
+
+.zona-perigo { border: 1.5px solid #f1c7c2; }
+.zona-perigo p { color: var(--cm-texto-suave); margin-bottom: 14px; }
+.account-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.modal-aviso {
+  background: var(--cm-erro-fundo);
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: var(--cm-erro-tinta);
+  line-height: 1.55;
+}
+
+.modal-icone {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 12px;
+  border-radius: 50%;
+  background: var(--cm-erro-fundo);
+  color: var(--cm-erro);
+  font-size: 1.4rem;
+}
+
+.modal-dica { font-size: 0.86rem; color: var(--cm-texto-suave); line-height: 1.5; }

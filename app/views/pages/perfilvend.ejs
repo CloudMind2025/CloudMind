@@ -1,0 +1,527 @@
+<%
+  const carregado = estado === 'ok';
+  const normalizar = function (txt) {
+    return String(txt || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  };
+%>
+<% if (!carregado) { %>
+<%
+  const ESTADOS = {
+    nao_encontrado: { icone: 'fa-store-slash', titulo: 'Loja não encontrada', texto: 'Este vendedor não existe ou a loja dele não está mais disponível na CloudMind.' },
+    erro:           { icone: 'fa-triangle-exclamation', titulo: 'Não foi possível abrir a loja', texto: 'Tivemos um problema ao carregar esta página. Tente novamente em instantes.' }
+  };
+  const est = ESTADOS[estado] || ESTADOS.erro;
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: est.titulo, noindex: true }) %>
+  <link rel="stylesheet" href="/css/erro.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+  <main class="erro-pagina" id="conteudo" tabindex="-1">
+    <section class="erro-cartao" aria-labelledby="erro-titulo">
+      <span class="erro-icone" aria-hidden="true"><i class="fa-solid <%= est.icone %>"></i></span>
+      <h1 id="erro-titulo"><%= est.titulo %></h1>
+      <p><%= est.texto %></p>
+      <div class="erro-acoes">
+        <% if (estado === 'erro') { %>
+          <a class="cm-btn" href=""><i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Tentar novamente</a>
+        <% } %>
+        <a class="cm-btn <%= estado === 'erro' ? 'cm-btn--ghost' : '' %>" href="/PProdutos">Explorar produtos</a>
+        <a class="cm-btn cm-btn--ghost" href="/">Página inicial</a>
+      </div>
+    </section>
+  </main>
+  <%- include('../partials/footer') %>
+</body>
+</html>
+<% } else { %>
+<%
+  const nome = vendedor.nome;
+  const partesNome = String(nome || '').trim().split(/\s+/).filter(Boolean);
+  const primeiroNome = partesNome[0] || 'o vendedor';
+  const iniciais = ((partesNome[0] || '?').charAt(0) + (partesNome.length > 1 ? partesNome[partesNome.length - 1].charAt(0) : '')).toUpperCase();
+  const idUsuario = usuarioLogado ? Number(usuarioLogado.id_usuario) : null;
+
+  const lista = produtos || [];
+  const temProdutos = lista.length > 0;
+  const bio = String(vendedor.bio || '').trim();
+  const LIMITE_BIO_HERO = 170;
+  const bioCurta = bio.length > LIMITE_BIO_HERO
+    ? bio.slice(0, bio.lastIndexOf(' ', LIMITE_BIO_HERO) > 80 ? bio.lastIndexOf(' ', LIMITE_BIO_HERO) : LIMITE_BIO_HERO).replace(/[\s.,;:!?-]+$/, '') + '…'
+    : bio;
+  const desdeTexto = vendedor.desde ? moment(vendedor.desde).format('MMMM [de] YYYY') : null;
+  const desdeCurto = vendedor.desde ? moment(vendedor.desde).format('MMM YYYY') : null;
+
+  const porTipo = {};
+  lista.forEach(function (p) {
+    const t = tipoProduto(p.tipo_produto);
+    if (!porTipo[t.chave]) porTipo[t.chave] = { info: t, qtd: 0 };
+    porTipo[t.chave].qtd++;
+  });
+  const tipos = Object.keys(porTipo).map(function (k) { return porTipo[k]; })
+    .sort(function (a, b) { return b.qtd - a.qtd || a.info.rotulo.localeCompare(b.info.rotulo); });
+
+  const r = resumoAvaliacoes;
+  const temAvaliacoes = !!r && r.total > 0;
+  const qtdAvaliacoes = r ? r.total : 0;
+  const rotuloAvaliacoes = function (n) { return n === 1 ? 'avaliação' : 'avaliações'; };
+
+  const maisVendidos = lista.length >= 5
+    ? lista.filter(function (p) { return p.vendas > 0; })
+        .sort(function (a, b) { return b.vendas - a.vendas || b.media_notas - a.media_notas; })
+        .slice(0, 3)
+    : [];
+  const NOVO_MS = 30 * 24 * 60 * 60 * 1000;
+  const agora = Date.now();
+  const ehNovo = function (p) { return p.data_publicacao && agora - new Date(p.data_publicacao).getTime() < NOVO_MS; };
+  const temVendasPorProduto = lista.some(function (p) { return p.vendas > 0; });
+  const temNotasPorProduto = lista.some(function (p) { return p.qtd_notas > 0; });
+  const comFerramentas = lista.length >= 4;
+  const PRIMEIROS = 12;
+
+  const descricaoMeta = bio
+    ? bio.replace(/\s+/g, ' ').slice(0, 155)
+    : `Conheça ${temProdutos ? `os ${lista.length} produtos digitais` : 'a loja'} de ${nome} na CloudMind.`;
+  const absoluta = function (ref, url) { const u = (url || urlMidia)(ref); return !u ? null : /^https?:/i.test(u) ? u : urlBase + u; };
+  const fotoAbsoluta = absoluta(vendedor.foto, urlFoto);
+  const imagemCompartilhar = absoluta(vendedor.capa) || fotoAbsoluta;
+  const dadosEstruturados = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    url: urlPublica,
+    mainEntity: {
+      '@type': 'Person',
+      name: nome,
+      description: bio || undefined,
+      image: fotoAbsoluta || undefined,
+      url: urlPublica
+    }
+  };
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', {
+        titulo: `${nome} — Produtos digitais`,
+        descricao: descricaoMeta,
+        canonical: urlPublica,
+        og: { tipo: 'profile', titulo: `${nome} na CloudMind`, url: urlPublica, imagem: imagemCompartilhar }
+      }) %>
+  <link rel="stylesheet" href="/css/produto-card.css">
+  <link rel="stylesheet" href="/css/perfilvend.css">
+  <% if (vendedor.capa) { %><link rel="preload" as="image" href="<%= urlMidia(vendedor.capa) %>" fetchpriority="high"><% } %>
+  <script type="application/ld+json"><%- JSON.stringify(dadosEstruturados).replace(/</g, '\\u003c') %></script>
+</head>
+<body>
+  <%- include('../partials/menu') %>
+
+  <main class="loja" id="conteudo" tabindex="-1">
+    <nav class="loja-trilha" aria-label="Você está em">
+      <ol>
+        <li><a href="/">Início</a></li>
+        <li><a href="/PProdutos">Produtos</a></li>
+        <li aria-current="page"><%= nome %></li>
+      </ol>
+    </nav>
+
+    <% if (ehDono) { %>
+      <aside class="loja-dono" aria-label="Gerenciar sua loja">
+        <p><i class="fa-solid fa-eye" aria-hidden="true"></i> Esta é a sua loja, do jeito que os visitantes a veem.</p>
+        <div class="loja-dono-acoes">
+          <a class="cm-btn cm-btn--pequeno cm-btn--ghost" href="/pgpublica"><i class="fa-solid fa-pen" aria-hidden="true"></i> Editar página</a>
+          <a class="cm-btn cm-btn--pequeno cm-btn--ghost" href="/admvend"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> Painel de vendas</a>
+          <a class="cm-btn cm-btn--pequeno" href="/cdstraprod"><i class="fa-solid fa-plus" aria-hidden="true"></i> Novo produto</a>
+        </div>
+      </aside>
+    <% } %>
+
+    <!-- ===== Identidade da loja ===== -->
+    <section class="loja-hero" aria-labelledby="loja-nome">
+      <div class="loja-capa<%= vendedor.capa ? ' loja-capa--imagem' : '' %>" aria-hidden="true">
+        <% if (vendedor.capa) { %>
+          <img src="<%= urlMidia(vendedor.capa) %>" alt="" width="1600" height="400" decoding="async" fetchpriority="high" data-capa>
+        <% } %>
+      </div>
+      <% if (ehDono) { %>
+        <a class="loja-capa-editar" href="/pgpublica#capa">
+          <i class="fa-regular fa-image" aria-hidden="true"></i> <%= vendedor.capa ? 'Trocar capa' : 'Adicionar capa' %>
+        </a>
+      <% } %>
+
+      <div class="loja-hero-corpo">
+        <div class="loja-avatar" data-avatar>
+          <span class="loja-avatar-iniciais" aria-hidden="true"><%= iniciais %></span>
+          <% const fotoLoja = urlFoto(vendedor.foto); %>
+          <% if (fotoLoja) { %>
+            <img src="<%= fotoLoja %>" alt="Foto de <%= nome %>" width="128" height="128" decoding="async" fetchpriority="high">
+          <% } %>
+        </div>
+
+        <div class="loja-identidade">
+          <p class="loja-sobretitulo"><i class="fa-solid fa-store" aria-hidden="true"></i> Loja na CloudMind</p>
+          <h1 id="loja-nome"><%= nome %></h1>
+          <% if (desdeTexto) { %>
+            <p class="loja-desde">Vendendo na CloudMind desde <%= desdeTexto %></p>
+          <% } %>
+          <% if (bioCurta) { %>
+            <p class="loja-bio-curta">
+              <%= bioCurta %>
+              <% if (bioCurta !== bio) { %><a href="#sobre">Continuar lendo<span class="cm-sr"> a apresentação de <%= nome %></span></a><% } %>
+            </p>
+          <% } %>
+          <% if (tipos.length) { %>
+            <ul class="loja-especialidades" aria-label="Tipos de produto da loja">
+              <% tipos.slice(0, 4).forEach(function (t) { %>
+                <li><i class="fa-solid <%= t.info.icone %>" aria-hidden="true"></i> <%= t.info.rotulo %></li>
+              <% }) %>
+            </ul>
+          <% } %>
+        </div>
+
+        <div class="loja-acoes">
+          <% if (temProdutos) { %>
+            <a class="cm-btn" href="#produtos"><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i> Ver produtos</a>
+          <% } %>
+          <button type="button" class="cm-btn cm-btn--ghost" data-compartilhar data-url="<%= urlPublica %>" data-titulo="<%= nome %> na CloudMind" hidden>
+            <i class="fa-solid fa-share-nodes" aria-hidden="true"></i> <span>Compartilhar</span>
+          </button>
+          <p class="loja-aviso-copia" role="status" aria-live="polite" data-compartilhar-status></p>
+        </div>
+      </div>
+
+      <dl class="loja-numeros">
+        <% if (temAvaliacoes) { %>
+          <div>
+            <dt>Avaliação média</dt>
+            <dd>
+              <a href="#avaliacoes">
+                <span class="loja-numero"><i class="fa-solid fa-star" aria-hidden="true"></i> <%= formatarNota(r.media) %></span>
+                <span class="loja-numero-sub"><%= r.total %> <%= rotuloAvaliacoes(r.total) %></span>
+              </a>
+            </dd>
+          </div>
+        <% } %>
+        <% if (produtos !== null) { %>
+          <div>
+            <dt>Produtos</dt>
+            <dd><span class="loja-numero"><%= lista.length %></span><span class="loja-numero-sub"><%= lista.length === 1 ? 'publicado' : 'publicados' %></span></dd>
+          </div>
+        <% } %>
+        <% if (vendas > 0) { %>
+          <div>
+            <dt>Vendas</dt>
+            <dd><span class="loja-numero"><%= vendas %></span><span class="loja-numero-sub">na plataforma</span></dd>
+          </div>
+        <% } %>
+        <% if (desdeCurto) { %>
+          <div>
+            <dt>Na CloudMind desde</dt>
+            <dd><span class="loja-numero loja-numero--texto"><%= desdeCurto.charAt(0).toUpperCase() + desdeCurto.slice(1) %></span></dd>
+          </div>
+        <% } %>
+      </dl>
+    </section>
+
+    <%# ===== Cupons de desconto (criados pelo ADM para este vendedor; só os usáveis hoje) ===== %>
+    <% if (locals.cuponsLoja && cuponsLoja.length) { %>
+      <section class="loja-cupons" aria-labelledby="cupons-titulo">
+        <header class="loja-secao-topo">
+          <div>
+            <h2 id="cupons-titulo"><i class="fa-solid fa-ticket" aria-hidden="true"></i> Cupons de desconto</h2>
+            <p>Use no carrinho, em produtos de <%= nome %>.</p>
+          </div>
+        </header>
+        <ul class="loja-cupons-lista">
+          <% cuponsLoja.forEach(function (c) { const restam = usosRestantes(c); %>
+            <li class="cupom-card">
+              <p class="cupom-valor"><%= rotuloDesconto(c) %></p>
+              <div class="cupom-corpo">
+                <p class="cupom-codigo"><span class="cm-sr">Código do cupom: </span><%= c.codigo %></p>
+                <p class="cupom-regra">
+                  Válido até <%= dataBR(c.data_fim) %><% if (restam !== null) { %> · <%= restam === 1 ? 'resta 1 uso' : 'restam ' + restam + ' usos' %><% } %>
+                </p>
+                <button type="button" class="cupom-copiar" data-copiar-cupom="<%= c.codigo %>">
+                  <i class="fa-regular fa-copy" aria-hidden="true"></i> <span>Copiar cupom</span><span class="cm-sr"> <%= c.codigo %></span>
+                </button>
+              </div>
+            </li>
+          <% }) %>
+        </ul>
+        <p class="cm-sr" role="status" aria-live="polite" data-cupom-status></p>
+      </section>
+    <% } %>
+
+    <!-- ===== Navegação interna ===== -->
+    <nav class="loja-nav" aria-label="Seções da loja" data-loja-nav>
+      <ul>
+        <li><a href="#produtos">Produtos<% if (produtos !== null) { %> <span class="loja-nav-qtd"><%= lista.length %></span><% } %></a></li>
+        <li><a href="#sobre">Sobre</a></li>
+        <li><a href="#avaliacoes">Avaliações<% if (temAvaliacoes) { %> <span class="loja-nav-qtd"><%= qtdAvaliacoes %></span><% } %></a></li>
+      </ul>
+    </nav>
+
+    <!-- ===== Mais vendidos (só com vendas reais) ===== -->
+    <% if (maisVendidos.length) { %>
+      <section class="loja-secao" aria-labelledby="destaques-titulo">
+        <header class="loja-secao-topo">
+          <div>
+            <h2 id="destaques-titulo"><i class="fa-solid fa-fire" aria-hidden="true"></i> Mais vendidos</h2>
+            <p>Os produtos com mais vendas nesta loja.</p>
+          </div>
+        </header>
+        <ul class="loja-destaques">
+          <% maisVendidos.forEach(function (p, i) { %>
+            <li><%- include('../partials/produto-card', {
+                  p: p, idUsuario: idUsuario, destaque: true, mostrarResumo: true,
+                  selo: i === 0 ? 'Mais vendido' : (ehNovo(p) ? 'Novo' : null)
+                }) %></li>
+          <% }) %>
+        </ul>
+      </section>
+    <% } %>
+
+    <!-- ===== Catálogo da loja ===== -->
+    <section class="loja-secao loja-ancora" id="produtos" aria-labelledby="produtos-titulo">
+      <header class="loja-secao-topo">
+        <div>
+          <h2 id="produtos-titulo"><i class="fa-solid fa-box-open" aria-hidden="true"></i> <%= maisVendidos.length ? 'Todos os produtos' : 'Produtos' %></h2>
+          <% if (temProdutos) { %>
+            <p><%= lista.length %> <%= lista.length === 1 ? 'produto publicado' : 'produtos publicados' %> por <%= nome %>.</p>
+          <% } %>
+        </div>
+      </header>
+
+      <% if (produtos === null) { %>
+        <p class="cm-alert cm-alert--erro" role="alert">
+          <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+          <span>Não foi possível carregar os produtos desta loja agora. <a href="">Tentar novamente</a></span>
+        </p>
+      <% } else if (!temProdutos) { %>
+        <div class="cm-empty loja-vazio">
+          <i class="fa-solid fa-box-open" aria-hidden="true"></i>
+          <% if (ehDono) { %>
+            <p><strong>Sua loja ainda não tem produtos publicados.</strong></p>
+            <p>Publique o primeiro: ele aparece aqui e no catálogo da CloudMind.</p>
+            <a class="cm-btn" href="/cdstraprod"><i class="fa-solid fa-plus" aria-hidden="true"></i> Publicar produto</a>
+          <% } else { %>
+            <p><strong>Este vendedor ainda não publicou produtos.</strong></p>
+            <p>Quando novos produtos forem publicados, eles aparecerão aqui.</p>
+            <a class="cm-btn cm-btn--ghost" href="/PProdutos">Explorar o catálogo</a>
+          <% } %>
+        </div>
+      <% } else { %>
+        <% if (comFerramentas) { %>
+          <div class="loja-ferramentas" data-ferramentas hidden>
+            <div class="loja-ferramentas-linha">
+              <label class="loja-busca">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                <input type="search" placeholder="Buscar nos produtos da loja" aria-label="Buscar nos produtos de <%= nome %>" maxlength="100" data-busca-loja>
+              </label>
+              <label class="loja-ordem">
+                <span>Ordenar</span>
+                <select data-ordem-loja aria-label="Ordenar produtos">
+                  <option value="recentes">Mais recentes</option>
+                  <% if (temVendasPorProduto) { %><option value="vendidos">Mais vendidos</option><% } %>
+                  <% if (temNotasPorProduto) { %><option value="avaliados">Melhor avaliados</option><% } %>
+                  <option value="menor-preco">Menor preço</option>
+                  <option value="maior-preco">Maior preço</option>
+                </select>
+              </label>
+            </div>
+            <% if (tipos.length > 1) { %>
+              <div class="loja-chips" role="group" aria-label="Filtrar por tipo de produto">
+                <button type="button" aria-pressed="true" data-filtro-tipo="">Todos <span><%= lista.length %></span></button>
+                <% tipos.forEach(function (t) { %>
+                  <button type="button" aria-pressed="false" data-filtro-tipo="<%= t.info.chave %>">
+                    <i class="fa-solid <%= t.info.icone %>" aria-hidden="true"></i> <%= t.info.rotulo %> <span><%= t.qtd %></span>
+                  </button>
+                <% }) %>
+              </div>
+            <% } %>
+            <p class="loja-resultado" role="status" aria-live="polite" data-resultado></p>
+          </div>
+        <% } %>
+
+        <ul class="loja-grid" data-grade-loja data-primeiros="<%= PRIMEIROS %>">
+          <% lista.forEach(function (p, i) { const info = tipoProduto(p.tipo_produto); %>
+            <li data-produto
+                data-ordem="<%= i %>"
+                data-tipo="<%= info.chave %>"
+                data-preco="<%= Number(p.preco) %>"
+                data-nota="<%= p.qtd_notas > 0 ? p.media_notas : 0 %>"
+                data-qtd-notas="<%= p.qtd_notas %>"
+                data-vendas="<%= p.vendas %>"
+                data-busca="<%= normalizar([p.titulo, p.resumo, info.rotulo, p.nome_categoria].join(' ')) %>">
+              <%- include('../partials/produto-card', { p: p, idUsuario: idUsuario, selo: ehNovo(p) ? 'Novo' : null }) %>
+            </li>
+          <% }) %>
+        </ul>
+
+        <div class="cm-empty loja-vazio" data-vazio-filtro hidden>
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <p><strong>Nenhum produto encontrado.</strong></p>
+          <p>Tente outras palavras ou remova o filtro.</p>
+          <button type="button" class="cm-btn cm-btn--ghost" data-limpar-filtros>Limpar filtros</button>
+        </div>
+
+        <div class="loja-mais" data-mais hidden>
+          <button type="button" class="cm-btn cm-btn--ghost" data-mostrar-mais>
+            <i class="fa-solid fa-chevron-down" aria-hidden="true"></i> <span>Mostrar mais produtos</span>
+          </button>
+        </div>
+      <% } %>
+    </section>
+
+    <!-- ===== Sobre ===== -->
+    <section class="loja-secao loja-ancora" id="sobre" aria-labelledby="sobre-titulo">
+      <div class="loja-sobre">
+        <article class="loja-bloco">
+          <h2 id="sobre-titulo">Sobre <%= nome %></h2>
+          <% if (bio) { %>
+            <p class="loja-bio"><%= bio %></p>
+          <% } else if (ehDono) { %>
+            <div class="loja-bio-vazia">
+              <p>Você ainda não escreveu sua apresentação. Conte quem você é, o que cria e para quem — é o que os compradores leem antes de decidir.</p>
+              <a class="cm-btn cm-btn--pequeno" href="/pgpublica"><i class="fa-solid fa-pen" aria-hidden="true"></i> Escrever apresentação</a>
+            </div>
+          <% } else { %>
+            <p class="loja-bio-vazia"><%= primeiroNome %> ainda não escreveu uma apresentação.</p>
+          <% } %>
+          <% if (desdeTexto) { %>
+            <p class="loja-fato"><i class="fa-regular fa-calendar" aria-hidden="true"></i> Na CloudMind desde <%= desdeTexto %></p>
+          <% } %>
+        </article>
+
+        <aside class="loja-bloco loja-lateral" aria-label="Sobre a loja">
+          <% if (tipos.length) { %>
+            <h3>O que <%= primeiroNome %> vende</h3>
+            <ul class="loja-tipos">
+              <% tipos.forEach(function (t) { %>
+                <li>
+                  <a href="#produtos" data-filtrar-tipo="<%= t.info.chave %>">
+                    <span class="loja-tipos-icone" aria-hidden="true"><i class="fa-solid <%= t.info.icone %>"></i></span>
+                    <span class="loja-tipos-nome"><%= t.info.rotulo %></span>
+                    <span class="loja-tipos-qtd"><%= t.qtd %> <%= t.qtd === 1 ? 'produto' : 'produtos' %></span>
+                  </a>
+                </li>
+              <% }) %>
+            </ul>
+          <% } %>
+          <h3>Comprando nesta loja</h3>
+          <ul class="loja-garantias">
+            <li><i class="fa-solid fa-download" aria-hidden="true"></i> <span>Produto digital: com o pagamento aprovado, o arquivo fica em <a href="/meusdowloads">Meus downloads</a>.</span></li>
+            <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> <span>Só quem comprou o produto pode avaliá-lo.</span></li>
+            <li><i class="fa-regular fa-comments" aria-hidden="true"></i> <span>Dúvidas? Pergunte ao vendedor na página de cada produto.</span></li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ===== Avaliações ===== -->
+    <section class="loja-secao loja-ancora" id="avaliacoes" aria-labelledby="avaliacoes-titulo">
+      <header class="loja-secao-topo">
+        <div>
+          <h2 id="avaliacoes-titulo"><i class="fa-solid fa-star" aria-hidden="true"></i> Avaliações da loja</h2>
+          <p>Notas que os compradores deram aos produtos de <%= nome %>.</p>
+        </div>
+      </header>
+
+      <% if (r === null) { %>
+        <p class="cm-alert cm-alert--erro" role="alert">
+          <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+          <span>Não foi possível carregar as avaliações agora. <a href="">Tentar novamente</a></span>
+        </p>
+      <% } else if (!temAvaliacoes) { %>
+        <div class="cm-empty loja-vazio">
+          <i class="fa-regular fa-star" aria-hidden="true"></i>
+          <p><strong>Este vendedor ainda não possui avaliações.</strong></p>
+          <p>Elas aparecem aqui quando compradores avaliarem os produtos da loja.</p>
+        </div>
+      <% } else { %>
+        <div class="loja-avaliacoes">
+          <div class="loja-bloco loja-nota">
+            <p class="loja-nota-valor" aria-hidden="true"><%= formatarNota(r.media) %></p>
+            <span class="loja-estrelas" aria-hidden="true">
+              <% estrelas(r.media).forEach(function (e) { %><i class="<%= e === 'cheia' ? 'fa-solid fa-star' : e === 'meia' ? 'fa-solid fa-star-half-stroke' : 'fa-regular fa-star' %>"></i><% }) %>
+            </span>
+            <p class="cm-sr">Nota média <%= formatarNota(r.media) %> de 5.</p>
+            <p class="loja-nota-total">Baseado em <%= r.total %> <%= rotuloAvaliacoes(r.total) %></p>
+
+            <% if (r.total >= 5) { %>
+              <ul class="loja-barras" aria-label="Distribuição das notas">
+                <% [5, 4, 3, 2, 1].forEach(function (n) {
+                     const qtd = r.distribuicao[n] || 0;
+                     const pct = Math.round((qtd / r.total) * 100); %>
+                  <li>
+                    <span class="loja-barra-rotulo" aria-hidden="true"><%= n %> <i class="fa-solid fa-star"></i></span>
+                    <span class="loja-barra" aria-hidden="true"><span style="width: <%= pct %>%"></span></span>
+                    <span class="loja-barra-qtd" aria-hidden="true"><%= qtd %></span>
+                    <span class="cm-sr"><%= n %> <%= n === 1 ? 'estrela' : 'estrelas' %>: <%= qtd %> (<%= pct %>%)</span>
+                  </li>
+                <% }) %>
+              </ul>
+            <% } %>
+          </div>
+
+          <div class="loja-reviews">
+            <% if (avaliacoes === null) { %>
+              <p class="cm-alert cm-alert--erro" role="alert">
+                <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                <span>Não foi possível carregar a lista de avaliações agora.</span>
+              </p>
+            <% } else { %>
+              <ol class="loja-review-lista">
+                <% avaliacoes.forEach(function (a) { const autor = nomePublico(a.nome_cliente); %>
+                  <li class="loja-review">
+                    <div class="loja-review-topo">
+                      <span class="loja-review-avatar" aria-hidden="true"><%= autor.charAt(0).toUpperCase() %></span>
+                      <div class="loja-review-quem">
+                        <p class="loja-review-nome"><%= autor %></p>
+                        <p class="loja-review-data"><time datetime="<%= moment(a.data_avaliacao).format('YYYY-MM-DD') %>"><%= moment(a.data_avaliacao).format('DD/MM/YYYY') %></time></p>
+                      </div>
+                      <span class="loja-estrelas loja-estrelas--p" aria-hidden="true">
+                        <% estrelas(a.nota).forEach(function (e) { %><i class="<%= e === 'vazia' ? 'fa-regular' : 'fa-solid' %> fa-star"></i><% }) %>
+                      </span>
+                      <span class="cm-sr">Nota <%= a.nota %> de 5.</span>
+                    </div>
+                    <% if (a.comentario) { %>
+                      <p class="loja-review-texto"><%= a.comentario %></p>
+                    <% } %>
+                    <p class="loja-review-produto">
+                      <span>Sobre
+                        <% if (a.status_produto === 'ativo') { %>
+                          <a href="/paginnerprod?id=<%= a.id_produto %>"><%= a.titulo_produto %></a>
+                        <% } else { %>
+                          <strong><%= a.titulo_produto %></strong>
+                        <% } %>
+                      </span>
+                      <% if (a.compra_verificada) { %>
+                        <span class="cm-badge cm-badge--ok"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Compra verificada</span>
+                      <% } %>
+                    </p>
+                  </li>
+                <% }) %>
+              </ol>
+
+              <% if (!todasAvaliacoes && r.total > avaliacoes.length) { %>
+                <a class="cm-btn cm-btn--ghost" href="/perfilvend?id=<%= vendedor.id_usuario %>&amp;avaliacoes=todas#avaliacoes">
+                  Ver todas as <%= r.total %> avaliações
+                </a>
+              <% } else if (r.total > avaliacoes.length) { %>
+                <p class="loja-muted">Mostrando as <%= avaliacoes.length %> avaliações mais recentes.</p>
+              <% } %>
+            <% } %>
+          </div>
+        </div>
+      <% } %>
+    </section>
+  </main>
+
+  <%- include('../partials/footer') %>
+  <script src="/js/perfilvend.js" defer></script>
+</body>
+</html>
+<% } %>

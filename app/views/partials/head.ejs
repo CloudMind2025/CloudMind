@@ -1,0 +1,23 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= locals.titulo ? `${locals.titulo} — CloudMind` : 'CloudMind — Marketplace de produtos digitais' %></title>
+<% if (locals.descricao) { %><meta name="description" content="<%= locals.descricao %>"><% } %>
+<% if (locals.noindex) { %><meta name="robots" content="noindex"><% } %>
+<% if (locals.canonical) { %><link rel="canonical" href="<%= locals.canonical %>"><% } %>
+<% if (locals.og) { %>
+  <meta property="og:type" content="<%= og.tipo || 'website' %>">
+  <meta property="og:site_name" content="CloudMind">
+  <meta property="og:title" content="<%= og.titulo %>">
+  <% if (locals.descricao) { %><meta property="og:description" content="<%= locals.descricao %>"><% } %>
+  <meta property="og:url" content="<%= og.url %>">
+  <% if (og.imagem) { %><meta property="og:image" content="<%= og.imagem %>"><% } %>
+<% } %>
+<meta name="theme-color" content="#15202c">
+<link rel="icon" href="/image/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/menu.css">
+<link rel="stylesheet" href="/css/footer.css">

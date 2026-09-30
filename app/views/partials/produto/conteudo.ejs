@@ -1,0 +1,58 @@
+<h2 class="pd-panel-title">Sobre o conteúdo</h2>
+
+<dl class="pd-specs">
+  <div>
+    <dt>Tipo</dt>
+    <dd><i class="fa-solid <%= tipo.icone %>" aria-hidden="true"></i> <%= tipo.rotulo %></dd>
+  </div>
+  <% if (produto.nome_categoria) { %>
+    <div>
+      <dt>Categoria</dt>
+      <dd><%= produto.nome_categoria %></dd>
+    </div>
+  <% } %>
+  <% fichaDoProduto(produto.tipo_produto, produto.detalhes).forEach(function (l) { %>
+    <div>
+      <dt><%= l.rotulo %></dt>
+      <dd><i class="fa-solid <%= l.icone %>" aria-hidden="true"></i> <%= l.valor %></dd>
+    </div>
+  <% }) %>
+  <% if (produto.formato_arquivo) { %>
+    <div>
+      <dt>Formato do arquivo</dt>
+      <dd><%= produto.formato_arquivo %></dd>
+    </div>
+  <% } %>
+  <div>
+    <dt>Entrega</dt>
+    <dd>Digital, em Meus downloads</dd>
+  </div>
+  <% if (produto.data_publicacao) { %>
+    <div>
+      <dt>Publicado em</dt>
+      <dd><time datetime="<%= moment(produto.data_publicacao).format('YYYY-MM-DD') %>"><%= moment(produto.data_publicacao).format('DD/MM/YYYY') %></time></dd>
+    </div>
+  <% } %>
+  <% if (produto.sku) { %>
+    <div>
+      <dt>Código (SKU)</dt>
+      <dd><%= produto.sku %></dd>
+    </div>
+  <% } %>
+</dl>
+
+<section class="pd-preview" aria-labelledby="pd-previa-titulo">
+  <h3 id="pd-previa-titulo"><%= tipo.previa.titulo %></h3>
+  <div class="pd-empty pd-empty--dashed">
+    <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
+    <p><%= tipo.previa.vazio %></p>
+    <% if (!ehDono) { %>
+      <p><a class="pd-link" href="#perguntas" data-ir-aba="perguntas">Tem dúvidas sobre o conteúdo? Pergunte ao vendedor</a></p>
+    <% } %>
+  </div>
+</section>
+
+<p class="pd-protected">
+  <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+  Os arquivos deste produto são protegidos: o conteúdo completo só é liberado para quem comprou, na área Meus downloads.
+</p>

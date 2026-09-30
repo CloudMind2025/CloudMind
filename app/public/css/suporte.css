@@ -1,0 +1,170 @@
+.container {
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 28px 16px 56px;
+}
+
+/* Intro */
+.intro { text-align: center; margin-bottom: 24px; }
+.intro h1 { color: var(--cm-navy); font-size: 1.7rem; margin-bottom: 6px; }
+.intro p { color: var(--cm-texto-suave); }
+
+.search-bar {
+  display: flex;
+  gap: 6px;
+  max-width: 640px;
+  margin: 16px auto 0;
+}
+
+.search-bar input {
+  flex: 1;
+  min-height: 46px;
+  border: 1.5px solid rgba(17, 33, 70, 0.22);
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: #fff;
+}
+
+.search-bar button {
+  min-width: 46px;
+  background: #15202c;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Card */
+.card {
+  background: #fff;
+  border-radius: var(--cm-raio);
+  box-shadow: var(--cm-sombra-sm);
+  padding: 20px;
+  margin-bottom: 18px;
+}
+
+.card h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--cm-navy);
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+}
+
+.card h2 i { color: var(--cm-dourado-tinta); }
+
+.faq-item { border-bottom: 1px solid var(--cm-linha); }
+.faq-item:last-child { border-bottom: 0; }
+
+.faq-question {
+  width: 100%;
+  min-height: 48px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 0.98rem;
+  padding: 12px 0;
+  font-weight: 600;
+  color: var(--cm-navy);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.faq-question i { transition: transform 0.2s ease; color: var(--cm-muted); }
+.faq-question[aria-expanded="true"] i { transform: rotate(180deg); }
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.faq-answer p { padding-bottom: 12px; font-size: 0.93rem; color: var(--cm-texto-suave); }
+
+/* Formulário */
+.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.form-group label { font-weight: 700; font-size: 0.92rem; color: var(--cm-navy); }
+
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  min-height: 46px;
+  border: 1.5px solid rgba(17, 33, 70, 0.22);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fff;
+  color: var(--cm-texto);
+  font-size: 1rem;
+}
+
+.form-group textarea { min-height: 130px; resize: vertical; }
+
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--cm-link);
+  box-shadow: 0 0 0 3px rgba(28, 93, 143, 0.2);
+}
+
+.form-group [aria-invalid="true"],
+.input-error { border-color: var(--cm-erro) !important; }
+
+.contador { align-self: flex-end; font-size: 0.8rem; color: var(--cm-muted); }
+
+.error-message,
+.cm-erro-campo { color: var(--cm-erro); font-size: 0.85rem; font-weight: 600; }
+
+.form-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+
+/* Histórico de tickets */
+.tickets-section { margin-top: 8px; }
+
+.tabela-tickets {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.tabela-tickets th,
+.tabela-tickets td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--cm-linha);
+  vertical-align: middle;
+}
+
+.tabela-tickets thead th { background: #f1f5f9; font-weight: 700; color: var(--cm-navy); }
+.tabela-tickets tbody tr:hover { background: #fafbfc; }
+.texto-muted { color: var(--cm-muted); font-size: 0.85rem; }
+
+@media (max-width: 640px) {
+  .tabela-tickets.cm-tabela tr { border-color: var(--cm-linha); background: #fff; }
+}
+
+.login-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  text-align: center;
+  padding: 16px;
+  background: var(--cm-info-fundo);
+  border-radius: var(--cm-raio);
+  color: var(--cm-info-tinta);
+  font-size: 0.95rem;
+}
+
+.login-hint a { color: var(--cm-navy); font-weight: 700; }
+
+@media (min-width: 769px) {
+  .container { padding: 36px 24px 64px; }
+  .card { padding: 24px; }
+}

@@ -1,0 +1,166 @@
+<% const LIMITE_BIO = 1000; %>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Página pública da loja', noindex: true }) %>
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/conta.css">
+  <link rel="stylesheet" href="/css/pgpublica.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+  <%- include('../partials/sidebar') %>
+
+  <main class="conta-main public-page" id="conteudo" tabindex="-1">
+    <%- include('../partials/btnV', { voltarPara: '/admvend' }) %>
+    <header class="page-header public-topo">
+      <div>
+        <h1>Página pública da loja</h1>
+        <p>O que os compradores veem quando visitam a sua loja.</p>
+      </div>
+      <a class="cm-btn cm-btn--ghost" href="/perfilvend"><i class="fa-solid fa-store" aria-hidden="true"></i> Ver minha loja</a>
+    </header>
+
+    <% if (aviso) { %>
+      <p class="cm-alert cm-alert--<%= aviso.tipo %>" role="<%= aviso.tipo === 'erro' ? 'alert' : 'status' %>">
+        <i class="fa-solid <%= aviso.tipo === 'erro' ? 'fa-circle-exclamation' : 'fa-circle-check' %>" aria-hidden="true"></i>
+        <span><%= aviso.msg %><% if (aviso.tipo === 'sucesso') { %> <a href="/perfilvend">Ver minha loja</a><% } %></span>
+      </p>
+    <% } %>
+    <% if (erroCarregar) { %>
+      <p class="cm-alert cm-alert--erro" role="alert">
+        <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+        <span>Não foi possível carregar os dados atuais da sua loja. Recarregue a página antes de salvar para não apagá-los.</span>
+      </p>
+    <% } %>
+
+    <section class="conta-bloco public-capa" id="capa" aria-labelledby="capa-titulo">
+      <h2 id="capa-titulo"><i class="fa-regular fa-image" aria-hidden="true"></i> Capa da loja</h2>
+      <p class="public-texto">A faixa no topo da sua loja. Sem capa, a loja usa o fundo padrão da CloudMind.</p>
+
+      <div class="public-previas" data-previas>
+        <figure>
+          <div class="public-previa public-previa--desktop<%= capa ? '' : ' is-padrao' %>">
+            <img src="<%= capa ? urlMidia(capa) : '' %>" alt=""<% if (!capa) { %> hidden<% } %> data-previa>
+          </div>
+          <figcaption>No computador</figcaption>
+        </figure>
+        <figure>
+          <div class="public-previa public-previa--celular<%= capa ? '' : ' is-padrao' %>">
+            <img src="<%= capa ? urlMidia(capa) : '' %>" alt=""<% if (!capa) { %> hidden<% } %> data-previa>
+          </div>
+          <figcaption>No celular</figcaption>
+        </figure>
+      </div>
+
+      <form class="public-capa-form" action="/pgpublica/capa" method="POST" enctype="multipart/form-data" data-enviando="Enviando…">
+        <div class="cm-campo">
+          <label for="capa-arquivo">Nova imagem de capa</label>
+          <input type="file" id="capa-arquivo" name="capa" accept=".jpg,.jpeg,.png,image/jpeg,image/png" required
+                 aria-describedby="capa-dica capa-aviso">
+          <small class="cm-dica" id="capa-dica">JPG ou PNG, até <%= tamanhoMaxCapaMb %>MB. Recomendado: 1600 × 400 px, com o principal no centro — as laterais são cortadas no celular.</small>
+          <small class="public-aviso" id="capa-aviso" role="status" aria-live="polite" data-capa-aviso></small>
+        </div>
+        <div class="public-capa-acoes">
+          <button type="submit" class="cm-btn"<% if (erroCarregar) { %> disabled<% } %>><i class="fa-solid fa-upload" aria-hidden="true"></i> <span><%= capa ? 'Trocar capa' : 'Enviar capa' %></span></button>
+          <% if (capa) { %>
+
+            <button type="submit" form="capa-remover" class="cm-btn cm-btn--ghost"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> <span>Remover capa</span></button>
+          <% } %>
+        </div>
+      </form>
+      <% if (capa) { %>
+        <form action="/pgpublica/capa/remover" method="POST" id="capa-remover" data-confirmar="Remover a capa? A loja volta a usar o fundo padrão, e a imagem atual é apagada."></form>
+      <% } %>
+    </section>
+
+    <section class="conta-bloco" aria-labelledby="bio-titulo">
+      <h2 id="bio-titulo"><i class="fa-solid fa-align-left" aria-hidden="true"></i> Apresentação</h2>
+      <form class="conta-form public-form" action="/pgpublica" method="POST" data-enviando="Salvando…">
+        <div class="cm-campo">
+          <label for="bio">Sobre você e sua loja</label>
+          <textarea id="bio" name="bio" rows="7" maxlength="<%= LIMITE_BIO %>" aria-describedby="bio-dica bio-contador"
+                    placeholder="Ex.: Sou designer há 8 anos e crio templates para quem quer lançar um site sem começar do zero..."><%= bio %></textarea>
+          <div class="public-dicas">
+            <small class="cm-dica" id="bio-dica">Aparece na seção “Sobre” da loja e no topo dela (resumida). Conte quem você é, o que cria e para quem.</small>
+            <small class="cm-dica public-contador" id="bio-contador" aria-live="polite" data-contador><%= bio.length %>/<%= LIMITE_BIO %></small>
+          </div>
+        </div>
+        <div>
+          <button type="submit" class="cm-btn"<% if (erroCarregar) { %> disabled<% } %>><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> <span>Salvar apresentação</span></button>
+        </div>
+      </form>
+    </section>
+
+    <section class="conta-bloco" aria-labelledby="identidade-titulo">
+      <h2 id="identidade-titulo"><i class="fa-solid fa-id-badge" aria-hidden="true"></i> Nome e foto</h2>
+      <p class="public-texto">Sua loja usa o nome e a foto da sua conta.</p>
+      <ul class="public-lista">
+        <li><i class="fa-solid fa-user-pen" aria-hidden="true"></i> <span>Para mudar o nome, use <a href="/editardados">Editar dados</a>.</span></li>
+        <li><i class="fa-solid fa-camera" aria-hidden="true"></i> <span>Para trocar a foto, clique no lápis sobre a foto, na barra lateral.</span></li>
+      </ul>
+    </section>
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <script>
+    (function () {
+      var input = document.getElementById('capa-arquivo');
+      var aviso = document.querySelector('[data-capa-aviso]');
+      var previas = document.querySelectorAll('[data-previa]');
+      if (!input) return;
+      var LIMITE = <%= tamanhoMaxCapaMb %> * 1024 * 1024;
+      var originais = Array.prototype.map.call(previas, function (img) { return { src: img.getAttribute('src'), oculta: img.hidden }; });
+      var urlAtual = null;
+
+      function avisar(texto, tipo) {
+        aviso.textContent = texto;
+        aviso.className = 'public-aviso' + (tipo ? ' is-' + tipo : '');
+      }
+      function restaurar() {
+        previas.forEach(function (img, i) {
+          img.src = originais[i].src;
+          img.hidden = originais[i].oculta;
+          img.parentElement.classList.toggle('is-padrao', originais[i].oculta);
+        });
+      }
+
+      input.addEventListener('change', function () {
+        if (urlAtual) { URL.revokeObjectURL(urlAtual); urlAtual = null; }
+        var arquivo = input.files[0];
+        avisar('');
+        if (!arquivo) { restaurar(); return; }
+        if (!/\.(jpe?g|png)$/i.test(arquivo.name)) { avisar('Use uma imagem JPG ou PNG.', 'erro'); input.value = ''; restaurar(); return; }
+        if (arquivo.size > LIMITE) { avisar('A imagem passa de <%= tamanhoMaxCapaMb %>MB. Escolha uma menor.', 'erro'); input.value = ''; restaurar(); return; }
+
+        urlAtual = URL.createObjectURL(arquivo);
+        previas.forEach(function (img) {
+          img.src = urlAtual;
+          img.hidden = false;
+          img.parentElement.classList.remove('is-padrao');
+        });
+        var teste = new Image();
+        teste.onload = function () {
+          if (teste.naturalWidth < 1200) avisar('Prévia — a imagem tem ' + teste.naturalWidth + ' px de largura e pode ficar desfocada em telas grandes. Prefira 1600 px ou mais.', 'aviso');
+          else avisar('Prévia — confira o enquadramento e clique em enviar.', 'ok');
+        };
+        teste.src = urlAtual;
+      });
+    })();
+
+    (function () {
+      var campo = document.getElementById('bio');
+      var contador = document.querySelector('[data-contador]');
+      if (!campo || !contador) return;
+      var limite = Number(campo.getAttribute('maxlength'));
+      function atualizar() {
+        contador.textContent = campo.value.length + '/' + limite;
+        contador.classList.toggle('is-perto', campo.value.length > limite * 0.9);
+      }
+      campo.addEventListener('input', atualizar);
+      atualizar();
+    })();
+  </script>
+</body>
+</html>

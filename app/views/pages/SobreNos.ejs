@@ -1,0 +1,78 @@
+<%
+  const equipe = [
+    { foto: 'ana.jpg',     nome: 'Ana Júlia Z.', funcoes: ['Gerente', 'Banco de Dados', 'Documentadora', 'Analista de Sistemas'] },
+    { foto: 'rodrigo.jpg', nome: 'Rodrigo C.',   funcoes: ['Dev Front-End', 'Analista de Sistemas'] },
+    { foto: 'paulo.jpg',   nome: 'Paulo S.',     funcoes: ['Dev Front-End', 'Analista de Sistemas'] },
+    { foto: 'livia.jpg',   nome: 'Lívia S.',     funcoes: ['Designer'] },
+    { foto: 'rafael.jpg',  nome: 'Rafael F.',    funcoes: ['Dev Back-End'] },
+    { foto: 'enrico.jpg',  nome: 'Enrico L.',    funcoes: ['Dev Back-End'] }
+  ];
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Sobre nós', descricao: 'Conheça a CloudMind: missão, visão, valores e a equipe por trás do marketplace de produtos digitais.' }) %>
+  <link rel="stylesheet" href="/css/sobre.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+
+  <main class="sobre" id="conteudo" tabindex="-1">
+
+    <section class="intro">
+      <h1>Sobre nós</h1>
+      <p>
+        A <strong>CloudMind</strong> é um marketplace 100% digital criado para conectar criadores e consumidores de conteúdos digitais de forma simples, justa e inspiradora. Aqui, qualquer pessoa pode vender ou comprar eBooks, cursos, templates, flashcards, mapas mentais, checklists, audiobooks e muito mais. Nossa plataforma é inclusiva, acessível e feita para impulsionar a criatividade, gerar renda e promover aprendizado.
+      </p>
+      <p>
+        Mais do que um site, somos uma comunidade que acredita no poder das ideias e no potencial de cada indivíduo para transformar conhecimento em oportunidades.
+      </p>
+    </section>
+
+    <section class="missao-visao-valores" aria-label="Missão, visão e valores">
+      <article>
+        <h2>Missão</h2>
+        <p>Nossa missão é democratizar a criação e o consumo de produtos digitais, oferecendo um espaço acessível, seguro e intuitivo para que qualquer pessoa possa empreender, aprender e compartilhar conhecimento, valorizando a criatividade e incentivando a inovação.</p>
+      </article>
+      <article>
+        <h2>Visão</h2>
+        <p>Ser referência em marketplace de produtos digitais no Brasil, reconhecida por impulsionar criadores independentes, oferecer experiências de compra e venda simples e seguras e inspirar uma nova geração de empreendedores digitais.</p>
+      </article>
+      <article>
+        <h2>Valores</h2>
+        <ul>
+          <li>Inclusão digital</li>
+          <li>Transparência</li>
+          <li>Colaboração</li>
+          <li>Qualidade</li>
+          <li>Inovação</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="historia" aria-labelledby="historia-titulo">
+      <h2 id="historia-titulo">Nossa história</h2>
+      <p>A CloudMind nasceu da ideia de criar um espaço onde o conhecimento e a criatividade pudessem ser compartilhados sem barreiras. Inspirados por jovens criadores, estudantes e microempreendedores que buscavam visibilidade e liberdade para vender seus conteúdos, desenvolvemos uma plataforma simples, intuitiva e com custos justos. Mais do que um marketplace, somos uma comunidade que acredita que cada pessoa tem algo único para oferecer ao mundo — e que o digital é o caminho para transformar isso em realidade.</p>
+    </section>
+
+    <section class="equipe" aria-labelledby="equipe-titulo">
+      <h2 id="equipe-titulo">Nosso time</h2>
+      <ul>
+        <% equipe.forEach(function (p) { %>
+          <li>
+            <figure>
+              <img src="/image/<%= p.foto %>" alt="Foto de <%= p.nome %>" width="120" height="120" loading="lazy">
+              <figcaption>
+                <strong><%= p.nome %></strong>
+                <span class="funcoes"><%= p.funcoes.join(' · ') %></span>
+              </figcaption>
+            </figure>
+          </li>
+        <% }) %>
+      </ul>
+    </section>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Configurações da conta', noindex: true }) %>
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/conta.css">
+  <link rel="stylesheet" href="/css/config.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+  <%- include('../partials/sidebar') %>
+
+  <main class="conta-main" id="conteudo" tabindex="-1">
+    <%- include('../partials/btnV', { voltarPara: '/perfiluser' }) %>
+    <header class="page-header">
+      <h1>Configurações da conta</h1>
+      <p>Gerencie suas preferências, segurança e privacidade.</p>
+    </header>
+
+    <% if (locals.aviso) { %>
+      <p class="cm-alert cm-alert--<%= aviso.tipo %>" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span><%= aviso.msg %></span></p>
+    <% } %>
+
+    <!-- Preferências -->
+    <section class="conta-bloco" aria-labelledby="pref-titulo">
+      <h2 id="pref-titulo"><i class="fa-solid fa-sliders" aria-hidden="true"></i> Preferências</h2>
+      <form class="config-form" onsubmit="return false">
+        <div>
+          <label for="theme">Tema</label>
+          <select id="theme" name="theme">
+            <option>Claro</option>
+            <option>Escuro</option>
+            <option>Sistema</option>
+          </select>
+        </div>
+        <div>
+          <label for="language">Idioma</label>
+          <select id="language" name="language">
+            <option>Português (BR)</option>
+            <option>Inglês (EN)</option>
+            <option>Espanhol (ES)</option>
+          </select>
+        </div>
+        <fieldset class="notifications">
+          <legend>Notificações</legend>
+          <label><input type="checkbox" checked> Notificações por e-mail</label>
+          <label><input type="checkbox"> Notificações por SMS</label>
+        </fieldset>
+      </form>
+    </section>
+
+    <!-- Segurança -->
+    <section class="conta-bloco" aria-labelledby="seg-titulo">
+      <h2 id="seg-titulo"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Segurança</h2>
+      <div class="security-options">
+        <div>
+          <h3>Alterar senha</h3>
+          <a href="/alterarsenha" class="cm-btn cm-btn--pequeno">Alterar</a>
+        </div>
+        <div>
+          <h3>Ver sessões ativas</h3>
+          <button type="button" class="cm-btn cm-btn--ghost cm-btn--pequeno">Ver sessões</button>
+        </div>
+        <div>
+          <h3 id="rotulo-2fa">Autenticação em duas etapas (2FA)</h3>
+          <label class="switch">
+            <input type="checkbox" role="switch" checked aria-labelledby="rotulo-2fa">
+            <span class="slider" aria-hidden="true"></span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ações da Conta -->
+    <section class="conta-bloco" aria-labelledby="acoes-titulo">
+      <h2 id="acoes-titulo"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> Ações da conta</h2>
+      <form class="config-form" onsubmit="return false">
+        <div>
+          <label for="privacy">Quem pode ver meu perfil</label>
+          <select id="privacy">
+            <option>Público</option>
+            <option>Apenas amigos</option>
+            <option>Privado</option>
+          </select>
+        </div>
+      </form>
+    </section>
+
+    <section class="conta-bloco zona-perigo" aria-labelledby="perigo-titulo">
+      <h2 id="perigo-titulo"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Encerrar conta</h2>
+      <p>Você pode sair da sua conta ou pedir a exclusão. A exclusão desativa a conta na hora e só apaga os dados depois de 30 dias.</p>
+      <div class="account-actions">
+        <a href="/logout" class="cm-btn cm-btn--ghost"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Sair da conta</a>
+        <button class="cm-btn cm-btn--perigo" type="button" data-abrir-dialogo="modalExclusao">
+          <i class="fa-solid fa-trash" aria-hidden="true"></i> Excluir conta
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="cm-dialog" id="modalExclusao" aria-labelledby="excluir-titulo">
+    <div class="cm-dialog-corpo">
+      <button class="cm-dialog-fechar" type="button" data-fechar-dialogo aria-label="Fechar">&times;</button>
+      <div class="modal-icone" aria-hidden="true"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <h2 id="excluir-titulo">Excluir minha conta</h2>
+      <p class="modal-aviso">Sua conta será <strong>desativada imediatamente</strong> e excluída permanentemente em <strong>30 dias</strong>.</p>
+      <p class="modal-dica">Para cancelar a exclusão, basta <strong>fazer login</strong> novamente antes do prazo — sua conta será reativada automaticamente.</p>
+      <form action="/conta/inativar" method="POST" data-enviando="Excluindo…">
+        <div class="cm-dialog-acoes">
+          <button type="button" class="cm-btn cm-btn--ghost" data-fechar-dialogo autofocus>Cancelar</button>
+          <button type="submit" class="cm-btn cm-btn--perigo"><i class="fa-solid fa-trash" aria-hidden="true"></i> <span>Excluir minha conta</span></button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

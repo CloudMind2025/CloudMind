@@ -1,0 +1,155 @@
+.tipo-conta { border: 0; margin: 16px 0 0; padding: 0; min-width: 0; }
+.tipo-conta legend { font-size: 0.9rem; font-weight: 700; color: var(--cm-navy); margin-bottom: 6px; }
+
+.tipo-conta-wrap { display: flex; gap: 12px; }
+
+.tipo-card {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 10px;
+  border: 2px solid rgba(17, 33, 70, 0.2);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: center;
+  user-select: none;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.tipo-card:hover { border-color: rgba(17, 33, 70, 0.4); }
+
+.tipo-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.tipo-card:focus-within { outline: 3px solid var(--cm-link); outline-offset: 2px; }
+
+.tipo-card i { font-size: 1.4rem; color: var(--cm-muted); transition: color 0.2s; }
+.tipo-card span { font-weight: 700; font-size: 0.92rem; color: var(--cm-navy); }
+.tipo-card small { font-size: 0.78rem; color: var(--cm-muted); }
+
+.tipo-card.ativo { border-color: var(--cm-dourado); background: #fdf8ec; }
+.tipo-card.ativo i { color: var(--cm-dourado-tinta); }
+
+/* ===== Painel escuro do cadastro (só nesta página; o login usa o painel padrão do auth.css) ===== */
+.auth-card--cadastro { flex-direction: column; }
+
+.auth-card--cadastro .auth-info {
+  display: flex;
+  gap: 12px;
+  padding: 22px 24px 20px;
+}
+.auth-card--cadastro .auth-info h2 { margin: 0; font-size: 1.3rem; }
+.auth-card--cadastro .auth-info > ul:first-of-type,
+.auth-vitrine { display: none; }
+
+.auth-info .auth-tipos { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; }
+.auth-info .auth-tipos li {
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #e3e8ee;
+}
+.auth-info .auth-tipos li i { margin: 0; width: auto; color: #f3d27a; }
+
+@media (min-width: 1100px) {
+  .auth-card--cadastro { flex-direction: row; }
+  .auth-card--cadastro .auth-info { gap: 0; padding: 48px 44px; }
+  .auth-card--cadastro .auth-info h2 { margin-bottom: 24px; font-size: 2rem; }
+  .auth-card--cadastro .auth-info > ul:first-of-type { display: flex; }
+  .auth-info .auth-tipos { display: none; }
+
+  .auth-vitrine {
+    display: block;
+    position: relative;
+    cursor: default;
+    user-select: none;
+    height: 250px;
+    margin-top: 40px;
+  }
+}
+
+.vit-card {
+  --giro: 0deg;
+  position: absolute;
+  top: 26px;
+  width: 150px;
+  padding: 10px 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #0b2f3d;
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.35);
+  transform: rotate(var(--giro));
+  animation: vit-flutuar 7s ease-in-out infinite alternate;
+}
+.vit-card--1 { --giro: -8deg; left: 2%; animation-delay: -2s; }
+.vit-card--2 { --giro: 0deg; left: 50%; top: 0; z-index: 2; width: 164px; margin-left: -82px; background: #052c3a;
+               border-color: rgba(243, 210, 122, 0.35); animation-delay: -4s; }
+.vit-card--3 { --giro: 8deg; right: 2%; }
+
+.vit-capa {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 10;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 1.6rem;
+}
+.vit-capa--ebook    { background: linear-gradient(135deg, #d8b25a, #7a5716); }
+.vit-capa--curso    { background: linear-gradient(135deg, #447a8c, #15202c); }
+.vit-capa--template { background: linear-gradient(135deg, #728e9e, #234162); }
+
+.vit-tipo {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 8px;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #f3d27a;
+}
+.vit-linha { display: block; height: 7px; margin-bottom: 6px; border-radius: 4px; background: rgba(255, 255, 255, 0.2); }
+.vit-linha--curta { width: 62%; }
+.vit-rodape { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; }
+.vit-preco { width: 44px; height: 9px; border-radius: 4px; background: rgba(255, 255, 255, 0.55); }
+.vit-botao { flex: 1; max-width: 62px; height: 18px; border-radius: 6px; background: #a3c6d7; opacity: 0.85; }
+
+.vit-tag,
+.vit-entrega {
+  position: absolute;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+}
+.vit-tag { border: 1px solid rgba(255, 255, 255, 0.16); background: #18343b; color: #e3e8ee; }
+.vit-tag i { color: #f3d27a; }
+.vit-tag--1 { left: 0; bottom: 6px; }
+.vit-tag--2 { right: 0; top: 0; }
+.vit-entrega { right: 6%; bottom: 0; background: #fff; color: #112146; }
+.vit-entrega i { color: #7a5716; }
+
+@keyframes vit-flutuar {
+  from { transform: rotate(var(--giro)) translateY(0); }
+  to   { transform: rotate(var(--giro)) translateY(-8px); }
+}

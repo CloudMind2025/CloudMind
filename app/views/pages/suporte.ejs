@@ -1,0 +1,173 @@
+<%
+  const c = locals.campos || {};
+  const errosCampo = {};
+  (locals.listaErros || []).forEach(function (e) {
+    const chave = e.path || 'geral';
+    (errosCampo[chave] = errosCampo[chave] || []).push(e.msg);
+  });
+  const CATEGORIAS = { duvida: 'Dúvida', problema: 'Problema', sugestao: 'Sugestão', outro: 'Outro' };
+  const STATUS_TICKET = {
+    aberto:       { rotulo: 'Aberto',       classe: 'cm-badge--info' },
+    em_andamento: { rotulo: 'Em andamento', classe: 'cm-badge--aviso' },
+    pendente:     { rotulo: 'Pendente',     classe: 'cm-badge--roxo' },
+    resolvido:    { rotulo: 'Resolvido',    classe: 'cm-badge--ok' },
+    fechado:      { rotulo: 'Fechado',      classe: '' }
+  };
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Central de suporte', descricao: 'Tire dúvidas sobre a CloudMind ou envie um ticket para a nossa equipe de suporte.' }) %>
+  <link rel="stylesheet" href="/css/suporte.css">
+  <link rel="stylesheet" href="/css/barraspesquisa.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+
+  <main class="container" id="conteudo" tabindex="-1">
+    <!-- Boas-vindas -->
+    <section class="intro">
+      <h1>Como podemos te ajudar?</h1>
+      <p>Encontre respostas rápidas nas perguntas frequentes ou entre em contato com nossa equipe de suporte.</p>
+      <div class="search-bar" role="search">
+        <input type="text" placeholder="Pesquise por um problema, exemplo: pagamento, conta..." aria-label="Pesquisar na ajuda">
+        <button type="button" aria-label="Pesquisar"><i class="fa-solid fa-search" aria-hidden="true"></i></button>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="card faq" aria-labelledby="faq-titulo">
+      <h2 id="faq-titulo"><i class="fa-solid fa-circle-question" aria-hidden="true"></i> Perguntas frequentes</h2>
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-1">Como alterar minha senha? <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+        <div class="faq-answer" id="faq-1">
+          <p>Você pode alterar sua senha acessando a área de configurações da conta e clicando em "Alterar Senha".</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-2">Meu pagamento não foi aprovado, o que fazer? <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+        <div class="faq-answer" id="faq-2">
+          <p>Verifique com sua operadora de cartão e tente novamente. Caso persista, envie um ticket com os detalhes.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-3">Como mudo o nome de usuário? <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+        <div class="faq-answer" id="faq-3">
+          <p>No perfil, clique em "Configurações" e ao lado dos seus dados pessoais haverá um botão de edição.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Formulário de ticket -->
+    <section class="card form-card" id="ticket" aria-labelledby="ticket-titulo" tabindex="-1">
+      <h2 id="ticket-titulo"><i class="fa-solid fa-ticket" aria-hidden="true"></i> Enviar um ticket</h2>
+
+      <% if (locals.resultado) { %>
+        <p class="cm-alert cm-alert--sucesso" role="status"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> <span><%= resultado %></span></p>
+      <% } %>
+      <% if (errosCampo.geral) { %>
+        <p class="cm-alert cm-alert--erro" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span><%= errosCampo.geral[0] %></span></p>
+      <% } else if (Object.keys(errosCampo).length) { %>
+        <p class="cm-alert cm-alert--erro" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span>Confira os campos destacados abaixo.</span></p>
+      <% } %>
+
+      <form class="ticket-form" action="/suporte" method="POST" novalidate>
+        <div class="form-group">
+          <label for="tipo_chamada">Categoria</label>
+          <select id="tipo_chamada" name="tipo_chamada" required
+                  <% if (errosCampo.tipo_chamada) { %>aria-invalid="true" aria-describedby="tipo_chamada-erro"<% } %>>
+            <option value="">Selecione</option>
+            <% Object.keys(CATEGORIAS).forEach(function (valor) { %>
+              <option value="<%= valor %>" <%= c.tipo_chamada === valor ? 'selected' : '' %>><%= CATEGORIAS[valor] %></option>
+            <% }) %>
+          </select>
+          <% if (errosCampo.tipo_chamada) { %><span class="cm-erro-campo" id="tipo_chamada-erro"><%= errosCampo.tipo_chamada[0] %></span><% } %>
+        </div>
+        <div class="form-group">
+          <label for="descricao">Mensagem</label>
+          <textarea id="descricao" name="descricao" rows="5" minlength="20" maxlength="1000" required
+                    placeholder="Descreva seu problema ou dúvida com o máximo de detalhes (mínimo de 20 caracteres)."
+                    aria-describedby="descricao-contador<%= errosCampo.descricao ? ' descricao-erro' : '' %>"
+                    <% if (errosCampo.descricao) { %>aria-invalid="true"<% } %>><%= c.descricao || '' %></textarea>
+          <small class="contador" id="descricao-contador" aria-live="off">0/1000</small>
+          <% if (errosCampo.descricao) { %><span class="cm-erro-campo" id="descricao-erro"><%= errosCampo.descricao[0] %></span><% } %>
+        </div>
+        <div class="form-actions">
+          <button type="reset" class="cm-btn cm-btn--ghost">Limpar</button>
+          <button type="submit" class="cm-btn"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <span>Enviar ticket</span></button>
+        </div>
+      </form>
+    </section>
+
+    <% if (usuarioLogado) { %>
+      <section class="card tickets-section" id="meus-tickets" aria-labelledby="tickets-titulo" tabindex="-1">
+        <h2 id="tickets-titulo"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> Meus tickets recentes</h2>
+
+        <% if (locals.aviso) { %>
+          <p class="cm-alert cm-alert--aviso" role="status"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> <span><%= aviso %></span></p>
+        <% } %>
+
+        <% if (locals.erroTickets) { %>
+          <p class="cm-alert cm-alert--erro" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span>Não foi possível carregar seus tickets agora. Recarregue a página para tentar novamente.</span></p>
+        <% } else if (!tickets || !tickets.length) { %>
+          <div class="cm-empty">
+            <i class="fa-regular fa-comments" aria-hidden="true"></i>
+            <p>Você ainda não enviou nenhum ticket. Quando enviar, ele aparece aqui com o status do atendimento.</p>
+          </div>
+        <% } else { %>
+          <div class="cm-tabela-wrap">
+            <table class="tabela-tickets cm-tabela">
+              <thead>
+                <tr><th scope="col">Nº</th><th scope="col">Categoria</th><th scope="col">Mensagem</th><th scope="col">Status</th><th scope="col">Data</th><th scope="col"><span class="cm-sr">Ações</span></th></tr>
+              </thead>
+              <tbody>
+                <% tickets.forEach(function (ticket) {
+                     const st = STATUS_TICKET[ticket.status] || { rotulo: ticket.status, classe: '' }; %>
+                  <tr>
+                    <td data-rotulo="Nº">#<%= ticket.id_chamada %></td>
+                    <td data-rotulo="Categoria"><%= CATEGORIAS[ticket.tipo_chamada] || ticket.tipo_chamada %></td>
+                    <td data-rotulo="Mensagem" title="<%= ticket.descricao %>"><%= ticket.descricao && ticket.descricao.length > 60 ? ticket.descricao.substring(0, 60) + '…' : ticket.descricao %></td>
+                    <td data-rotulo="Status"><span class="cm-badge <%= st.classe %>"><%= st.rotulo %></span></td>
+                    <td data-rotulo="Data"><%= ticket.data_chamada ? moment(ticket.data_chamada).format('DD/MM/YYYY') : '-' %></td>
+                    <td data-rotulo="">
+                      <% if (ticket.status !== 'fechado' && ticket.status !== 'resolvido') { %>
+                        <form action="/suporte/cancelar" method="POST" data-confirmar="Cancelar o ticket #<%= ticket.id_chamada %>? A equipe deixará de atendê-lo.">
+                          <input type="hidden" name="id_chamada" value="<%= ticket.id_chamada %>">
+                          <button type="submit" class="cm-btn cm-btn--perigo cm-btn--pequeno">Cancelar</button>
+                        </form>
+                      <% } else { %>
+                        <span class="texto-muted">Encerrado</span>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </section>
+    <% } else { %>
+      <div class="login-hint">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <span><a href="/login?voltar=%2Fsuporte">Faça login</a> para acompanhar o histórico dos seus tickets de suporte.</span>
+      </div>
+    <% } %>
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <script>
+    document.querySelectorAll('.faq-question').forEach(function (botao) {
+      botao.addEventListener('click', function () {
+        var resposta = document.getElementById(botao.getAttribute('aria-controls'));
+        var aberto = botao.getAttribute('aria-expanded') === 'true';
+        botao.setAttribute('aria-expanded', String(!aberto));
+        resposta.style.maxHeight = aberto ? null : resposta.scrollHeight + 'px';
+      });
+    });
+  </script>
+  <script src="/js/validacao.js" defer></script>
+  <script src="/js/validaF_suporte.js" defer></script>
+  <script src="/js/validaF_barrapesquisa3.js" defer></script>
+</body>
+</html>

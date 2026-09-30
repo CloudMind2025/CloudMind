@@ -1,0 +1,86 @@
+<%
+  const total = imagens.length;
+  const varias = total > 1;
+  const altDe = i => i === 0 ? `Capa de ${produto.titulo}` : `${produto.titulo} — imagem ${i + 1} de ${total}`;
+%>
+<% if (total === 0) { %>
+  <div class="pd-gallery">
+    <div class="pd-gallery-stage pd-media pd-media--vazia" role="img" aria-label="Produto sem imagem de capa">
+      <div class="pd-media-fallback">
+        <i class="fa-solid <%= tipo.icone %>" aria-hidden="true"></i>
+        <span>Sem imagem de capa</span>
+      </div>
+    </div>
+  </div>
+<% } else { %>
+  <section class="pd-gallery<%= varias ? ' pd-gallery--varias' : '' %>" data-galeria
+           data-imagens="<%= JSON.stringify(imagens.map(i => urlMidia(i))) %>"
+           data-titulo="<%= produto.titulo %>"
+           <% if (varias) { %>aria-roledescription="carrossel"<% } %>
+           aria-label="Imagens de <%= produto.titulo %>">
+
+    <div class="pd-gallery-stage pd-media is-loading" data-galeria-palco
+         <% if (varias) { %>role="group" aria-roledescription="slide" aria-label="Imagem 1 de <%= total %>"<% } %>>
+      <button type="button" class="pd-gallery-open" data-galeria-ampliar
+              aria-label="Ampliar imagem 1 de <%= total %>" aria-haspopup="dialog">
+        <img src="<%= urlMidia(imagens[0]) %>" alt="<%= altDe(0) %>" fetchpriority="high" decoding="async" data-galeria-imagem>
+      </button>
+      <div class="pd-media-fallback" data-media-fallback hidden>
+        <i class="fa-solid <%= tipo.icone %>" aria-hidden="true"></i>
+        <span>Imagem indisponível</span>
+      </div>
+
+      <% if (varias) { %>
+        <span class="pd-gallery-counter" aria-hidden="true"><span data-galeria-numero>1</span> / <%= total %></span>
+      <% } %>
+    </div>
+
+    <% if (varias) { %>
+      <div class="pd-gallery-bar">
+        <ul class="pd-thumbs" data-galeria-miniaturas aria-label="Miniaturas">
+          <% imagens.forEach(function (img, i) { %>
+            <li>
+              <button type="button" class="pd-thumb" data-galeria-miniatura="<%= i %>"
+                      aria-label="Ver imagem <%= i + 1 %> de <%= total %>" aria-current="<%= i === 0 %>">
+                <img src="<%= urlMidia(img) %>" alt="" loading="lazy" decoding="async" fetchpriority="low">
+              </button>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+      <p class="pd-sr" aria-live="polite" data-galeria-anuncio></p>
+    <% } %>
+
+    <dialog class="pd-lightbox" data-lightbox aria-label="Imagens de <%= produto.titulo %> ampliadas">
+      <div class="pd-lightbox-bar">
+        <span class="pd-lightbox-counter" data-lightbox-numero><%= varias ? `1 / ${total}` : '' %></span>
+        <div class="pd-lightbox-tools">
+          <button type="button" class="pd-lightbox-btn" data-lightbox-menos aria-label="Diminuir zoom">
+            <i class="fa-solid fa-magnifying-glass-minus" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="pd-lightbox-btn" data-lightbox-mais aria-label="Aumentar zoom">
+            <i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="pd-lightbox-btn" data-lightbox-fechar aria-label="Fechar imagem ampliada" autofocus>
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+      <div class="pd-lightbox-stage" data-lightbox-palco>
+        <img class="pd-lightbox-img" data-lightbox-imagem alt="" draggable="false">
+      </div>
+      <% if (varias) { %>
+        <button type="button" class="pd-lightbox-arrow pd-lightbox-arrow--prev" data-lightbox-anterior aria-label="Imagem anterior">
+          <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="pd-lightbox-arrow pd-lightbox-arrow--next" data-lightbox-proxima aria-label="Próxima imagem">
+          <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+        </button>
+      <% } %>
+      <p class="pd-lightbox-hint">
+        <span class="pd-dica-mouse">Duplo clique ou roda do mouse para ampliar • arraste para mover • Esc fecha</span>
+        <span class="pd-dica-toque">Toque duplo ou pinça para ampliar • deslize para trocar de imagem</span>
+      </p>
+    </dialog>
+  </section>
+<% } %>

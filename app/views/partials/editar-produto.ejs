@@ -1,0 +1,205 @@
+<%
+  const ed = locals.edicao || null;
+  const prod = ed ? produtos.find(function (p) { return Number(p.id_produto) === Number(ed.id_produto); }) : null;
+  const c = ed && ed.campos ? ed.campos : (prod ? {
+    titulo: prod.titulo, tipo_produto: prod.tipo_produto, id_categoria: prod.categoria_legada ? '' : prod.id_categoria,
+    sku: prod.sku || '', preco: Number(prod.preco).toFixed(2).replace('.', ','), resumo: prod.resumo || '',
+    descricao: prod.descricao || '', detalhes: detalhesParaFormulario(prod.tipo_produto, prod.detalhes)
+  } : {});
+  const erros = ed ? (ed.erros || []) : [];
+  const incompleto = !!prod && (prod.categoria_legada || !detalhesCompletos(prod.tipo_produto, prod.detalhes));
+%>
+<dialog class="cm-dialog vend-editar" id="editar-produto" aria-labelledby="ve-titulo"
+        data-abrir="<%= ed ? (erros.length ? 'edicao' : 'revisao') : '' %>" <%= ed ? 'open' : '' %>>
+  <form class="cm-dialog-corpo" action="/produto/editar" method="POST" enctype="multipart/form-data" novalidate
+        data-ve-form data-formatos="<%= JSON.stringify(locals.formatosArquivo || {}) %>"
+        data-max-mb="<%= locals.tamanhoMaxImagemMb || 3 %>">
+
+    <input type="hidden" name="id_produto" value="<%= ed ? ed.id_produto : '' %>" data-ve-campo="id">
+
+    <header class="ve-cabecalho">
+      <img class="ve-capa" data-ve="capa" alt="" width="64" height="64"
+           <% if (prod && prod.imagem) { %>src="<%= urlMidia(prod.imagem) %>"<% } else { %>hidden<% } %>>
+      <div class="ve-cabecalho-texto">
+        <p class="ve-kicker"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Editar produto</p>
+        <h2 id="ve-titulo" data-ve="titulo-cabecalho" tabindex="-1"><%= prod ? prod.titulo : 'Produto' %></h2>
+        <p class="ve-meta" data-ve="meta"></p>
+      </div>
+      <% if (ed) { %>
+        <a class="ve-fechar" href="/admvend" aria-label="Fechar" data-ve-fechar><i class="fa-solid fa-xmark" aria-hidden="true"></i></a>
+      <% } else { %>
+        <button type="button" class="ve-fechar" aria-label="Fechar" data-ve-fechar><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+      <% } %>
+    </header>
+
+    <div class="cm-alert cm-alert--erro ve-erros" role="alert" data-ve-erros <%= erros.length ? '' : 'hidden' %>>
+      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+      <div>
+        <p>Não foi possível salvar. Corrija o que está abaixo:</p>
+        <ul><% erros.forEach(function (e) { %><li><%= e %></li><% }) %></ul>
+      </div>
+    </div>
+
+    <p class="ve-legado-aviso" data-ve="aviso-incompleto" <%= incompleto ? '' : 'hidden' %>>
+      <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+      <span>Este produto foi publicado antes das categorias por assunto e das informações do tipo.
+      <strong>Escolha uma categoria e complete as informações do tipo para salvar alterações.</strong></span>
+    </p>
+
+    <%# ===== REVISÃO (como a etapa 5 do Wizard) ===== %>
+    <div class="ve-revisao" data-ve-modo="revisao" hidden>
+      <p class="ve-alterado-aviso" data-ve="aviso-alterado" hidden>
+        <i class="fa-solid fa-pen" aria-hidden="true"></i> Há alterações ainda não salvas (destacadas abaixo).
+      </p>
+
+      <section class="ve-bloco" aria-labelledby="ve-rv-info">
+        <div class="ve-bloco-topo">
+          <h3 id="ve-rv-info"><span class="ve-icone" aria-hidden="true"><i class="fa-solid fa-tag"></i></span>Informações</h3>
+          <button type="button" class="cm-btn cm-btn--ghost cm-btn--pequeno" data-ve-editar="info">Editar<span class="cm-sr"> informações</span></button>
+        </div>
+        <dl class="ve-dl">
+          <dt>Tipo</dt><dd data-rv="tipo_produto">—</dd>
+          <dt>Título</dt><dd data-rv="titulo">—</dd>
+          <dt>Categoria</dt><dd data-rv="id_categoria">—</dd>
+          <dt>SKU</dt><dd data-rv="sku">—</dd>
+          <dt>Preço</dt><dd data-rv="preco">—</dd>
+        </dl>
+      </section>
+
+      <section class="ve-bloco" aria-labelledby="ve-rv-tipo">
+        <div class="ve-bloco-topo">
+          <h3 id="ve-rv-tipo"><span class="ve-icone" aria-hidden="true"><i class="fa-solid fa-list-check"></i></span>Informações do tipo</h3>
+          <button type="button" class="cm-btn cm-btn--ghost cm-btn--pequeno" data-ve-editar="tipo">Editar<span class="cm-sr"> informações do tipo</span></button>
+        </div>
+
+        <dl class="ve-dl" data-rv="detalhes"></dl>
+      </section>
+
+      <section class="ve-bloco" aria-labelledby="ve-rv-conteudo">
+        <div class="ve-bloco-topo">
+          <h3 id="ve-rv-conteudo"><span class="ve-icone" aria-hidden="true"><i class="fa-solid fa-align-left"></i></span>Conteúdo</h3>
+          <button type="button" class="cm-btn cm-btn--ghost cm-btn--pequeno" data-ve-editar="conteudo">Editar<span class="cm-sr"> conteúdo</span></button>
+        </div>
+        <dl class="ve-dl">
+          <dt>Resumo</dt><dd data-rv="resumo">—</dd>
+          <dt>Descrição</dt><dd data-rv="descricao" class="ve-descricao">—</dd>
+        </dl>
+      </section>
+
+      <section class="ve-bloco" aria-labelledby="ve-rv-midia">
+        <div class="ve-bloco-topo">
+          <h3 id="ve-rv-midia"><span class="ve-icone" aria-hidden="true"><i class="fa-solid fa-image"></i></span>Mídia</h3>
+          <button type="button" class="cm-btn cm-btn--ghost cm-btn--pequeno" data-ve-editar="midia">Editar<span class="cm-sr"> mídia</span></button>
+        </div>
+        <p class="ve-texto" data-rv="midia">—</p>
+      </section>
+
+      <section class="ve-bloco" aria-labelledby="ve-rv-arquivo">
+        <div class="ve-bloco-topo"><h3 id="ve-rv-arquivo"><span class="ve-icone" aria-hidden="true"><i class="fa-solid fa-file-arrow-down"></i></span>Arquivo do produto</h3></div>
+        <p class="ve-texto" data-rv="arquivo">—</p>
+      </section>
+
+      <div class="cm-dialog-acoes">
+        <button type="button" class="cm-btn cm-btn--ghost" data-ve-fechar>Fechar</button>
+        <button type="button" class="cm-btn cm-btn--ghost" data-ve-editar="info">Editar informações</button>
+        <button type="submit" class="cm-btn" data-ve="salvar-revisao" hidden><i class="fa-solid fa-check" aria-hidden="true"></i> Salvar alterações</button>
+      </div>
+    </div>
+
+    <%# ===== FORMULÁRIO ===== %>
+    <div class="ve-edicao" data-ve-modo="edicao">
+      <fieldset class="ve-bloco" id="ve-bloco-info">
+        <legend><span class="ve-icone" aria-hidden="true"><i class="fa-solid fa-tag"></i></span>Informações</legend>
+        <div class="cm-campo">
+          <label for="ve-tipo">Tipo de produto</label>
+          <select id="ve-tipo" name="tipo_produto" required data-ve-campo="tipo_produto">
+            <% TIPOS_CHAVES.forEach(function (t) { %>
+              <option value="<%= t %>" <%= c.tipo_produto === t ? 'selected' : '' %>><%= tipoProduto(t).rotulo %></option>
+            <% }) %>
+          </select>
+        </div>
+        <p class="cm-dica ve-formatos" data-ve="formatos" aria-live="polite"></p>
+
+        <div id="ve-bloco-tipo">
+          <%- include('produto/campos-tipo', {
+                prefixo: 've', tipoAtual: c.tipo_produto, idCategoriaAtual: c.id_categoria, detalhesAtuais: c.detalhes
+              }) %>
+        </div>
+
+        <div class="cm-campo">
+          <label for="ve-titulo-campo">Título</label>
+          <input id="ve-titulo-campo" name="titulo" type="text" required minlength="5" maxlength="100"
+                 value="<%= c.titulo || '' %>" data-ve-campo="titulo" aria-describedby="ve-titulo-dica">
+          <span class="cm-dica" id="ve-titulo-dica">De 5 a 100 caracteres.</span>
+        </div>
+
+        <div class="ve-linha">
+          <div class="cm-campo">
+            <label for="ve-preco">Preço (R$)</label>
+            <input id="ve-preco" name="preco" type="text" inputmode="decimal" required placeholder="0,00"
+                   value="<%= c.preco || '' %>" data-ve-campo="preco" aria-describedby="ve-preco-dica">
+            <span class="cm-dica" id="ve-preco-dica">Ex.: 39,90 ou 1.500,00.</span>
+          </div>
+          <div class="cm-campo">
+            <label for="ve-sku">SKU / Código <span class="ve-opcional">(opcional)</span></label>
+            <input id="ve-sku" name="sku" type="text" maxlength="20" value="<%= c.sku || '' %>" data-ve-campo="sku"
+                   aria-describedby="ve-sku-dica">
+            <span class="cm-dica" id="ve-sku-dica">3 a 20 letras ou números.</span>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="ve-bloco" id="ve-bloco-conteudo">
+        <legend><span class="ve-icone" aria-hidden="true"><i class="fa-solid fa-align-left"></i></span>Conteúdo</legend>
+        <div class="cm-campo">
+          <label for="ve-resumo">Resumo / Subtítulo <span class="ve-opcional">(opcional)</span></label>
+          <input id="ve-resumo" name="resumo" type="text" maxlength="150" value="<%= c.resumo || '' %>"
+                 data-ve-campo="resumo" aria-describedby="ve-resumo-dica">
+          <span class="cm-dica" id="ve-resumo-dica">De 10 a 150 caracteres. Aparece abaixo do título na página do produto.</span>
+        </div>
+        <div class="cm-campo">
+          <label for="ve-descricao">Descrição completa</label>
+          <textarea id="ve-descricao" name="descricao" rows="8" required minlength="20" maxlength="1000"
+                    data-ve-campo="descricao" aria-describedby="ve-descricao-dica"><%= c.descricao || '' %></textarea>
+          <span class="cm-dica" id="ve-descricao-dica">De 20 a 1000 caracteres. <span data-ve="contador"></span></span>
+        </div>
+      </fieldset>
+
+      <fieldset class="ve-bloco" id="ve-bloco-midia">
+        <legend><span class="ve-icone" aria-hidden="true"><i class="fa-solid fa-image"></i></span>Mídia</legend>
+
+        <p class="cm-label">Imagem principal <span class="ve-opcional">(opcional)</span></p>
+        <div class="ve-upload" data-ve="upload">
+          <div class="ve-upload-previa">
+            <img data-ve="previa" alt="" width="112" height="112"
+                 <% if (prod && prod.imagem) { %>src="<%= urlMidia(prod.imagem) %>"<% } else { %>hidden<% } %>>
+            <span class="ve-upload-selo" data-ve="upload-selo">Atual</span>
+          </div>
+          <div class="ve-upload-info">
+            <strong class="ve-upload-nome" data-ve="upload-nome">Capa atual do produto</strong>
+            <span class="cm-dica" id="ve-imagem-dica">Arraste uma imagem para cá ou escolha um arquivo. JPG ou PNG, até <%= locals.tamanhoMaxImagemMb || 3 %>MB. As imagens adicionais da galeria não mudam.</span>
+            <div class="ve-upload-acoes">
+              <label class="ve-upload-botao">
+                <i class="fa-solid fa-arrow-up-from-bracket" aria-hidden="true"></i> <span>Escolher nova imagem</span>
+                <input id="ve-imagem" name="imagem" type="file" accept="image/jpeg,image/png" data-ve-campo="imagem"
+                       class="ve-upload-input" aria-describedby="ve-imagem-dica">
+              </label>
+              <button type="button" class="ve-upload-desfazer" data-ve="upload-desfazer" hidden>
+                <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Manter a atual
+              </button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="cm-dialog-acoes">
+        <% if (ed) { %>
+          <a class="cm-btn cm-btn--ghost" href="/admvend" data-ve-voltar>Cancelar</a>
+        <% } else { %>
+          <button type="button" class="cm-btn cm-btn--ghost" data-ve-voltar>Voltar aos detalhes</button>
+        <% } %>
+        <button type="submit" class="cm-btn" data-ve="salvar"><i class="fa-solid fa-check" aria-hidden="true"></i> <span>Salvar alterações</span></button>
+      </div>
+    </div>
+  </form>
+</dialog>

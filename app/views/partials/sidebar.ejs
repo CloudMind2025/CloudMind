@@ -1,0 +1,117 @@
+<%
+  const caminhoSb = locals.caminhoAtual || '';
+  const uSb = locals.usuarioLogado || null;
+  const ativoSb = function (rotas) { return rotas.indexOf(caminhoSb) !== -1; };
+  const itensSb = !uSb ? [] : uSb.tipo === 'admin'
+    ? [
+        { href: '/paineladm',  icone: 'fa-chart-simple', rotulo: 'Painel ADM',         rotas: ['/paineladm'] },
+        { href: '/adm/cupons', icone: 'fa-ticket',       rotulo: 'Cupons de desconto', rotas: ['/adm/cupons'] }
+      ]
+    : [
+        { href: '/perfiluser',    icone: 'fa-user',         rotulo: 'Meu perfil',      rotas: ['/perfiluser', '/editardados', '/alterarsenha'] },
+        { href: '/minhascompras', icone: 'fa-bag-shopping', rotulo: 'Minhas compras',  rotas: ['/minhascompras', '/detalhepedido'] },
+        { href: '/meusdowloads',  icone: 'fa-download',     rotulo: 'Meus downloads',  rotas: ['/meusdowloads'] },
+        { href: '/favoritos',     icone: 'fa-star',         rotulo: 'Favoritos',       rotas: ['/favoritos'] },
+        { href: '/config',        icone: 'fa-gear',         rotulo: 'Configurações',   rotas: ['/config'] }
+      ].concat(uSb.tipo === 'criador'
+        ? [
+            { href: '/admvend',    icone: 'fa-chart-line', rotulo: 'Painel Vendas', rotas: ['/admvend', '/cdstraprod'] },
+            { href: '/perfilvend', icone: 'fa-store',      rotulo: 'Minha loja',    rotas: ['/pgpublica'] }
+          ]
+        : []);
+%>
+<aside class="sidebar" aria-label="Área da conta">
+  <header class="profile">
+    <figure class="avatar">
+      <% const fotoSb = uSb && urlFoto(uSb.foto); %>
+      <% if (fotoSb) { %>
+        <img src="<%= fotoSb %>" alt="Foto de perfil" class="avatar-img" width="90" height="90">
+      <% } else if (uSb && uSb.tipo === 'admin') { %>
+
+        <img src="/image/avatar-admin.svg" alt="Avatar padrão do administrador" class="avatar-img" width="90" height="90">
+      <% } else { %>
+        <i class="fa-solid fa-user" aria-hidden="true"></i>
+      <% } %>
+      <% if (uSb) { %>
+        <label class="avatar-edit" title="Alterar foto (JPG ou PNG, até 3MB)">
+          <i class="fa-solid fa-pen" aria-hidden="true"></i>
+          <input type="file" id="avatarInput" class="cm-sr" accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                 aria-label="Alterar foto de perfil (JPG ou PNG, até 3MB)">
+        </label>
+      <% } %>
+    </figure>
+    <p class="profile-nome"><%= uSb ? uSb.nome : 'Visitante' %></p>
+    <% if (uSb && uSb.tipo === 'admin') { %><p class="profile-papel"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Administrador</p><% } %>
+    <p class="avatar-status" id="avatarStatus" role="status" aria-live="polite" hidden></p>
+  </header>
+
+  <nav class="menuz" aria-label="Menu da conta">
+    <ul>
+      <% itensSb.forEach(function (item) { const ativo = ativoSb(item.rotas); %>
+        <li<% if (ativo) { %> class="active"<% } %>>
+          <a href="<%= item.href %>"<% if (ativo) { %> aria-current="page"<% } %>>
+            <i class="fa-solid <%= item.icone %>" aria-hidden="true"></i> <%= item.rotulo %>
+          </a>
+        </li>
+      <% }) %>
+      <% if (uSb) { %>
+        <li class="sidebar-sair"><a href="/logout" class="sidebar-logout"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Sair</a></li>
+      <% } %>
+    </ul>
+  </nav>
+</aside>
+
+<script>
+(function () {
+  var input = document.getElementById('avatarInput');
+  if (!input) return;
+  var status = document.getElementById('avatarStatus');
+  var rotulo = input.closest('label');
+
+  function avisar(texto, erro) {
+    status.textContent = texto;
+    status.className = 'avatar-status' + (erro ? ' is-erro' : ' is-ok');
+    status.hidden = false;
+    clearTimeout(avisar.t);
+    avisar.t = setTimeout(function () { status.hidden = true; }, erro ? 7000 : 4000);
+  }
+
+  input.addEventListener('change', async function () {
+    var arquivo = this.files[0];
+    if (!arquivo) return;
+    if (!/\.(jpe?g|png)$/i.test(arquivo.name)) { avisar('Use uma imagem JPG ou PNG.', true); this.value = ''; return; }
+    if (arquivo.size > 3 * 1024 * 1024) { avisar('A imagem passa de 3MB. Escolha uma menor.', true); this.value = ''; return; }
+
+    var formData = new FormData();
+    formData.append('foto', arquivo);
+    rotulo.classList.add('is-enviando');
+    rotulo.setAttribute('aria-busy', 'true');
+    avisar('Enviando foto…', false);
+    try {
+      var res = await fetch('/perfil/foto', { method: 'POST', body: formData, headers: { Accept: 'application/json' } });
+      var data = await res.json().catch(function () { return {}; });
+      if (!res.ok || !data.foto) throw new Error(data.erro || 'Não foi possível salvar a foto. Tente novamente.');
+
+      var fig = document.querySelector('.sidebar .avatar');
+      var img = fig.querySelector('.avatar-img');
+      if (!img) {
+        var icone = fig.querySelector('i.fa-user');
+        if (icone) icone.remove();
+        img = document.createElement('img');
+        img.className = 'avatar-img';
+        img.alt = 'Foto de perfil';
+        fig.insertBefore(img, fig.querySelector('.avatar-edit'));
+      }
+      img.src = data.foto;
+      document.querySelectorAll('[data-avatar-menu]').forEach(function (el) { el.src = data.foto; });
+      avisar('Foto atualizada.', false);
+    } catch (e) {
+      avisar(e.message, true);
+    } finally {
+      rotulo.classList.remove('is-enviando');
+      rotulo.removeAttribute('aria-busy');
+      input.value = '';
+    }
+  });
+})();
+</script>

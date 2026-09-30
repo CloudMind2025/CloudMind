@@ -1,0 +1,44 @@
+<%
+  const nomeTipo = tipo.rotulo.toLowerCase();
+  const comprado = jaComprou && !ehDono;
+  const arquivoTexto = produto.formato_arquivo ? `O arquivo (${produto.formato_arquivo})` : 'O arquivo';
+  const passos = [
+    { icone: 'fa-cart-shopping', titulo: comprado ? 'Pedido feito' : 'Compre',
+      texto: comprado ? 'Seu pedido deste produto foi finalizado.' : 'Adicione ao carrinho e finalize o pedido.' },
+    { icone: 'fa-circle-check', titulo: comprado ? 'Pagamento aprovado' : 'Pagamento confirmado',
+      texto: comprado ? 'O acesso ao arquivo já está liberado para você.' : 'O acesso é liberado assim que o pagamento é aprovado.' },
+    { icone: 'fa-download', titulo: comprado ? 'Já está com você' : 'Baixe quando quiser',
+      texto: null }
+  ];
+%>
+<section class="pd-overview" aria-labelledby="pd-overview-titulo">
+  <h2 class="pd-overview-title" id="pd-overview-titulo">
+    <% if (comprado) { %>
+      Você já tem este <%= nomeTipo %>
+    <% } else if (ehDono) { %>
+      Como os compradores recebem este <%= nomeTipo %>
+    <% } else { %>
+      Como você recebe este <%= nomeTipo %>
+    <% } %>
+  </h2>
+
+  <ol class="pd-steps">
+    <% passos.forEach(function (p, i) { %>
+      <li class="pd-step<%= comprado ? ' is-feito' : '' %>">
+        <span class="pd-step-icone" aria-hidden="true">
+          <i class="fa-solid <%= comprado ? 'fa-check' : p.icone %>"></i>
+        </span>
+        <div>
+          <p class="pd-step-titulo"><span class="pd-sr">Passo <%= i + 1 %>: </span><%= p.titulo %></p>
+          <p class="pd-step-texto">
+            <% if (i === 2) { %>
+              <%= arquivoTexto %> fica em <a class="pd-link" href="/meusdowloads">Meus downloads</a> — baixe de novo sempre que precisar.
+            <% } else { %>
+              <%= p.texto %>
+            <% } %>
+          </p>
+        </div>
+      </li>
+    <% }) %>
+  </ol>
+</section>

@@ -1,0 +1,26 @@
+.perfil-grade { display: grid; gap: 18px; }
+
+.perfil-dados { display: grid; gap: 10px; }
+.perfil-dados div { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.perfil-dados dt { font-weight: 700; color: var(--cm-navy); min-width: 130px; }
+.perfil-dados dd { color: var(--cm-texto); overflow-wrap: anywhere; }
+.perfil-dados a { color: var(--cm-link); }
+
+.perfil-bloco-topo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.perfil-bloco-topo h2 { display: flex; align-items: center; gap: 8px; font-size: 1.1rem; color: var(--cm-navy); }
+.perfil-bloco-topo h2 i { color: var(--cm-dourado-tinta); }
+
+.perfil-bloco p { color: var(--cm-texto-suave); margin-bottom: 14px; }
+
+@media (min-width: 900px) {
+  .perfil-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .perfil-grade > :first-child { grid-column: 1 / -1; }
+}

@@ -1,0 +1,63 @@
+<%
+  const c = locals.campos || {};
+  const errosCampo = {};
+  (locals.listaErros || []).forEach(function (e) {
+    const chave = e.path || e.param || 'geral';
+    (errosCampo[chave] = errosCampo[chave] || []).push(e.msg);
+  });
+  const valor = function (campo) { return c[campo] !== undefined ? c[campo] : (usuario ? usuario[campo] : ''); };
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Editar dados pessoais', noindex: true }) %>
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/conta.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+  <%- include('../partials/sidebar') %>
+
+  <main class="conta-main" id="conteudo" tabindex="-1">
+    <%- include('../partials/btnV', { voltarPara: '/perfiluser' }) %>
+    <header class="page-header">
+      <h1>Editar dados pessoais</h1>
+      <p>Atualize seu nome e e-mail. Eles aparecem nos seus pedidos e nas avaliações que você publicar.</p>
+    </header>
+
+    <% if (resultado) { %>
+      <p class="cm-alert cm-alert--sucesso" role="status"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> <span><%= resultado %> <a href="/perfiluser">Voltar ao perfil</a></span></p>
+    <% } %>
+    <% if (errosCampo.geral) { %>
+      <p class="cm-alert cm-alert--erro" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span><%= errosCampo.geral[0] %></span></p>
+    <% } %>
+
+    <section class="conta-bloco">
+      <form class="conta-form dados-form" action="/editardados" method="POST" novalidate>
+        <div class="cm-campo">
+          <label for="nome">Nome completo</label>
+          <input type="text" id="nome" name="nome" autocomplete="name" maxlength="50" required
+                 value="<%= valor('nome') %>" placeholder="Ex.: João da Silva"
+                 <% if (errosCampo.nome) { %>aria-invalid="true" aria-describedby="nome-erro-srv"<% } %>>
+          <% if (errosCampo.nome) { %><span class="cm-erro-campo" id="nome-erro-srv"><%= errosCampo.nome[0] %></span><% } %>
+        </div>
+
+        <div class="cm-campo">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email" autocomplete="email" required
+                 value="<%= valor('email') %>" placeholder="nome@email.com"
+                 <% if (errosCampo.email) { %>aria-invalid="true" aria-describedby="email-erro-srv"<% } %>>
+          <% if (errosCampo.email) { %><span class="cm-erro-campo" id="email-erro-srv"><%= errosCampo.email[0] %></span><% } %>
+        </div>
+
+        <button type="submit" class="cm-btn"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> <span>Salvar alterações</span></button>
+      </form>
+    </section>
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <script src="/js/validacao.js" defer></script>
+  <script src="/js/validaF_editardados.js" defer></script>
+</body>
+</html>

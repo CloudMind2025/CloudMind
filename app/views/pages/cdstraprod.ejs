@@ -1,0 +1,315 @@
+<%
+  const c = locals.campos || {};
+  const voltouComErro = !!(locals.listaErros && listaErros.length > 0);
+  const TIPOS_WZ = (locals.configTipos && configTipos.tipos) || {};
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Publicar novo produto', noindex: true }) %>
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/cdstraprod.css">
+  <link rel="stylesheet" href="/css/wizard-cdstraprod.css">
+  <link rel="stylesheet" href="/css/campos-tipo.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+  <%- include('../partials/sidebar') %>
+
+  <main class="main" id="conteudo" tabindex="-1">
+    <%- include('../partials/btnV', { voltarPara: '/admvend' }) %>
+
+    <% if (voltouComErro) { %>
+      <div class="cm-alert cm-alert--erro" role="alert">
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+        <div>
+          <p>Não foi possível publicar. Corrija o que está abaixo:</p>
+          <ul><% listaErros.forEach(function(e){ %><li><%= e.msg %></li><% }) %></ul>
+          <p><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Os dados digitados foram mantidos. Por segurança, o navegador não guarda arquivos entre envios:
+          selecione de novo as imagens (etapa 3) e o arquivo do produto (etapa 4).</p>
+        </div>
+      </div>
+    <% } %>
+
+    <section class="page-header">
+      <h1>Publicar novo produto</h1>
+      <p class="muted" id="wizard-intro">Comece pelo tipo: ele define a categoria, as informações pedidas e o arquivo aceito.</p>
+    </section>
+
+    <!-- ===== BARRA DE PROGRESSO ===== -->
+    <nav class="wizard-progress" aria-label="Progresso do cadastro">
+      <ol class="wizard-progress-track" id="wizard-track">
+        <li class="wp-step is-current" data-step="1" aria-current="step">
+          <span class="wp-dot"><span class="wp-num">1</span><i class="fa-solid fa-check wp-check"></i></span>
+          <span class="wp-label">Tipo</span>
+        </li>
+        <li class="wp-step" data-step="2">
+          <span class="wp-dot"><span class="wp-num">2</span><i class="fa-solid fa-check wp-check"></i></span>
+          <span class="wp-label">Informações</span>
+        </li>
+        <li class="wp-step" data-step="3">
+          <span class="wp-dot"><span class="wp-num">3</span><i class="fa-solid fa-check wp-check"></i></span>
+          <span class="wp-label">Mídia</span>
+        </li>
+        <li class="wp-step" data-step="4">
+          <span class="wp-dot"><span class="wp-num">4</span><i class="fa-solid fa-check wp-check"></i></span>
+          <span class="wp-label" id="wp-label-4">Arquivo</span>
+        </li>
+        <li class="wp-step" data-step="5">
+          <span class="wp-dot"><span class="wp-num">5</span><i class="fa-solid fa-check wp-check"></i></span>
+          <span class="wp-label">Revisão</span>
+        </li>
+      </ol>
+      <p class="wizard-progress-mobile">
+        <strong>Etapa <span id="wp-current-num">1</span> de 5</strong> — <span id="wp-current-label">Tipo</span>
+        <span class="wp-bar-track"><span class="wp-bar-fill" id="wp-bar-fill" style="width:0%"></span></span>
+      </p>
+    </nav>
+
+    <form id="product-form" class="product-form wizard-form" action="/cdstraprod" method="POST" enctype="multipart/form-data" novalidate
+          data-com-erros="<%= voltouComErro %>">
+
+      <div class="wizard-layout">
+        <section class="panel wizard-panel">
+
+          <!-- ===== ETAPA 1 — TIPO, CATEGORIA E INFORMAÇÕES DO TIPO ===== -->
+          <fieldset class="wizard-step" data-step="1" tabindex="-1">
+            <legend class="wizard-step-title">Que tipo de produto você vai vender?</legend>
+            <p class="muted wizard-step-sub">O tipo define a categoria, as informações pedidas e os formatos de arquivo aceitos.</p>
+
+            <label class="field-label" id="type-group-label">Tipo de produto <span class="required">*</span></label>
+            <div class="type-cards" id="type-cards" role="radiogroup" aria-labelledby="type-group-label" aria-describedby="type-error">
+              <% Object.keys(TIPOS_WZ).forEach(function (chave) { const t = TIPOS_WZ[chave]; %>
+                <label class="type-card">
+                  <input type="radio" name="tipo_produto" value="<%= chave %>" class="type-card-input" <%= c.tipo_produto === chave ? 'checked' : '' %>>
+                  <i class="fa-solid <%= t.icone %>" aria-hidden="true"></i><span><%= t.rotulo %></span>
+                </label>
+              <% }) %>
+            </div>
+            <small class="field-error type-error" id="type-error" role="alert" style="display:none;">Selecione um tipo de produto para continuar.</small>
+
+            <%- include('../partials/produto/campos-tipo', {
+                  prefixo: 'wz', tipoAtual: c.tipo_produto, idCategoriaAtual: c.id_categoria, detalhesAtuais: c.detalhes
+                }) %>
+          </fieldset>
+
+          <!-- ===== ETAPA 2 — INFORMAÇÕES GERAIS ===== -->
+          <fieldset class="wizard-step" data-step="2" tabindex="-1" hidden>
+            <legend class="wizard-step-title">Apresente o seu produto</legend>
+            <p class="muted wizard-step-sub">Título, preço e a descrição que vai convencer o cliente a comprar.</p>
+
+            <label for="title" class="field-label">Título do produto <span class="required">*</span>
+              <input id="title" name="titulo" type="text" placeholder="Ex.: Curso 'Frontend do Zero'" required minlength="5" maxlength="100" value="<%= c.titulo || '' %>">
+            </label>
+
+            <div class="inline-row">
+
+              <label for="price" class="field-label">Preço (R$) <span class="required">*</span>
+                <input id="price" name="preco" inputmode="decimal" type="text" placeholder="0,00" required value="<%= c.preco || '' %>">
+              </label>
+
+              <label for="sku" class="field-label">SKU / Código
+                <input id="sku" name="sku" type="text" placeholder="Opcional" value="<%= c.sku || '' %>">
+              </label>
+            </div>
+
+            <label for="short-desc" class="field-label">Resumo / Subtítulo <span class="muted small">(opcional, 10 a 150 caracteres)</span>
+              <input id="short-desc" name="resumo" type="text" maxlength="150" placeholder="Uma frase que aparece abaixo do título na página do produto" value="<%= c.resumo || '' %>">
+            </label>
+
+            <label for="description" class="field-label">Descrição completa <span class="required">*</span>
+              <textarea id="description" name="descricao" rows="10" maxlength="1000" placeholder="Detalhe conteúdo, o que inclui, público-alvo..." required><%= c.descricao || '' %></textarea>
+            </label>
+            <small class="muted small">Entre 20 e 1000 caracteres.</small>
+          </fieldset>
+
+          <!-- ===== ETAPA 3 — MÍDIA ===== -->
+          <fieldset class="wizard-step" data-step="3" tabindex="-1" hidden>
+            <legend class="wizard-step-title">Imagens do produto</legend>
+            <p class="muted wizard-step-sub">A imagem principal é a capa do produto. As adicionais aparecem na galeria da página do produto, na ordem abaixo.</p>
+
+            <h3 class="media-subtitle">Imagem principal <span class="required">*</span></h3>
+            <div class="upload-area" id="images-drop">
+              <input id="images" name="imagem" type="file" accept="image/jpeg,image/png" required hidden>
+
+              <div class="upload-empty" id="images-empty">
+                <i class="fa-solid fa-image upload-icon"></i>
+                <p><strong id="images-label-text">Arraste uma imagem aqui ou selecione um arquivo</strong></p>
+                <p class="muted small">JPG ou PNG • até <%= locals.tamanhoMaxImagemMb || 3 %>MB</p>
+                <button type="button" class="btn ghost small" id="images-browse-btn">Selecionar arquivo</button>
+              </div>
+
+              <div class="upload-filled" id="images-filled" hidden>
+                <div class="media-principal-preview">
+                  <img id="images-preview" alt="Pré-visualização da imagem principal">
+                  <span class="media-badge"><i class="fa-solid fa-star" aria-hidden="true"></i> Principal</span>
+                </div>
+                <div class="upload-file-info">
+                  <strong id="images-filename"></strong>
+                  <span class="muted small" id="images-filesize"></span>
+                </div>
+                <div class="upload-file-actions">
+                  <button type="button" class="btn ghost small" id="images-replace-btn">Substituir</button>
+                  <button type="button" class="btn ghost small danger" id="images-remove-btn">Remover</button>
+                </div>
+              </div>
+            </div>
+            <small class="field-error" id="images-error" role="alert" style="display:none;"></small>
+
+            <div class="media-extra" id="media-extra" data-max="<%= locals.maxImagensAdicionais || 7 %>">
+              <h3 class="media-subtitle">
+                Imagens adicionais
+                <span class="muted small">(opcional • até <%= locals.maxImagensAdicionais || 7 %>)</span>
+                <span class="muted small media-count" id="media-count" aria-live="polite"></span>
+              </h3>
+              <input id="images-extra" name="imagens_adicionais" type="file" accept="image/jpeg,image/png" multiple hidden>
+              <input id="images-picker" type="file" accept="image/jpeg,image/png" multiple hidden>
+
+              <ul class="media-grid" id="media-extra-list" aria-label="Imagens adicionais, na ordem da galeria"></ul>
+              <button type="button" class="media-add" id="media-add-btn">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i> Adicionar imagens
+              </button>
+              <p class="muted small media-hint">Arraste imagens para esta área ou use o botão. Use as setas para mudar a ordem e a estrela para escolher a principal.</p>
+              <small class="field-error" id="images-extra-error" role="alert" style="display:none;"></small>
+              <span class="media-sr" id="media-status" aria-live="polite"></span>
+            </div>
+            <p class="muted small" id="media-sem-suporte" hidden>
+              <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+              Seu navegador não permite montar a galeria aqui: o produto será publicado apenas com a imagem principal.
+            </p>
+          </fieldset>
+
+          <!-- ===== ETAPA 4 — ARQUIVO / CONFIGURAÇÃO ===== -->
+          <fieldset class="wizard-step" data-step="4" tabindex="-1" hidden>
+            <legend class="wizard-step-title" id="step4-title">Arquivo do produto</legend>
+            <p class="muted wizard-step-sub" id="step4-sub">Envie o arquivo que será entregue ao cliente.</p>
+
+            <div class="upload-area" id="content-drop"
+                 data-formatos="<%= JSON.stringify(locals.formatosArquivo || {}) %>"
+                 data-max-mb="<%= locals.tamanhoMaxArquivoMb || 100 %>">
+              <input id="content-file" name="arquivo" type="file" hidden aria-describedby="content-hint content-error">
+
+              <div class="upload-empty" id="content-empty">
+                <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                <p><strong id="content-label-text">Adicione o arquivo do produto</strong></p>
+                <p class="muted small" id="content-hint">Esse arquivo será disponibilizado ao cliente após a compra.</p>
+                <button type="button" class="btn ghost small" id="content-browse-btn">Selecionar arquivo</button>
+              </div>
+
+              <div class="upload-filled" id="content-filled" hidden>
+                <i class="fa-solid fa-file-lines upload-file-icon"></i>
+                <div class="upload-file-info">
+                  <strong id="content-filename"></strong>
+                  <span class="muted small" id="content-filesize"></span>
+                  <span class="upload-status success"><i class="fa-solid fa-circle-check"></i> Pronto</span>
+                </div>
+                <div class="upload-file-actions">
+                  <button type="button" class="btn ghost small" id="content-replace-btn">Substituir</button>
+                  <button type="button" class="btn ghost small danger" id="content-remove-btn">Remover</button>
+                </div>
+              </div>
+            </div>
+            <small class="field-error" id="content-error" role="alert" style="display:none;"></small>
+            <small class="muted small" style="display:block;margin-top:10px;">
+              <i class="fa-solid fa-lock"></i> <span id="content-formats">Escolha o tipo de produto na etapa 1 para ver os formatos aceitos.</span>
+              O arquivo fica protegido e só é liberado para quem comprar.
+            </small>
+          </fieldset>
+
+          <!-- ===== ETAPA 5 — REVISÃO ===== -->
+          <div class="wizard-step wizard-review" data-step="5" tabindex="-1" hidden>
+            <div class="review-header">
+              <h2>Seu produto está pronto para publicação</h2>
+              <p class="muted">Revise as informações abaixo antes de publicar.</p>
+            </div>
+
+            <ul class="review-checklist" id="review-checklist">
+              <li data-check="info"><i class="fa-solid fa-circle-check"></i> Tipo, categoria e informações do tipo</li>
+              <li data-check="content"><i class="fa-solid fa-circle-check"></i> Título, preço e descrição</li>
+              <li data-check="image"><i class="fa-solid fa-circle-check"></i> Imagem adicionada</li>
+              <li data-check="file"><i class="fa-solid fa-circle-check"></i> Arquivo do produto adicionado</li>
+            </ul>
+
+            <div class="review-block">
+              <div class="review-block-header">
+                <h3>Tipo e categoria</h3>
+                <button type="button" class="btn ghost small review-edit" data-goto="1">Editar</button>
+              </div>
+
+              <dl class="review-dl" id="rv-tipo-dl">
+                <dt>Tipo</dt><dd id="rv-type">—</dd>
+              </dl>
+            </div>
+
+            <div class="review-block">
+              <div class="review-block-header">
+                <h3>Informações</h3>
+                <button type="button" class="btn ghost small review-edit" data-goto="2">Editar</button>
+              </div>
+              <dl class="review-dl">
+                <dt>Título</dt><dd id="rv-title">—</dd>
+                <dt>Preço</dt><dd id="rv-price">—</dd>
+                <dt>SKU</dt><dd id="rv-sku">—</dd>
+                <dt>Resumo</dt><dd id="rv-resumo">—</dd>
+                <dt>Descrição</dt><dd id="rv-description">—</dd>
+              </dl>
+            </div>
+
+            <div class="review-block">
+              <div class="review-block-header">
+                <h3>Mídia</h3>
+                <button type="button" class="btn ghost small review-edit" data-goto="3">Editar</button>
+              </div>
+              <div id="rv-image-wrap" class="muted small">Nenhuma imagem adicionada.</div>
+            </div>
+
+            <div class="review-block">
+              <div class="review-block-header">
+                <h3 id="rv-file-title">Conteúdo digital</h3>
+                <button type="button" class="btn ghost small review-edit" data-goto="4">Editar</button>
+              </div>
+              <div id="rv-file-wrap" class="muted small">Nenhum arquivo adicionado.</div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ===== PAINEL LATERAL (resumo — só relevante na revisão) ===== -->
+        <aside class="panel panel-right wizard-side" aria-label="Resumo do produto">
+          <section class="card summary-card">
+            <h2>Resumo</h2>
+            <dl class="summary-line"><dt>Preço (R$)</dt><dd id="summary-price">0,00</dd></dl>
+            <p class="muted small">Produto digital: entrega em Meus downloads, sem estoque.</p>
+          </section>
+
+          <section class="card save-status-card">
+            <p class="save-status" id="save-status" role="status" aria-live="polite"><i class="fa-regular fa-circle"></i> Nenhuma alteração ainda</p>
+          </section>
+
+          <section class="card help-card">
+            <h3><i class="fa-solid fa-lightbulb"></i> Dicas rápidas</h3>
+            <ul>
+              <li>Use imagens nítidas e capa principal.</li>
+              <li>Descreva benefícios e formato do produto.</li>
+            </ul>
+          </section>
+        </aside>
+      </div>
+
+      <!-- ===== NAVEGAÇÃO INFERIOR ===== -->
+      <div class="wizard-nav">
+        <button type="button" class="btn ghost btn-back" id="wizard-back-btn" aria-label="Voltar edição da etapa anterior"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Voltar edição</button>
+        <button type="button" class="btn primary" id="wizard-next-btn" aria-label="Continuar para a próxima etapa">Continuar <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+        <button type="submit" class="btn primary" id="publish-btn" hidden><i class="fa-solid fa-check" aria-hidden="true"></i> Publicar produto</button>
+      </div>
+    </form>
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/js/detalhes-produto.js"></script>
+  <script src="/js/wizard-cdstraprod.js"></script>
+
+</body>
+</html>

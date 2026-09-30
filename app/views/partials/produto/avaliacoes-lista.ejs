@@ -1,0 +1,53 @@
+<%
+  const temAvaliacoes = !!resumoAvaliacoes && resumoAvaliacoes.total > 0;
+  const podeAvaliar = jaComprou && !ehDono;
+%>
+<% if (temAvaliacoes || podeAvaliar) { %>
+  <section class="pd-reviews pd-surface" id="avaliacoes" aria-labelledby="pd-reviews-titulo">
+    <h2 id="pd-reviews-titulo" class="pd-section-title">O que os compradores acharam</h2>
+
+    <% if (podeAvaliar) { %>
+      <%- include('avaliar') %>
+    <% } %>
+
+    <% if (avaliacoes === null) { %>
+      <p class="pd-alert pd-alert--erro" role="alert">
+        <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+        Não foi possível carregar as avaliações agora. Recarregue a página para tentar novamente.
+      </p>
+    <% } else if (temAvaliacoes) { %>
+      <ol class="pd-review-list">
+        <% avaliacoes.forEach(function (a) { %>
+          <li class="pd-review">
+            <div class="pd-review-head">
+              <% if (a.nota) { %>
+                <span class="pd-stars" aria-hidden="true">
+                  <% estrelas(a.nota).forEach(function (e) { %><i class="<%= e === 'vazia' ? 'fa-regular' : 'fa-solid' %> fa-star"></i><% }) %>
+                </span>
+                <span class="pd-sr">Nota <%= a.nota %> de 5.</span>
+              <% } %>
+              <% if (a.compra_verificada) { %>
+                <span class="pd-badge"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Compra verificada</span>
+              <% } %>
+            </div>
+            <% if (a.comentario) { %>
+              <p class="pd-review-text"><%= a.comentario %></p>
+            <% } %>
+            <p class="pd-review-meta">
+              <%= nomePublico(a.nome_cliente) %> ·
+              <time datetime="<%= moment(a.data_avaliacao).format('YYYY-MM-DD') %>"><%= moment(a.data_avaliacao).format('DD/MM/YYYY') %></time>
+            </p>
+          </li>
+        <% }) %>
+      </ol>
+
+      <% if (!todasAvaliacoes && resumoAvaliacoes.total > avaliacoes.length) { %>
+        <a class="pd-btn pd-btn--ghost" href="/paginnerprod?id=<%= produto.id_produto %>&amp;avaliacoes=todas#avaliacoes">
+          Mostrar todas as <%= resumoAvaliacoes.total %> avaliações
+        </a>
+      <% } else if (resumoAvaliacoes.total > avaliacoes.length) { %>
+        <p class="pd-muted">Mostrando as <%= avaliacoes.length %> avaliações mais recentes.</p>
+      <% } %>
+    <% } %>
+  </section>
+<% } %>

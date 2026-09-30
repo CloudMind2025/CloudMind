@@ -1,0 +1,50 @@
+<%
+  const flash = flashAvaliacao || null;
+  const notaAtual = flash && flash.tipo === 'erro' && flash.nota ? Number(flash.nota) : (minhaAvaliacao ? Number(minhaAvaliacao.nota) : 0);
+  const textoAtual = flash && flash.tipo === 'erro' && flash.texto !== undefined ? flash.texto : (minhaAvaliacao && minhaAvaliacao.comentario) || '';
+  const ROTULOS = ['', 'Ruim', 'Regular', 'Bom', 'Muito bom', 'Excelente'];
+%>
+<form class="pd-review-form" id="avaliar" action="/produto/avaliar" method="POST" novalidate data-form-avaliacao>
+  <input type="hidden" name="id_produto" value="<%= produto.id_produto %>">
+  <h3 class="pd-review-form-title"><%= minhaAvaliacao ? 'Sua avaliação' : 'Avalie este produto' %></h3>
+
+  <% if (flash) { %>
+    <p class="pd-alert pd-alert--<%= flash.tipo %>" role="<%= flash.tipo === 'erro' ? 'alert' : 'status' %>" tabindex="-1" data-flash>
+      <i class="fa-solid <%= flash.tipo === 'erro' ? 'fa-circle-exclamation' : 'fa-circle-check' %>" aria-hidden="true"></i>
+      <%= flash.msg %>
+    </p>
+  <% } %>
+
+  <fieldset class="pd-rating-input" aria-describedby="pd-nota-erro">
+    <legend class="pd-label">
+      Sua nota
+      <span class="pd-muted" data-nota-texto><%= notaAtual ? `${notaAtual} de 5 — ${ROTULOS[notaAtual]}` : '' %></span>
+    </legend>
+    <div class="pd-rating-options">
+      <% for (let n = 1; n <= 5; n++) { %>
+        <input type="radio" class="pd-sr" id="pd-nota-<%= n %>" name="nota" value="<%= n %>"
+               data-rotulo="<%= ROTULOS[n] %>" <%= notaAtual === n ? 'checked' : '' %> required>
+        <label for="pd-nota-<%= n %>" title="<%= n %> de 5 — <%= ROTULOS[n] %>">
+          <i class="fa-regular fa-star pd-star-off" aria-hidden="true"></i>
+          <i class="fa-solid fa-star pd-star-on" aria-hidden="true"></i>
+          <span class="pd-sr"><%= n %> <%= n === 1 ? 'estrela' : 'estrelas' %> — <%= ROTULOS[n] %></span>
+        </label>
+      <% } %>
+    </div>
+  </fieldset>
+  <p id="pd-nota-erro" class="pd-field-error" hidden></p>
+
+  <label for="pd-comentario" class="pd-label">Comentário <span class="pd-muted">(opcional)</span></label>
+  <textarea id="pd-comentario" name="comentario" rows="3" maxlength="1000"
+            placeholder="Conte o que achou do conteúdo, do formato e se ele cumpriu o que prometia."
+            aria-describedby="pd-comentario-contador"
+            data-contador="pd-comentario-contador"><%= textoAtual %></textarea>
+  <div class="pd-form-meta">
+    <small class="pd-muted">Sua avaliação aparece com seu primeiro nome e a inicial do sobrenome.</small>
+    <small id="pd-comentario-contador" class="pd-muted" aria-live="off">0/1000</small>
+  </div>
+
+  <button type="submit" class="pd-btn pd-btn--dark">
+    <i class="fa-regular fa-star" aria-hidden="true"></i> <%= minhaAvaliacao ? 'Atualizar avaliação' : 'Publicar avaliação' %>
+  </button>
+</form>

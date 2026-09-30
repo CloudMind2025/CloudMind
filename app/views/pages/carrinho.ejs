@@ -1,0 +1,160 @@
+<%
+  const lista = itens || [];
+  const r = locals.resumo || { quantidade: 0, subtotal: 0, desconto: 0, total: 0, compraveis: [] };
+  const cupom = locals.cupomAplicado || null;
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Carrinho', noindex: true }) %>
+  <link rel="stylesheet" href="/css/carrinho.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+
+  <main class="page-cart" id="conteudo" tabindex="-1">
+    <%- include('../partials/btnV', { voltarPara: '/PProdutos' }) %>
+
+    <div class="cart-grid">
+      <!-- Lista de itens -->
+      <section class="cart-items" aria-labelledby="titulo-carrinho">
+        <h1 id="titulo-carrinho">Seu carrinho</h1>
+
+        <% if (locals.aviso) { %>
+          <p class="cm-alert cm-alert--<%= aviso.tipo %>" role="<%= aviso.tipo === 'erro' ? 'alert' : 'status' %>">
+            <i class="fa-solid <%= aviso.tipo === 'erro' ? 'fa-circle-exclamation' : 'fa-circle-check' %>" aria-hidden="true"></i>
+            <span><%= aviso.msg %></span>
+          </p>
+        <% } %>
+
+        <% if (!lista.length) { %>
+          <div class="cm-empty">
+            <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+            <p>Seu carrinho está vazio. Explore o catálogo e adicione os produtos que quiser comprar.</p>
+            <a class="cm-btn" href="/PProdutos">Explorar produtos</a>
+          </div>
+        <% } else { %>
+          <ul class="items-list">
+            <% lista.forEach(function (item) {
+                 const disponivel = item.status_produto === 'ativo';
+                 const t = tipoProduto(item.tipo_produto);
+                 const mudou = disponivel && Number(item.preco_unitario) !== Number(item.preco_atual); %>
+              <li class="cart-item<%= disponivel ? '' : ' is-indisponivel' %>">
+                <% if (item.imagem) { %>
+                  <img src="<%= urlMidia(item.imagem) %>" alt="" class="item-thumb" width="120" height="90" loading="lazy">
+                <% } else { %>
+                  <span class="item-thumb item-thumb-vazia" aria-hidden="true"><i class="fa-solid <%= t.icone %>"></i></span>
+                <% } %>
+                <div class="item-main">
+                  <div class="item-title-row">
+                    <h2 class="item-title"><a href="/paginnerprod?id=<%= item.id_produto %>"><%= item.titulo %></a></h2>
+                    <form action="/carrinho/remover" method="POST">
+                      <input type="hidden" name="id_produto" value="<%= item.id_produto %>">
+                      <button type="submit" class="remove-btn" aria-label="Remover <%= item.titulo %> do carrinho" title="Remover do carrinho">
+                        <i class="fa-regular fa-trash-can" aria-hidden="true"></i>
+                      </button>
+                    </form>
+                  </div>
+                  <% if (!disponivel) { %>
+                    <p class="item-meta item-indisponivel"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i> Indisponível — não entra na compra</p>
+                  <% } else { %>
+                    <p class="item-meta"><%= t.rotulo %> · produto digital, liberado em Meus downloads após a compra</p>
+                  <% } %>
+                  <% const descItem = cupom && cupom.porItem[item.id_produto]; %>
+                  <% if (descItem) { %>
+                    <p class="price price--cupom">
+                      <span class="cm-sr">Preço original: </span><s><%= formatarPreco(descItem.preco) %></s>
+                      <span class="cm-sr">Preço com cupom: </span><%= formatarPreco(descItem.precoFinal) %>
+                    </p>
+                    <p class="item-cupom"><i class="fa-solid fa-ticket" aria-hidden="true"></i> Cupom <%= cupom.codigo %>: − <%= formatarPreco(descItem.desconto) %></p>
+                  <% } else { %>
+                    <p class="price"><span class="cm-sr">Preço: </span><%= formatarPreco(disponivel ? item.preco_atual : item.preco_unitario) %></p>
+                  <% } %>
+                  <% if (mudou) { %>
+                    <p class="item-preco-mudou"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> O preço mudou desde que você adicionou (era <%= formatarPreco(item.preco_unitario) %>).</p>
+                  <% } %>
+                </div>
+              </li>
+            <% }) %>
+          </ul>
+
+          <div class="cart-actions">
+            <form action="/carrinho/limpar" method="POST" data-confirmar="Remover todos os itens do carrinho?">
+              <button type="submit" class="cm-btn cm-btn--ghost cm-btn--pequeno">
+                <i class="fa-regular fa-trash-can" aria-hidden="true"></i> Limpar carrinho
+              </button>
+            </form>
+            <a href="/PProdutos" class="link-continue">← Continuar comprando</a>
+          </div>
+        <% } %>
+      </section>
+
+      <!-- Resumo / checkout -->
+      <aside class="cart-summary" aria-labelledby="titulo-resumo">
+        <section class="summary-card">
+          <h2 id="titulo-resumo">Resumo do pedido</h2>
+
+          <div class="summary-line">
+            <span>Subtotal (<%= r.quantidade %> <%= r.quantidade === 1 ? 'item' : 'itens' %>)</span>
+            <span><%= formatarPreco(r.subtotal) %></span>
+          </div>
+          <% if (cupom) { %>
+            <div class="summary-line summary-desconto">
+              <span><i class="fa-solid fa-ticket" aria-hidden="true"></i> Cupom <%= cupom.codigo %></span>
+              <span>− <%= formatarPreco(r.desconto) %></span>
+            </div>
+          <% } %>
+
+          <div class="promo" id="cupom">
+            <% if (cupom) { %>
+              <div class="cupom-aplicado">
+                <p>
+                  <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                  <strong><%= cupom.codigo %></strong> · <%= cupom.rotulo %>
+                  <span class="cupom-aplicado-loja">em produtos de <%= cupom.nome_criador %></span>
+                </p>
+                <form action="/carrinho/cupom/remover" method="POST">
+                  <button type="submit" class="cupom-remover">Remover cupom</button>
+                </form>
+              </div>
+            <% } else { %>
+              <form action="/carrinho/cupom" method="POST" class="promo-form" data-enviando="Aplicando…">
+                <label for="coupon">Possui um cupom?</label>
+                <div class="promo-row">
+                  <input id="coupon" name="codigo" type="text" placeholder="Ex.: JOAO10" maxlength="30" autocomplete="off"
+                         autocapitalize="characters" spellcheck="false" value="<%= locals.cupomDigitado || '' %>"
+                         <%= r.quantidade ? '' : 'disabled' %>>
+                  <button type="submit" class="cm-btn cm-btn--escuro cm-btn--pequeno" <%= r.quantidade ? '' : 'disabled' %>><span>Aplicar</span></button>
+                </div>
+                <small class="promo-dica">Cupons valem para produtos da loja que os oferece.</small>
+              </form>
+            <% } %>
+          </div>
+
+          <hr>
+
+          <div class="summary-line total">
+            <span>Total</span>
+            <span id="total"><%= formatarPreco(r.total) %></span>
+          </div>
+
+          <form class="checkout-actions" action="/carrinho/finalizar" method="POST" id="form-checkout" data-enviando="Finalizando…">
+            <button id="checkout" type="submit" class="cm-btn" <%= r.quantidade ? '' : 'disabled' %>>
+              <i class="fa-solid fa-credit-card" aria-hidden="true"></i> <span>Finalizar compra</span>
+            </button>
+          </form>
+
+          <% if (locals.pagamentoOnline && r.quantidade && r.total > 0) { %>
+            <p class="cart-demo">
+              <i class="fa-solid fa-lock" aria-hidden="true"></i>
+              Você será direcionado ao Mercado Pago para pagar com segurança. Os arquivos são liberados assim que o pagamento for aprovado.
+            </p>
+          <% } %>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

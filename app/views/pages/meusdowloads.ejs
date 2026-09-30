@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Meus downloads', noindex: true }) %>
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/conta.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+  <%- include('../partials/sidebar') %>
+
+  <main class="conta-main" id="conteudo" tabindex="-1">
+    <%- include('../partials/btnV', { voltarPara: '/perfiluser' }) %>
+    <header class="page-header">
+      <h1>Meus downloads</h1>
+      <p>Acesse seus arquivos já adquiridos, disponíveis para baixar novamente quando quiser.</p>
+    </header>
+
+    <% if (aviso) { %>
+      <p class="cm-alert cm-alert--aviso" role="status"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> <span><%= aviso %></span></p>
+    <% } %>
+
+    <% if (locals.erro) { %>
+      <p class="cm-alert cm-alert--erro" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span><%= erro %> Recarregue a página para tentar novamente.</span></p>
+    <% } else if (!downloads.length) { %>
+      <div class="cm-empty">
+        <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i>
+        <p>Os produtos que você comprar aparecem aqui para baixar quando quiser.</p>
+        <a class="cm-btn" href="/PProdutos">Explorar produtos</a>
+      </div>
+    <% } else { %>
+      <ul class="conta-lista">
+        <% downloads.forEach(function (d) { const t = tipoProduto(d.tipo_produto); %>
+          <li class="conta-card">
+            <% if (d.imagem) { %>
+              <img class="conta-card-midia" src="<%= urlMidia(d.imagem) %>" alt="" loading="lazy" width="88" height="88">
+            <% } else { %>
+              <span class="conta-card-midia conta-card-sem-img" aria-hidden="true"><i class="fa-solid <%= t.icone %>"></i></span>
+            <% } %>
+            <div class="conta-card-corpo">
+              <h2><a href="/paginnerprod?id=<%= d.id_produto %>"><%= d.titulo %></a></h2>
+              <p class="conta-card-meta">
+                <span><i class="fa-solid <%= t.icone %>" aria-hidden="true"></i> <%= t.rotulo %></span>
+                <span><strong>Formato:</strong> <%= d.formato_arquivo || 'aguardando envio do vendedor' %></span>
+                <span><strong>Comprado em</strong> <%= moment(d.data_pedido).format('DD/MM/YYYY') %></span>
+              </p>
+            </div>
+            <div class="conta-card-acoes">
+              <% if (d.formato_arquivo) { %>
+                <a class="cm-btn cm-btn--pequeno" href="/downloads/<%= d.id_produto %>"><i class="fa-solid fa-download" aria-hidden="true"></i> Baixar<span class="cm-sr"> <%= d.titulo %></span></a>
+              <% } else { %>
+                <span class="cm-btn cm-btn--ghost cm-btn--pequeno" aria-disabled="true" title="O vendedor ainda não enviou o arquivo"><i class="fa-regular fa-clock" aria-hidden="true"></i> Arquivo pendente</span>
+              <% } %>
+              <a class="cm-btn cm-btn--ghost cm-btn--pequeno" href="/paginnerprod?id=<%= d.id_produto %>#avaliar"><i class="fa-regular fa-star" aria-hidden="true"></i> Avaliar<span class="cm-sr"> <%= d.titulo %></span></a>
+            </div>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

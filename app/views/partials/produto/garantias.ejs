@@ -1,0 +1,22 @@
+<ul class="pd-assurances">
+  <li>
+    <div class="pd-assurance">
+      <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+      <p><strong>Arquivo protegido</strong><span>Liberado só para quem comprou.</span></p>
+    </div>
+  </li>
+  <li>
+    <div class="pd-assurance">
+      <i class="fa-solid fa-star" aria-hidden="true"></i>
+      <p><strong>Avaliações verificadas</strong><span>Só quem comprou pode avaliar.</span></p>
+    </div>
+  </li>
+  <% if (!ehDono) { %>
+    <li>
+      <a class="pd-assurance pd-assurance--link" href="#perguntas" data-ir-aba="perguntas">
+        <i class="fa-regular fa-comments" aria-hidden="true"></i>
+        <p><strong>Tem dúvidas?</strong><span>Pergunte ao vendedor <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span></p>
+      </a>
+    </li>
+  <% } %>
+</ul>

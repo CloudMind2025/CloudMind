@@ -1,0 +1,26 @@
+<div class="pd-seller">
+  <% const fotoVendedor = urlFoto(produto.foto_criador); %>
+  <% if (fotoVendedor) { %>
+    <img class="pd-seller-avatar" src="<%= fotoVendedor %>" alt="" width="40" height="40" loading="lazy" decoding="async">
+  <% } else { %>
+    <span class="pd-seller-avatar pd-seller-avatar--vazio" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+  <% } %>
+  <div class="pd-seller-info">
+    <p class="pd-seller-name">Vendido por <strong><%= produto.nome_criador %></strong></p>
+    <p class="pd-seller-meta">
+      <% if (Number(produto.qtd_avaliacoes) > 0) { %>
+        <span>
+          <i class="fa-solid fa-star" aria-hidden="true"></i>
+          <%= formatarNota(produto.media_avaliacoes) %>
+          · <%= produto.qtd_avaliacoes %> <%= Number(produto.qtd_avaliacoes) === 1 ? 'avaliação' : 'avaliações' %> do vendedor
+        </span>
+      <% } %>
+      <% if (produto.criador_desde) { %>
+        <span>Na CloudMind desde <%= moment(produto.criador_desde).format('MMMM [de] YYYY') %></span>
+      <% } %>
+    </p>
+  </div>
+  <a class="pd-seller-link" href="/perfilvend?id=<%= produto.id_criador %>">
+    Visitar perfil<span class="pd-sr"> de <%= produto.nome_criador %></span>
+  </a>
+</div>

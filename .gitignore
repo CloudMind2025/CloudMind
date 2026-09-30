@@ -1,0 +1,13 @@
+/node_modules
+.env
+.env.example
+
+
+/storage
+
+/app/public/image/uploads/*
+/app/public/image/avatars/*
+/app/public/image/capas/*
+
+
+/_checkpoints/

@@ -1,0 +1,90 @@
+<%
+  const errosCampo = {};
+  (locals.listaErros || []).forEach(function (e) {
+    const chave = e.path || e.param || 'geral';
+    (errosCampo[chave] = errosCampo[chave] || []).push(e.msg);
+  });
+  const attrErro = function (campo) { return errosCampo[campo] ? `aria-invalid="true" aria-describedby="${campo}-erro-srv"` : ''; };
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Alterar senha', noindex: true }) %>
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/conta.css">
+  <link rel="stylesheet" href="/css/alterarsenha.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+  <%- include('../partials/sidebar') %>
+
+  <main class="conta-main" id="conteudo" tabindex="-1">
+    <%- include('../partials/btnV', { voltarPara: '/perfiluser' }) %>
+    <header class="page-header">
+      <h1>Alterar senha</h1>
+      <p>Atualize sua senha com segurança. Recomendamos usar uma senha forte e única.</p>
+    </header>
+
+    <% if (resultado) { %>
+      <p class="cm-alert cm-alert--sucesso" role="status"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> <span><%= resultado %></span></p>
+    <% } %>
+    <% if (errosCampo.geral) { %>
+      <p class="cm-alert cm-alert--erro" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span><%= errosCampo.geral[0] %></span></p>
+    <% } %>
+
+    <div class="senha-grade">
+      <section class="conta-bloco">
+        <form class="conta-form password-form" action="/alterarsenha" method="POST" novalidate>
+          <div class="cm-campo">
+            <label for="senha_atual">Senha atual</label>
+            <div class="campo-senha">
+              <input type="password" id="senha_atual" name="senha_atual" autocomplete="current-password" required <%- attrErro('senha_atual') %>>
+              <button type="button" class="mostrar-senha" data-mostrar-senha="senha_atual" aria-label="Mostrar senha" aria-pressed="false"><i class="fa-regular fa-eye" aria-hidden="true"></i></button>
+            </div>
+            <% if (errosCampo.senha_atual) { %><span class="cm-erro-campo" id="senha_atual-erro-srv"><%= errosCampo.senha_atual[0] %></span><% } %>
+          </div>
+
+          <div class="cm-campo">
+            <label for="nova_senha">Nova senha</label>
+            <div class="campo-senha">
+              <input type="password" id="nova_senha" name="nova_senha" autocomplete="new-password" required
+                     aria-describedby="regras-senha" <%- errosCampo.nova_senha ? 'aria-invalid="true"' : '' %>>
+              <button type="button" class="mostrar-senha" data-mostrar-senha="nova_senha" aria-label="Mostrar senha" aria-pressed="false"><i class="fa-regular fa-eye" aria-hidden="true"></i></button>
+            </div>
+            <ul class="regras-senha" id="regras-senha" aria-label="A nova senha precisa ter">
+              <li data-regra="tamanho">Pelo menos 8 caracteres</li>
+              <li data-regra="maiuscula">Uma letra maiúscula</li>
+              <li data-regra="minuscula">Uma letra minúscula</li>
+              <li data-regra="numero">Um número</li>
+              <li data-regra="simbolo">Um símbolo (ex.: ! @ # $ %)</li>
+            </ul>
+            <% if (errosCampo.nova_senha) { %><span class="cm-erro-campo"><%= errosCampo.nova_senha[0] %></span><% } %>
+          </div>
+
+          <div class="cm-campo">
+            <label for="confirmar_senha">Confirmar nova senha</label>
+            <input type="password" id="confirmar_senha" name="confirmar_senha" autocomplete="new-password" required <%- attrErro('confirmar_senha') %>>
+            <% if (errosCampo.confirmar_senha) { %><span class="cm-erro-campo" id="confirmar_senha-erro-srv"><%= errosCampo.confirmar_senha[0] %></span><% } %>
+          </div>
+
+          <button type="submit" class="cm-btn"><i class="fa-solid fa-key" aria-hidden="true"></i> <span>Alterar senha</span></button>
+        </form>
+      </section>
+
+      <aside class="tips" aria-labelledby="dicas-titulo">
+        <h2 id="dicas-titulo"><i class="fa-solid fa-lock" aria-hidden="true"></i> Dicas de segurança</h2>
+        <ul>
+          <li>Não reutilize senhas usadas em outros sites.</li>
+          <li>Evite usar informações pessoais (como datas ou nomes).</li>
+          <li>Ative a autenticação em duas etapas (2FA) para maior proteção.</li>
+        </ul>
+      </aside>
+    </div>
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <script src="/js/validacao.js" defer></script>
+  <script src="/js/validaF_alterarsenha.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<%
+  const est = locals.estatisticas || null;
+  const numero = function (n) { return Number(n || 0).toLocaleString('pt-BR'); };
+%>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <script>document.documentElement.classList.add('js');</script>
+  <%- include('../partials/head', { descricao: 'Marketplace para criadores e estudantes — ebooks, cursos, templates, audiobooks e mais.' }) %>
+  <link rel="stylesheet" href="/css/w.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+
+  <main class="home" id="conteudo" tabindex="-1">
+    <% if (locals.aviso) { %>
+      <div class="home-aviso">
+        <p class="cm-alert cm-alert--<%= aviso.tipo %>" role="status"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> <span><%= aviso.msg %></span></p>
+      </div>
+    <% } %>
+
+    <!-- HERO -->
+    <section class="hero">
+      <article class="hero-card reveal">
+        <p class="kicker">Para criadores & estudantes</p>
+        <h1>Venda seus conhecimentos. Compre conteúdos práticos.</h1>
+        <p class="lead">Ebooks, cursos, templates, flashcards e mais — tudo pensado para quem quer aprender ou ganhar com criação digital. Comissão justa, divulgação fácil e entrega segura.</p>
+        <div class="hero-actions">
+          <a href="/cadastro" class="btn3">COMECE AGORA</a>
+          <a href="/PProdutos" class="btn secundary">Ver o Marketplace</a>
+        </div>
+        <% if (est) { %>
+
+          <ul class="stats" aria-label="A CloudMind em números">
+            <li><small>Produtos</small><strong><%= numero(est.produtos) %></strong></li>
+            <li><small>Vendedores</small><strong><%= numero(est.vendedores) %></strong></li>
+            <li>
+              <small>Média de nota</small>
+              <strong><%= est.qtdNotas > 0 ? Number(est.mediaNotas).toFixed(1).replace('.', ',') + ' ★' : '—' %></strong>
+            </li>
+          </ul>
+        <% } %>
+        <p class="slogan">"Você baixou um planner hoje — que tal vender o seu amanhã?"</p>
+      </article>
+
+      <figure class="hero-media reveal floaty" aria-hidden="true">
+        <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=2c3a5c4a0f5e0c9f9a2b6b8b8b7c7d" alt="" width="1200" height="800" decoding="async">
+      </figure>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features" aria-label="Diferenciais">
+      <article class="feature reveal">
+        <span class="icon" aria-hidden="true">★</span>
+        <div>
+          <h2 class="feature-titulo">Comissão justa</h2>
+          <p>Taxa sugerida: 10% — projetada para remunerar criadores e manter a plataforma acessível.</p>
+        </div>
+      </article>
+
+      <article class="feature reveal">
+        <span class="icon" aria-hidden="true">🔒</span>
+        <div>
+          <h2 class="feature-titulo">Entrega segura</h2>
+          <p>Links privados e entrega por e-mail com proteção contra compartilhamento não autorizado.</p>
+        </div>
+      </article>
+
+      <article class="feature reveal">
+        <span class="icon" aria-hidden="true">🚀</span>
+        <div>
+          <h2 class="feature-titulo">Crescimento & comunidade</h2>
+          <p>Gamificação, selos e ferramentas de divulgação para destacar novos criadores.</p>
+        </div>
+      </article>
+    </section>
+
+    <!-- CATEGORIES -->
+    <section class="cat-wrap" aria-labelledby="cat-title">
+      <header class="cat-title">
+        <h2 id="cat-title">Categorias populares</h2>
+        <a href="/PProdutos" class="ver">Ver tudo</a>
+      </header>
+      <ul class="carousel" id="carousel">
+        <li><a class="card reveal" href="/PProdutos?tipo=ebook">
+          <h3>eBooks</h3>
+          <p>Guias, apostilas e etc prontos para download imediato.</p>
+          <img class="cardimg" src="/image/ebook.png" alt="" width="90" height="90">
+        </a></li>
+        <li><a class="card reveal" href="/PProdutos?tipo=curso">
+          <h3>Cursos em vídeo</h3>
+          <p>Minicursos e aulas gravadas — com aulas curtas e diretas.</p>
+          <img class="cardimg" src="/image/cursos.png" alt="" width="90" height="90">
+        </a></li>
+        <li><a class="card reveal" href="/PProdutos?tipo=template">
+          <h3>Templates</h3>
+          <p>Currículos, planners e apresentações editáveis.</p>
+          <img class="cardimg" src="/image/templi.png" alt="" width="90" height="90">
+        </a></li>
+        <li><a class="card reveal" href="/PProdutos?q=flashcard">
+          <h3>Flashcards & Mapas</h3>
+          <p>Resumo rápido para estudar para ENEM e provas.</p>
+          <img class="cardimg" src="/image/flscard.png" alt="" width="90" height="90">
+        </a></li>
+        <li><a class="card reveal" href="/PProdutos?tipo=audiobook">
+          <h3>Audiobooks</h3>
+          <p>Leituras e narrações perfeitas para aprender ouvindo.</p>
+          <img class="cardimg" src="/image/audiobook.png" alt="" width="90" height="90">
+        </a></li>
+      </ul>
+    </section>
+
+    <!-- SELLERS CTA -->
+    <section class="cta-sellers reveal" id="vender">
+      <div>
+        <h2>Você não precisa ser famoso para publicar</h2>
+        <p>Crie seu perfil em minutos e comece a vender. Nós ajudamos na divulgação e no processo de entrega.</p>
+      </div>
+      <a href="/cadastro" class="btn2">Quero vender</a>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials" aria-labelledby="depoimentos-titulo">
+      <h2 id="depoimentos-titulo">O que falam sobre a plataforma</h2>
+      <div class="depoimentos">
+        <blockquote class="card reveal">
+          "Plataforma simples — vendi meu primeiro curso em uma semana."
+          <p>— Marina, professora</p>
+        </blockquote>
+        <blockquote class="card reveal">
+          "Encontrei ótimos materiais para estudar para o ENEM."
+          <p>— Rafael, estudante</p>
+        </blockquote>
+        <blockquote class="card reveal">
+          "A comissão é justa e o suporte é rápido."
+          <p>— Luana, designer</p>
+        </blockquote>
+      </div>
+    </section>
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var revelar = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entradas) {
+          entradas.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+        }, { threshold: 0.12 });
+        revelar.forEach(function (el) { io.observe(el); });
+      } else {
+        revelar.forEach(function (el) { el.classList.add('visible'); });
+      }
+
+      var carousel = document.getElementById('carousel');
+      if (!carousel || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var speed = 40;
+      var auto = true, pos = carousel.scrollLeft, last = null, retomar = null;
+
+      function reciclar() {
+        var primeiro = carousel.firstElementChild, segundo = primeiro && primeiro.nextElementSibling;
+        while (segundo) {
+          var largura = segundo.offsetLeft - primeiro.offsetLeft;
+          if (largura <= 0 || pos < largura) break;
+          carousel.appendChild(primeiro);
+          pos -= largura;
+          primeiro = carousel.firstElementChild;
+          segundo = primeiro.nextElementSibling;
+        }
+      }
+
+      function frame(agora) {
+        if (last === null) last = agora;
+        var dt = Math.min(agora - last, 100) / 1000;
+        last = agora;
+        if (auto && !document.hidden && carousel.scrollWidth > carousel.clientWidth) {
+          pos += speed * dt;
+          reciclar();
+          carousel.scrollLeft = pos;
+        } else {
+          pos = carousel.scrollLeft;
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+
+      carousel.addEventListener('mouseenter', function () { auto = false; });
+      carousel.addEventListener('mouseleave', function () { auto = true; });
+      carousel.addEventListener('focusin', function () { auto = false; });
+      carousel.addEventListener('focusout', function () { auto = true; });
+      carousel.addEventListener('touchstart', function () { clearTimeout(retomar); auto = false; }, { passive: true });
+      carousel.addEventListener('touchend', function () { retomar = setTimeout(function () { auto = true; }, 1500); });
+    });
+  </script>
+</body>
+</html>

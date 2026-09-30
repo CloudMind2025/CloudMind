@@ -1,0 +1,77 @@
+<%
+  const STATUS_PEDIDO = {
+    pago:        { classe: 'cm-badge--ok',    rotulo: 'Pago' },
+    pendente:    { classe: 'cm-badge--aviso', rotulo: 'Aguardando pagamento' },
+    cancelado:   { classe: 'cm-badge--erro',  rotulo: 'Cancelado' },
+    reembolsado: { classe: 'cm-badge--erro',  rotulo: 'Reembolsado' }
+  };
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Minhas compras', noindex: true }) %>
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/conta.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+  <%- include('../partials/sidebar') %>
+
+  <main class="conta-main" id="conteudo" tabindex="-1">
+    <%- include('../partials/btnV', { voltarPara: '/perfiluser' }) %>
+    <header class="page-header">
+      <h1>Minhas compras</h1>
+      <p>Acompanhe seus pedidos, status e detalhes de cada compra.</p>
+    </header>
+
+    <% if (erro) { %>
+      <p class="cm-alert cm-alert--erro" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span><%= erro %> Recarregue a página para tentar novamente.</span></p>
+    <% } else if (!pedidos.length) { %>
+      <div class="cm-empty">
+        <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+        <p>Você ainda não fez nenhuma compra. Quando comprar, seus pedidos aparecem aqui.</p>
+        <a class="cm-btn" href="/PProdutos">Explorar produtos</a>
+      </div>
+    <% } else { %>
+      <ul class="conta-lista">
+        <% pedidos.forEach(function (p) {
+             const st = STATUS_PEDIDO[p.status] || { classe: '', rotulo: p.status };
+             const outros = Number(p.qtd_itens) - 1; %>
+          <li class="conta-card">
+            <% if (p.imagem_principal) { %>
+              <img class="conta-card-midia" src="<%= urlMidia(p.imagem_principal) %>" alt="" loading="lazy" width="88" height="88">
+            <% } else { %>
+              <span class="conta-card-midia conta-card-sem-img" aria-hidden="true"><i class="fa-solid fa-box-open"></i></span>
+            <% } %>
+            <div class="conta-card-corpo">
+              <h2>
+                <%= p.titulo_principal || 'Pedido sem itens' %>
+                <% if (outros > 0) { %><span class="conta-mais">+ <%= outros %> <%= outros === 1 ? 'item' : 'itens' %></span><% } %>
+              </h2>
+              <p class="conta-card-meta">
+                <span><strong>Pedido</strong> #<%= p.id_pedido %></span>
+                <span><time datetime="<%= moment(p.data_pedido).format('YYYY-MM-DDTHH:mm') %>"><%= moment(p.data_pedido).format('DD/MM/YYYY [às] HH:mm') %></time></span>
+                <span><strong><%= formatarPreco(p.total) %></strong></span>
+                <span class="cm-badge <%= st.classe %>"><%= st.rotulo %></span>
+              </p>
+            </div>
+            <div class="conta-card-acoes">
+              <a class="cm-btn cm-btn--pequeno" href="/detalhepedido?id=<%= p.id_pedido %>">Ver detalhes<span class="cm-sr"> do pedido #<%= p.id_pedido %></span></a>
+              <% if (p.status === 'pago') { %>
+                <a class="cm-btn cm-btn--ghost cm-btn--pequeno" href="/meusdowloads"><i class="fa-solid fa-download" aria-hidden="true"></i> Meus downloads</a>
+              <% } else if (p.status === 'pendente' && locals.pagamentoOnline) { %>
+                <form action="/pedido/pagar" method="POST" data-enviando="Abrindo…">
+                  <input type="hidden" name="id_pedido" value="<%= p.id_pedido %>">
+                  <button type="submit" class="cm-btn cm-btn--ghost cm-btn--pequeno"><i class="fa-solid fa-lock" aria-hidden="true"></i> <span>Pagar<span class="cm-sr"> o pedido #<%= p.id_pedido %></span></span></button>
+                </form>
+              <% } %>
+            </div>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

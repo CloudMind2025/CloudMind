@@ -1,0 +1,42 @@
+<section class="pd-related pd-surface" aria-labelledby="pd-related-titulo">
+  <div class="pd-section-head">
+    <h2 id="pd-related-titulo" class="pd-section-title">Produtos relacionados</h2>
+    <a class="pd-link" href="/PProdutos">Ver catálogo</a>
+  </div>
+
+  <% if (relacionados === null) { %>
+    <p class="pd-alert pd-alert--erro" role="alert">
+      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+      Não foi possível carregar os produtos relacionados agora.
+    </p>
+  <% } else if (relacionados.length === 0) { %>
+    <div class="pd-empty">
+      <i class="fa-regular fa-compass" aria-hidden="true"></i>
+      <p>Ainda não há outros produtos<% if (produto.nome_categoria) { %> na categoria <strong><%= produto.nome_categoria %></strong><% } %>.</p>
+      <p><a class="pd-link" href="/PProdutos">Explorar o catálogo completo</a></p>
+    </div>
+  <% } else { %>
+    <ul class="pd-related-grid">
+      <% relacionados.forEach(function (r) { const t = tipoProduto(r.tipo_produto); %>
+        <li>
+          <a class="pd-card" href="/paginnerprod?id=<%= r.id_produto %>">
+            <div class="pd-card-media pd-media<%= r.imagem ? ' is-loading' : ' pd-media--vazia' %>" <%= r.imagem ? 'data-media' : '' %>>
+              <% if (r.imagem) { %>
+                <img src="<%= urlMidia(r.imagem) %>" alt="" loading="lazy" decoding="async">
+              <% } %>
+              <div class="pd-media-fallback" data-media-fallback <%= r.imagem ? 'hidden' : '' %>>
+                <i class="fa-solid <%= t.icone %>" aria-hidden="true"></i>
+              </div>
+            </div>
+            <div class="pd-card-body">
+              <span class="pd-card-type"><i class="fa-solid <%= t.icone %>" aria-hidden="true"></i> <%= t.rotulo %></span>
+              <h3 class="pd-card-title"><%= r.titulo %></h3>
+              <p class="pd-card-seller">por <%= r.nome_criador %></p>
+              <p class="pd-card-price"><%= formatarPreco(r.preco) %></p>
+            </div>
+          </a>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</section>

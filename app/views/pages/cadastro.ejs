@@ -1,0 +1,169 @@
+<%
+  const c = locals.campos || {};
+  const errosCampo = {};
+  (locals.listaErros || []).forEach(function (e) {
+    const chave = e.path || e.param || 'geral';
+    (errosCampo[chave] = errosCampo[chave] || []).push(e.msg);
+  });
+  const errosGerais = errosCampo.geral || [];
+  const vendedor = c.tipo_conta === 'vendedor';
+  const invalido = function (campo) { return errosCampo[campo] ? `aria-invalid="true" aria-describedby="${campo}-erro-srv"` : ''; };
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Criar conta', descricao: 'Crie sua conta na CloudMind para comprar ou vender ebooks, cursos, templates, audiobooks e assets.' }) %>
+  <link rel="stylesheet" href="/css/auth.css">
+  <link rel="stylesheet" href="/css/cadastro.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+
+  <main class="auth" id="conteudo" tabindex="-1">
+    <section class="auth-card auth-card--cadastro">
+
+      <aside class="auth-info" aria-label="Por que criar uma conta">
+        <h2>Junte-se a nós ☁️</h2>
+        <ul>
+          <li><i class="fa-solid fa-book-open" aria-hidden="true"></i> Explore eBooks, cursos, templates, audiobooks e assets — tudo em um só lugar.</li>
+          <li><i class="fa-solid fa-user-check" aria-hidden="true"></i> Materiais feitos por pessoas reais, com preços justos e foco em criatividade, educação e desenvolvimento pessoal.</li>
+          <li><i class="fa-solid fa-sack-dollar" aria-hidden="true"></i> Transforme seus conhecimentos em renda extra. Publique seu eBook, curso ou qualquer produto digital.</li>
+          <li><i class="fa-solid fa-lightbulb" aria-hidden="true"></i> Aqui você não precisa ser famoso. Nós valorizamos cada criador e incentivamos todos a compartilhar sua criatividade.</li>
+          <li><i class="fa-solid fa-compass" aria-hidden="true"></i> Navegação intuitiva, entrega digital confiável e suporte amigável para que você aproveite ao máximo a plataforma.</li>
+        </ul>
+
+        <% const tiposV = locals.tiposVitrine || [];
+           const porChave = {}; tiposV.forEach(function (t) { porChave[t.chave] = t; });
+           const cartoes = ['ebook', 'curso', 'template'].filter(function (k) { return porChave[k]; }); %>
+        <% if (cartoes.length) { %>
+          <div class="auth-vitrine" aria-hidden="true">
+            <% cartoes.forEach(function (k, i) { const t = porChave[k]; %>
+              <div class="vit-card vit-card--<%= i + 1 %>">
+                <div class="vit-capa vit-capa--<%= k %>"><i class="fa-solid <%= t.icone %>"></i></div>
+                <span class="vit-tipo"><i class="fa-solid <%= t.icone %>"></i> <%= t.rotulo %></span>
+                <span class="vit-linha"></span>
+                <span class="vit-linha vit-linha--curta"></span>
+                <span class="vit-rodape"><span class="vit-preco"></span><span class="vit-botao"></span></span>
+              </div>
+            <% }) %>
+            <% ['audiobook', 'assets'].filter(function (k) { return porChave[k]; }).forEach(function (k, i) { const t = porChave[k]; %>
+              <span class="vit-tag vit-tag--<%= i + 1 %>"><i class="fa-solid <%= t.icone %>"></i> <%= t.rotulo %></span>
+            <% }) %>
+            <span class="vit-entrega"><i class="fa-solid fa-download"></i> Meus downloads</span>
+          </div>
+        <% } %>
+
+        <% if (tiposV.length) { %>
+          <ul class="auth-tipos" aria-label="Tipos de produto na CloudMind">
+            <% tiposV.forEach(function (t) { %>
+              <li><i class="fa-solid <%= t.icone %>" aria-hidden="true"></i> <%= t.rotulo %></li>
+            <% }) %>
+          </ul>
+        <% } %>
+      </aside>
+
+      <section class="auth-form" aria-labelledby="titulo-cadastro">
+        <h1 id="titulo-cadastro">Crie sua conta</h1>
+        <p class="auth-sub">Leva menos de um minuto.</p>
+
+        <div class="social-login">
+          <button type="button" class="google"><i class="fa-brands fa-google" aria-hidden="true"></i> Google</button>
+          <button type="button" class="apple"><i class="fa-brands fa-apple" aria-hidden="true"></i> Apple</button>
+        </div>
+
+        <p class="auth-divisor">ou use seu e-mail</p>
+
+        <form action="/cadastro" method="POST" novalidate data-form-cadastro>
+          <% if (errosGerais.length || Object.keys(errosCampo).length) { %>
+            <div class="cm-alert cm-alert--erro" role="alert">
+              <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+              <div>
+                <% if (errosGerais.length) { %>
+                  <% errosGerais.forEach(function (m) { %><p><%= m %></p><% }) %>
+                <% } else { %>
+                  <p>Confira os campos destacados abaixo.</p>
+                <% } %>
+              </div>
+            </div>
+          <% } %>
+
+          <div class="cm-campo">
+            <label for="name">Nome completo</label>
+            <input type="text" id="name" name="nome" autocomplete="name" required maxlength="50"
+                   placeholder="Ex.: Ana Souza" value="<%= c.nome || '' %>" <%- invalido('nome') %>>
+            <% if (errosCampo.nome) { %><span class="cm-erro-campo" id="nome-erro-srv"><%= errosCampo.nome[0] %></span><% } %>
+          </div>
+
+          <div class="cm-campo">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" autocomplete="email" required
+                   placeholder="nome@email.com" value="<%= c.email || '' %>" <%- invalido('email') %>>
+            <% if (errosCampo.email) { %><span class="cm-erro-campo" id="email-erro-srv"><%= errosCampo.email[0] %></span><% } %>
+          </div>
+
+          <fieldset class="tipo-conta">
+            <legend>Tipo de conta</legend>
+            <div class="tipo-conta-wrap">
+              <label class="tipo-card<%= !vendedor ? ' ativo' : '' %>" id="card-cliente">
+                <input type="radio" name="tipo_conta" value="cliente" <%= !vendedor ? 'checked' : '' %>>
+                <i class="fa-solid fa-user" aria-hidden="true"></i>
+                <span>Cliente</span>
+                <small>Compre produtos digitais</small>
+              </label>
+              <label class="tipo-card<%= vendedor ? ' ativo' : '' %>" id="card-vendedor">
+                <input type="radio" name="tipo_conta" value="vendedor" <%= vendedor ? 'checked' : '' %>>
+                <i class="fa-solid fa-store" aria-hidden="true"></i>
+                <span>Vendedor</span>
+                <small>Publique e venda produtos</small>
+              </label>
+            </div>
+            <% if (errosCampo.tipo_conta) { %><span class="cm-erro-campo"><%= errosCampo.tipo_conta[0] %></span><% } %>
+          </fieldset>
+
+          <div class="cm-campo" id="cpf-wrapper"<% if (!vendedor) { %> hidden<% } %>>
+            <label for="cpf">CPF <span class="cm-dica">(obrigatório para vendedores)</span></label>
+            <input type="text" id="cpf" name="cpf" inputmode="numeric" autocomplete="off" maxlength="14"
+                   placeholder="000.000.000-00" value="<%= c.cpf || '' %>" <%- invalido('cpf') %>>
+            <% if (errosCampo.cpf) { %><span class="cm-erro-campo" id="cpf-erro-srv"><%= errosCampo.cpf[0] %></span><% } %>
+          </div>
+
+          <div class="cm-campo">
+            <label for="password">Senha</label>
+            <div class="campo-senha">
+              <input type="password" id="password" name="senha" autocomplete="new-password" required
+                     aria-describedby="regras-senha" <%- errosCampo.senha ? 'aria-invalid="true"' : '' %>>
+              <button type="button" class="mostrar-senha" data-mostrar-senha="password" aria-label="Mostrar senha" aria-pressed="false">
+                <i class="fa-regular fa-eye" aria-hidden="true"></i>
+              </button>
+            </div>
+            <ul class="regras-senha" id="regras-senha" aria-label="A senha precisa ter">
+              <li data-regra="tamanho">Pelo menos 8 caracteres</li>
+              <li data-regra="maiuscula">Uma letra maiúscula</li>
+              <li data-regra="minuscula">Uma letra minúscula</li>
+              <li data-regra="numero">Um número</li>
+              <li data-regra="simbolo">Um símbolo (ex.: ! @ # $ %)</li>
+            </ul>
+            <% if (errosCampo.senha) { %><span class="cm-erro-campo"><%= errosCampo.senha[0] %></span><% } %>
+          </div>
+
+          <div class="cm-campo">
+            <label for="confirm-password">Confirme a senha</label>
+            <input type="password" id="confirm-password" name="csenha" autocomplete="new-password" required <%- invalido('csenha') %>>
+            <% if (errosCampo.csenha) { %><span class="cm-erro-campo" id="csenha-erro-srv"><%= errosCampo.csenha[0] %></span><% } %>
+          </div>
+
+          <div class="auth-acoes">
+            <button type="submit" class="cm-btn cm-btn--bloco"><span>Criar minha conta</span></button>
+            <a href="/login" class="cm-btn cm-btn--escuro cm-btn--bloco">Já tenho conta — entrar</a>
+          </div>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <script src="/js/validacao.js" defer></script>
+  <script src="/js/validaF_cadastro.js" defer></script>
+</body>
+</html>

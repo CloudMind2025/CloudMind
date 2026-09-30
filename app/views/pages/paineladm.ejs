@@ -1,0 +1,317 @@
+<%
+  const MENSAGENS = {
+    conta_excluida:                    { tipo: 'sucesso', texto: 'Conta excluída permanentemente e e-mail de confirmação enviado ao usuário.' },
+    conta_excluida_sem_email:          { tipo: 'aviso',   texto: 'Conta excluída, mas o e-mail de confirmação não foi enviado (verifique EMAIL_USER e EMAIL_PASS no .env).' },
+    conta_desativada_vendas:           { tipo: 'info',    texto: 'Conta desativada em vez de apagada: há vendas ou pagamentos registrados nesta conta, que foram mantidos. Os produtos (se houver) saíram da loja e a conta foi suspensa. O usuário foi avisado por e-mail.' },
+    conta_desativada_vendas_sem_email: { tipo: 'aviso',   texto: 'Conta desativada em vez de apagada (há vendas ou pagamentos registrados), mas o e-mail de aviso não foi enviado.' },
+    usuario_suspenso:                  { tipo: 'sucesso', texto: 'Usuário suspenso. Se estiver logado, a sessão dele é encerrada em até 5 minutos.' },
+    usuario_suspenso_produtos:         { tipo: 'sucesso', texto: 'Usuário suspenso. Os produtos dele saíram da loja; quem já comprou continua com acesso ao arquivo. Se estiver logado, a sessão dele é encerrada em até 5 minutos.' },
+    usuario_reativado:                 { tipo: 'sucesso', texto: 'Usuário reativado.' },
+    usuario_reativado_produtos:        { tipo: 'sucesso', texto: 'Usuário reativado. Os produtos que saíram da loja com a suspensão voltaram à venda.' },
+    bloqueado_admin:                   { tipo: 'erro',    texto: 'Administradores não podem ser suspensos ou excluídos por este painel.' },
+    denuncia_arquivada:                { tipo: 'sucesso', texto: 'Denúncia arquivada.' },
+    ticket_atualizado:                 { tipo: 'sucesso', texto: 'Ticket atualizado.' },
+    ticket_excluido:                   { tipo: 'sucesso', texto: 'Ticket excluído.' },
+    erro:                              { tipo: 'erro',    texto: 'Não foi possível concluir a ação. Tente novamente.' }
+  };
+  const aviso = MENSAGENS[locals.msg] || null;
+  const ICONES = { sucesso: 'fa-circle-check', erro: 'fa-circle-exclamation', aviso: 'fa-triangle-exclamation', info: 'fa-circle-info' };
+
+  const TIPO_USUARIO = { cliente: ['Cliente', 'cm-badge--info'], criador: ['Vendedor', 'cm-badge--ok'], admin: ['Admin', 'cm-badge--aviso'] };
+  const STATUS_USUARIO = { ativo: ['Ativo', 'cm-badge--ok'], suspenso: ['Suspenso', 'cm-badge--aviso'] };
+  const STATUS_TICKET = {
+    aberto: ['Aberto', 'cm-badge--info'], em_andamento: ['Em andamento', 'cm-badge--aviso'],
+    pendente: ['Pendente', 'cm-badge--roxo'], resolvido: ['Resolvido', 'cm-badge--ok'], fechado: ['Fechado', '']
+  };
+  const CATEGORIA_TICKET = { duvida: 'Dúvida', problema: 'Problema', sugestao: 'Sugestão', outro: 'Outro' };
+  const STATUS_DENUNCIA = { pendente: 'Pendente', em_analise: 'Em análise', resolvida: 'Resolvida' };
+  const idAdmin = usuarioLogado ? Number(usuarioLogado.id_usuario) : null;
+
+  const serie = locals.serieVendas || null;
+  const contagemTipos = { cliente: 0, criador: 0, admin: 0 };
+  (usuarios || []).forEach(function (u) { if (contagemTipos[u.tipo] !== undefined) contagemTipos[u.tipo]++; });
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Painel administrativo', noindex: true }) %>
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/conta.css">
+  <link rel="stylesheet" href="/css/paineladm.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+  <%- include('../partials/sidebar') %>
+
+  <main class="conta-main painel-adm" id="conteudo" tabindex="-1">
+    <header class="page-header">
+      <h1>Painel administrativo</h1>
+      <p>Usuários, denúncias, tickets de suporte e indicadores da plataforma.</p>
+    </header>
+
+    <% if (aviso) { %>
+      <p class="cm-alert cm-alert--<%= aviso.tipo %>" role="<%= aviso.tipo === 'erro' ? 'alert' : 'status' %>">
+        <i class="fa-solid <%= ICONES[aviso.tipo] %>" aria-hidden="true"></i> <span><%= aviso.texto %></span>
+      </p>
+    <% } %>
+    <% if (locals.erroCarga) { %>
+      <p class="cm-alert cm-alert--erro" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span>Não foi possível carregar os dados do painel. Recarregue a página para tentar novamente.</span></p>
+    <% } %>
+
+    <!-- Métricas -->
+    <section aria-labelledby="metricas-titulo">
+      <h2 id="metricas-titulo" class="cm-sr">Resumo</h2>
+      <ul class="cards">
+        <li class="card"><h3>Usuários</h3><p><%= usuarios ? usuarios.length : 0 %></p></li>
+        <li class="card"><h3>Tickets abertos</h3><p><%= tickets ? tickets.filter(t => !['resolvido','fechado'].includes(t.status)).length : 0 %></p></li>
+        <li class="card"><h3>Denúncias pendentes</h3><p><%= denuncias ? denuncias.filter(d => d.status === 'pendente').length : 0 %></p></li>
+        <li class="card"><h3>Cupons ativos</h3><p><%= locals.cuponsAtivos == null ? '—' : cuponsAtivos %></p><a class="card-link" href="/adm/cupons">Gerenciar cupons</a></li>
+      </ul>
+    </section>
+
+    <!-- Usuários -->
+    <section aria-labelledby="usuarios-titulo">
+      <h2 id="usuarios-titulo">Usuários</h2>
+      <div class="adm-tabela cm-tabela-wrap">
+        <table class="cm-tabela">
+          <thead>
+            <tr><th scope="col">Nome</th><th scope="col">E-mail</th><th scope="col">Tipo</th><th scope="col">Status</th><th scope="col">Cadastro</th><th scope="col">Ações</th></tr>
+          </thead>
+          <tbody>
+            <% if (usuarios && usuarios.length > 0) { %>
+              <% usuarios.forEach(function (u) {
+                   const tipo = TIPO_USUARIO[u.tipo] || [u.tipo, ''];
+                   const st = STATUS_USUARIO[u.status] || [u.status, ''];
+                   const protegido = u.tipo === 'admin' || Number(u.id_usuario) === idAdmin; %>
+                <tr>
+                  <td data-rotulo="Nome"><%= u.nome %></td>
+                  <td data-rotulo="E-mail"><%= u.email %></td>
+                  <td data-rotulo="Tipo"><span class="cm-badge <%= tipo[1] %>"><%= tipo[0] %></span></td>
+                  <td data-rotulo="Status"><span class="cm-badge <%= st[1] %>"><%= st[0] %></span></td>
+                  <td data-rotulo="Cadastro"><%= u.data_cadastro ? moment(u.data_cadastro).format('DD/MM/YYYY') : '-' %></td>
+                  <td data-rotulo="Ações">
+                    <% if (protegido) { %>
+                      <span class="texto-muted">Administrador</span>
+                    <% } else { %>
+                      <div class="acoes-linha">
+                        <% if (u.status === 'ativo') { %>
+                          <form action="/adm/suspender" method="POST" data-confirmar="Suspender <%= u.nome %>? A pessoa não consegue mais entrar até ser reativada.<%= u.tipo === 'criador' ? ' Os produtos à venda saem da loja; quem já comprou continua com acesso.' : '' %>">
+                            <input type="hidden" name="id_usuario" value="<%= u.id_usuario %>">
+                            <button type="submit" class="cm-btn cm-btn--ghost cm-btn--pequeno">Suspender</button>
+                          </form>
+                        <% } else { %>
+                          <form action="/adm/reativar" method="POST">
+                            <input type="hidden" name="id_usuario" value="<%= u.id_usuario %>">
+                            <button type="submit" class="cm-btn cm-btn--pequeno">Reativar</button>
+                          </form>
+                        <% } %>
+                        <form action="/adm/excluir-permanente" method="POST"
+                              data-confirmar="Excluir permanentemente a conta de <%= u.nome %>? Esta ação é irreversível. Se for um vendedor com vendas, a conta será desativada em vez de apagada, para preservar as compras.">
+                          <input type="hidden" name="id_usuario" value="<%= u.id_usuario %>">
+                          <button type="submit" class="cm-btn cm-btn--perigo cm-btn--pequeno"><i class="fa-solid fa-user-xmark" aria-hidden="true"></i> Excluir</button>
+                        </form>
+                      </div>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr><td colspan="6" class="cm-tabela-vazia">Nenhum usuário encontrado.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="denuncias-titulo">
+      <h2 id="denuncias-titulo">Denúncias e pedidos de exclusão</h2>
+      <div class="adm-tabela cm-tabela-wrap">
+        <table class="cm-tabela">
+          <thead>
+            <tr><th scope="col">Autor</th><th scope="col">Motivo</th><th scope="col">Descrição</th><th scope="col">Data</th><th scope="col">Status</th><th scope="col">Ações</th></tr>
+          </thead>
+          <tbody>
+            <% if (denuncias && denuncias.length > 0) { %>
+              <% denuncias.forEach(function (d) {
+                   const isExclusao = d.motivo === 'exclusao_de_conta';
+                   const motivo = isExclusao ? 'Exclusão de conta' : d.motivo;
+                   const data = d.data_denuncia ? moment(d.data_denuncia).format('DD/MM/YYYY') : '-'; %>
+                <tr>
+                  <td data-rotulo="Autor"><%= d.denunciante || '-' %></td>
+                  <td data-rotulo="Motivo">
+                    <% if (isExclusao) { %><span class="motivo-exclusao"><i class="fa-solid fa-user-xmark" aria-hidden="true"></i> Exclusão de conta</span><% } else { %><%= d.motivo %><% } %>
+                  </td>
+                  <td data-rotulo="Descrição">
+                    <button type="button" class="btn-detalhe" data-abrir-dialogo="modalDetalhe"
+                            data-titulo="Detalhes da denúncia" data-rotulo1="Autor" data-valor1="<%= d.denunciante || '-' %>"
+                            data-rotulo2="Motivo" data-valor2="<%= motivo %>" data-status="<%= STATUS_DENUNCIA[d.status] || d.status %>"
+                            data-data="<%= data %>" data-descricao="<%= d.descricao || '-' %>">
+                      <%= d.descricao || '-' %>
+                    </button>
+                  </td>
+                  <td data-rotulo="Data"><%= data %></td>
+                  <td data-rotulo="Status"><%= STATUS_DENUNCIA[d.status] || d.status || '-' %></td>
+                  <td data-rotulo="Ações">
+                    <div class="acoes-linha">
+                      <% if (d.status !== 'arquivada' && d.status !== 'resolvida') { %>
+                        <% if (isExclusao) { %>
+                          <form action="/adm/reativar" method="POST">
+                            <input type="hidden" name="id_usuario" value="<%= d.id_cliente %>">
+                            <input type="hidden" name="id_denuncia" value="<%= d.id_denuncia %>">
+                            <button type="submit" class="cm-btn cm-btn--pequeno"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Reativar</button>
+                          </form>
+                          <form action="/adm/excluir-permanente" method="POST"
+                                data-confirmar="Excluir permanentemente a conta de <%= d.denunciante %>? Esta ação é irreversível. Se for um vendedor com vendas, a conta será desativada em vez de apagada.">
+                            <input type="hidden" name="id_usuario" value="<%= d.id_cliente %>">
+                            <input type="hidden" name="id_denuncia" value="<%= d.id_denuncia %>">
+                            <button type="submit" class="cm-btn cm-btn--perigo cm-btn--pequeno"><i class="fa-solid fa-user-xmark" aria-hidden="true"></i> Excluir</button>
+                          </form>
+                        <% } else { %>
+                          <form action="/adm/arquivar-denuncia" method="POST" data-confirmar="Arquivar esta denúncia?">
+                            <input type="hidden" name="id_denuncia" value="<%= d.id_denuncia %>">
+                            <button type="submit" class="cm-btn cm-btn--ghost cm-btn--pequeno">Arquivar</button>
+                          </form>
+                        <% } %>
+                      <% } else { %>
+                        <span class="texto-muted">Encerrada</span>
+                      <% } %>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr><td colspan="6" class="cm-tabela-vazia">Nenhuma denúncia encontrada.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Tickets de Suporte -->
+    <section aria-labelledby="tickets-titulo">
+      <h2 id="tickets-titulo">Tickets de suporte</h2>
+      <div class="adm-tabela cm-tabela-wrap">
+        <table class="cm-tabela">
+          <thead>
+            <tr><th scope="col">Usuário</th><th scope="col">Categoria</th><th scope="col">Mensagem</th><th scope="col">Status</th><th scope="col">Data</th><th scope="col">Ações</th></tr>
+          </thead>
+          <tbody>
+            <% if (tickets && tickets.length > 0) { %>
+              <% tickets.forEach(function (t) {
+                   const st = STATUS_TICKET[t.status] || [t.status, ''];
+                   const cat = CATEGORIA_TICKET[t.tipo_chamada] || t.tipo_chamada;
+                   const data = t.data_chamada ? moment(t.data_chamada).format('DD/MM/YYYY') : '-'; %>
+                <tr>
+                  <td data-rotulo="Usuário"><%= t.nome_usuario || 'Anônimo' %></td>
+                  <td data-rotulo="Categoria"><%= cat %></td>
+                  <td data-rotulo="Mensagem">
+                    <button type="button" class="btn-detalhe" data-abrir-dialogo="modalDetalhe"
+                            data-titulo="Ticket #<%= t.id_chamada %>" data-rotulo1="Usuário" data-valor1="<%= t.nome_usuario || 'Anônimo' %>"
+                            data-rotulo2="Categoria" data-valor2="<%= cat %>" data-status="<%= st[0] %>"
+                            data-data="<%= data %>" data-descricao="<%= t.descricao %>">
+                      <%= t.descricao %>
+                    </button>
+                  </td>
+                  <td data-rotulo="Status"><span class="cm-badge <%= st[1] %>"><%= st[0] %></span></td>
+                  <td data-rotulo="Data"><%= data %></td>
+                  <td data-rotulo="Ações">
+                    <div class="acoes-linha">
+                      <form action="/adm/status-ticket" method="POST">
+                        <input type="hidden" name="id_chamada" value="<%= t.id_chamada %>">
+                        <label class="cm-sr" for="status-<%= t.id_chamada %>">Status do ticket #<%= t.id_chamada %></label>
+                        <select id="status-<%= t.id_chamada %>" name="novo_status">
+                          <% Object.keys(STATUS_TICKET).forEach(function (s) { %>
+                            <option value="<%= s %>" <%= t.status === s ? 'selected' : '' %>><%= STATUS_TICKET[s][0] %></option>
+                          <% }) %>
+                        </select>
+                        <button type="submit" class="cm-btn cm-btn--ghost cm-btn--pequeno">Salvar</button>
+                      </form>
+                      <form action="/adm/excluir-ticket" method="POST" data-confirmar="Excluir o ticket #<%= t.id_chamada %> permanentemente?">
+                        <input type="hidden" name="id_chamada" value="<%= t.id_chamada %>">
+                        <button type="submit" class="cm-btn cm-btn--perigo cm-btn--pequeno">Excluir</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr><td colspan="6" class="cm-tabela-vazia">Nenhum ticket encontrado.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Gráficos -->
+    <section aria-labelledby="graficos-titulo">
+      <h2 id="graficos-titulo">Indicadores do projeto</h2>
+      <div class="graficos">
+        <article class="grafico grafico-vendas" data-vendas>
+          <div class="vendas-topo">
+            <h3>Vendas e faturamento</h3>
+            <% if (serie) { %>
+              <div class="vendas-controles">
+                <div class="segmentado" role="group" aria-label="Métrica">
+                  <button type="button" aria-pressed="true" data-metrica="faturamento">Faturamento</button>
+                  <button type="button" aria-pressed="false" data-metrica="vendas">Vendas</button>
+                </div>
+                <div class="segmentado" role="group" aria-label="Período">
+                  <button type="button" aria-pressed="true" data-periodo="7">7 dias</button>
+                  <button type="button" aria-pressed="false" data-periodo="30">30 dias</button>
+                  <button type="button" aria-pressed="false" data-periodo="12m">12 meses</button>
+                </div>
+              </div>
+            <% } %>
+          </div>
+          <% if (!serie) { %>
+            <p class="cm-alert cm-alert--erro" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span>Não foi possível carregar as vendas agora.</span></p>
+          <% } else { %>
+
+            <%
+              const sete = serie.dias.slice(-7);
+              const somar = function (lista, campo) { return lista.reduce(function (s, p) { return s + p[campo]; }, 0); };
+              const reais = function (v) { return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+            %>
+            <dl class="vendas-resumo" aria-live="polite">
+              <div><dt>Faturamento</dt><dd data-total="faturamento"><%= reais(somar(sete, 'faturamento')) %></dd></div>
+              <div><dt>Vendas</dt><dd data-total="vendas"><%= somar(sete, 'vendas') %></dd></div>
+              <div><dt>Pedidos</dt><dd data-total="pedidos"><%= somar(sete, 'pedidos') %></dd></div>
+              <div><dt>Descontos de cupons</dt><dd data-total="descontos"><%= reais(somar(sete, 'descontos')) %></dd></div>
+            </dl>
+            <div class="grafico-wrap grafico-wrap--alto">
+              <canvas id="graficoVendas" role="img" aria-label="Faturamento dos pedidos pagos nos últimos 7 dias"></canvas>
+            </div>
+            <p class="vendas-nota">Pedidos pagos. Faturamento = valor pago pelos clientes (já com os descontos de cupons); vendas = itens vendidos.</p>
+            <script type="application/json" id="dadosVendas"><%- JSON.stringify(serie).replace(/</g, '\\u003c') %></script>
+          <% } %>
+        </article>
+        <article class="grafico">
+          <h3>Distribuição de tipos</h3>
+          <div class="grafico-wrap"><canvas id="graficoTipos" role="img"
+                  aria-label="Distribuição de tipos de conta: <%= contagemTipos.cliente %> clientes, <%= contagemTipos.criador %> vendedores, <%= contagemTipos.admin %> administradores"
+                  data-valores="<%= JSON.stringify([contagemTipos.cliente, contagemTipos.criador, contagemTipos.admin]) %>"></canvas></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="cm-dialog" id="modalDetalhe" aria-labelledby="detalhe-titulo">
+    <div class="cm-dialog-corpo">
+      <button class="cm-dialog-fechar" type="button" data-fechar-dialogo aria-label="Fechar">&times;</button>
+      <h2 id="detalhe-titulo">Detalhes</h2>
+      <div class="modal-meta">
+        <span><b data-m="rotulo1"></b>: <span data-m="valor1"></span></span>
+        <span><b data-m="rotulo2"></b>: <span data-m="valor2"></span></span>
+        <span><b>Status:</b> <span data-m="status"></span></span>
+        <span><b>Data:</b> <span data-m="data"></span></span>
+      </div>
+      <div class="modal-desc" data-m="descricao"></div>
+    </div>
+  </dialog>
+
+  <%- include('../partials/footer') %>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+  <script src="/js/paineladm.js" defer></script>
+</body>
+</html>

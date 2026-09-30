@@ -1,0 +1,20 @@
+.btn-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  min-height: 40px;
+  padding: 6px 10px 6px 4px;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  color: #1c5d8f;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-voltar:hover {
+  color: #0f4c81;
+  background: rgba(28, 93, 143, 0.08);
+}

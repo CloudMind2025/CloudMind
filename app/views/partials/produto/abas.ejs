@@ -1,0 +1,38 @@
+<%
+  const abas = [
+    { id: 'descricao', rotulo: 'Descrição' },
+    { id: 'conteudo',  rotulo: 'Conteúdo' },
+    { id: 'perguntas', rotulo: 'Perguntas', contador: perguntas ? perguntas.length : null }
+  ];
+%>
+<section class="pd-tabs pd-surface" aria-label="Detalhes do produto" data-abas>
+  <div class="pd-tablist" role="tablist" aria-label="Detalhes do produto">
+    <% abas.forEach(function (aba, i) { %>
+      <button type="button" role="tab" class="pd-tab" id="aba-<%= aba.id %>" data-aba="<%= aba.id %>"
+              aria-controls="<%= aba.id %>" aria-selected="<%= i === 0 %>" tabindex="<%= i === 0 ? 0 : -1 %>">
+        <%= aba.rotulo %>
+        <% if (aba.contador) { %><span class="pd-tab-count"><%= aba.contador %></span><% } %>
+      </button>
+    <% }) %>
+  </div>
+
+  <div class="pd-tabpanel" role="tabpanel" id="descricao" aria-labelledby="aba-descricao" tabindex="0">
+    <h2 class="pd-sr">Descrição</h2>
+    <% if (produto.descricao && String(produto.descricao).trim()) { %>
+      <div class="pd-description"><%= String(produto.descricao).trim() %></div>
+    <% } else { %>
+      <div class="pd-empty">
+        <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
+        <p>O vendedor ainda não adicionou uma descrição para este produto.</p>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="pd-tabpanel" role="tabpanel" id="conteudo" aria-labelledby="aba-conteudo" tabindex="0" hidden>
+    <%- include('conteudo') %>
+  </div>
+
+  <div class="pd-tabpanel" role="tabpanel" id="perguntas" aria-labelledby="aba-perguntas" tabindex="0" hidden>
+    <%- include('perguntas') %>
+  </div>
+</section>

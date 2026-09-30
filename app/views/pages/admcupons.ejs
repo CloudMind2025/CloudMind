@@ -1,0 +1,208 @@
+<%
+  const ICONES = { sucesso: 'fa-circle-check', erro: 'fa-circle-exclamation', aviso: 'fa-triangle-exclamation', info: 'fa-circle-info' };
+  const ed = locals.editando || null;
+  const somarDias = function (iso, n) { const d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+  const c = locals.campos || (ed ? {
+    codigo: ed.codigo, id_criador: String(ed.id_criador), tipo_desconto: ed.tipo_desconto,
+    valor_desconto: String(ed.valor_desconto).replace('.', ','), data_inicio: ed.data_inicio, data_fim: ed.data_fim,
+    limite_usos: ed.limite_usos == null ? '' : String(ed.limite_usos), ilimitado: ed.limite_usos == null ? 'on' : '',
+    ativo: ed.ativo ? 'on' : ''
+  } : { tipo_desconto: 'percentual', data_inicio: dia, data_fim: somarDias(dia, 30), limite_usos: '100', ativo: 'on' });
+  const ilimitado = c.ilimitado === 'on';
+  const vendedoresForm = (vendedores || []).slice();
+  if (ed && !vendedoresForm.some(function (v) { return Number(v.id_usuario) === Number(ed.id_criador); })) {
+    vendedoresForm.push({ id_usuario: ed.id_criador, nome: ed.nome_criador + ' (conta suspensa)', email: '' });
+  }
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Cupons de desconto', noindex: true }) %>
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/conta.css">
+  <link rel="stylesheet" href="/css/paineladm.css">
+  <link rel="stylesheet" href="/css/admcupons.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+  <%- include('../partials/sidebar') %>
+
+  <main class="conta-main painel-adm painel-cupons" id="conteudo" tabindex="-1">
+    <header class="page-header">
+      <h1>Cupons de desconto</h1>
+      <p>Cada cupom pertence a um vendedor: aparece na loja dele e só dá desconto nos produtos dele.</p>
+    </header>
+
+    <% if (locals.aviso) { %>
+      <p class="cm-alert cm-alert--<%= aviso.tipo %>" role="<%= aviso.tipo === 'erro' ? 'alert' : 'status' %>">
+        <i class="fa-solid <%= ICONES[aviso.tipo] || ICONES.info %>" aria-hidden="true"></i> <span><%= aviso.tipo === 'sucesso' ? '✓ ' : '' %><%= aviso.msg %></span>
+      </p>
+    <% } %>
+
+    <!-- ===== Criar / editar ===== -->
+    <section class="conta-bloco cupom-form-bloco" id="form-cupom" aria-labelledby="form-cupom-titulo">
+      <h2 id="form-cupom-titulo">
+        <i class="fa-solid <%= ed ? 'fa-pen' : 'fa-plus' %>" aria-hidden="true"></i>
+        <%= ed ? 'Editar cupom ' + ed.codigo : 'Criar cupom' %>
+      </h2>
+      <% if (ed && ed.usos > 0) { %>
+        <p class="cupom-form-nota"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Já usado <%= ed.usos %> <%= ed.usos === 1 ? 'vez' : 'vezes' %>: as mudanças valem só para as próximas compras.</p>
+      <% } %>
+
+      <% if (erros && erros.length) { %>
+        <div class="cm-alert cm-alert--erro" role="alert">
+          <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+          <div><p>Confira o que está abaixo:</p><ul><% erros.forEach(function (e) { %><li><%= e %></li><% }) %></ul></div>
+        </div>
+      <% } %>
+
+      <form class="cupom-form" action="<%= ed ? '/adm/cupons/' + ed.id_cupom : '/adm/cupons' %>" method="POST" novalidate data-cupom-form data-enviando="Salvando…">
+        <div class="cupom-form-grade">
+          <div class="cm-campo">
+            <label for="cp-codigo">Código do cupom</label>
+            <input id="cp-codigo" name="codigo" type="text" required maxlength="30" autocomplete="off" spellcheck="false"
+                   placeholder="Ex.: JOAO10" value="<%= c.codigo || '' %>" aria-describedby="cp-codigo-dica" data-codigo>
+            <small class="cm-dica" id="cp-codigo-dica">Único. Letras, números, hífen ou sublinhado; fica em maiúsculas e sem espaços.</small>
+          </div>
+
+          <div class="cm-campo">
+            <label for="cp-vendedor">Vendedor</label>
+            <select id="cp-vendedor" name="id_criador" required aria-describedby="cp-vendedor-dica">
+              <option value="">Selecione o vendedor</option>
+              <% vendedoresForm.forEach(function (v) { %>
+                <option value="<%= v.id_usuario %>" <%= String(c.id_criador) === String(v.id_usuario) ? 'selected' : '' %>><%= v.nome %><%= v.email ? ' — ' + v.email : '' %></option>
+              <% }) %>
+            </select>
+            <small class="cm-dica" id="cp-vendedor-dica">O cupom aparece na loja deste vendedor e só desconta produtos dele.</small>
+          </div>
+
+          <fieldset class="cm-campo cupom-tipo">
+            <legend class="cm-label">Tipo de desconto</legend>
+            <div class="segmentado segmentado--form">
+              <label><input type="radio" name="tipo_desconto" value="percentual" <%= c.tipo_desconto !== 'fixo' ? 'checked' : '' %> data-tipo> <span>Porcentagem</span></label>
+              <label><input type="radio" name="tipo_desconto" value="fixo" <%= c.tipo_desconto === 'fixo' ? 'checked' : '' %> data-tipo> <span>Valor fixo</span></label>
+            </div>
+          </fieldset>
+
+          <div class="cm-campo">
+            <label for="cp-valor">Valor do desconto</label>
+            <div class="campo-unidade" data-unidade="<%= c.tipo_desconto === 'fixo' ? 'R$' : '%' %>">
+              <input id="cp-valor" name="valor_desconto" type="text" inputmode="decimal" required
+                     placeholder="<%= c.tipo_desconto === 'fixo' ? '20,00' : '10' %>" value="<%= c.valor_desconto || '' %>" aria-describedby="cp-valor-dica" data-valor>
+            </div>
+            <small class="cm-dica" id="cp-valor-dica" data-valor-dica><%= c.tipo_desconto === 'fixo' ? 'De R$ 0,01 a R$ 99.999,99 — nunca passa do valor dos produtos do vendedor no carrinho.' : 'De 1% a 100% sobre os produtos do vendedor no carrinho.' %></small>
+          </div>
+
+          <div class="cm-campo">
+            <label for="cp-inicio">Início da validade</label>
+            <input id="cp-inicio" name="data_inicio" type="date" required value="<%= c.data_inicio || '' %>">
+          </div>
+          <div class="cm-campo">
+            <label for="cp-fim">Fim da validade</label>
+            <input id="cp-fim" name="data_fim" type="date" required value="<%= c.data_fim || '' %>" aria-describedby="cp-fim-dica">
+            <small class="cm-dica" id="cp-fim-dica">Vale até o fim deste dia.</small>
+          </div>
+
+          <div class="cm-campo">
+            <label for="cp-limite">Limite de usos</label>
+            <input id="cp-limite" name="limite_usos" type="number" min="1" step="1" inputmode="numeric" value="<%= ilimitado ? '' : (c.limite_usos || '') %>"
+                   <%= ilimitado ? 'disabled' : '' %> aria-describedby="cp-limite-dica" data-limite>
+            <label class="cupom-check"><input type="checkbox" name="ilimitado" <%= ilimitado ? 'checked' : '' %> data-ilimitado> Uso ilimitado</label>
+            <small class="cm-dica" id="cp-limite-dica">Cada cliente usa o cupom uma vez.</small>
+          </div>
+
+          <div class="cm-campo">
+            <span class="cm-label">Situação</span>
+            <label class="cupom-check cupom-check--destaque"><input type="checkbox" name="ativo" <%= c.ativo === 'on' ? 'checked' : '' %>> Cupom ativo (pode ser usado dentro da validade)</label>
+          </div>
+        </div>
+
+        <div class="cupom-form-acoes">
+          <% if (ed) { %><a class="cm-btn cm-btn--ghost" href="/adm/cupons">Cancelar edição</a><% } %>
+          <button type="submit" class="cm-btn"><i class="fa-solid fa-check" aria-hidden="true"></i> <span><%= ed ? 'Salvar alterações' : 'Criar cupom' %></span></button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ===== Lista ===== -->
+    <section aria-labelledby="lista-cupons-titulo">
+      <h2 id="lista-cupons-titulo">Cupons cadastrados <span class="cupons-qtd"><%= cupons.length %></span></h2>
+      <% if (!cupons.length) { %>
+        <div class="cm-empty">
+          <i class="fa-solid fa-ticket" aria-hidden="true"></i>
+          <p>Nenhum cupom criado ainda. Crie o primeiro acima e escolha o vendedor que vai recebê-lo.</p>
+        </div>
+      <% } else { %>
+        <div class="adm-tabela cm-tabela-wrap">
+          <table class="cm-tabela">
+            <thead>
+              <tr><th scope="col">Cupom</th><th scope="col">Vendedor</th><th scope="col">Desconto</th><th scope="col">Validade</th><th scope="col">Usos</th><th scope="col">Descontado</th><th scope="col">Status</th><th scope="col">Ações</th></tr>
+            </thead>
+            <tbody>
+              <% cupons.forEach(function (cp) { const st = STATUS[cp.status] || STATUS.inativo; %>
+                <tr<% if (ed && ed.id_cupom === cp.id_cupom) { %> class="is-editando"<% } %>>
+                  <td data-rotulo="Cupom"><strong class="cupom-codigo-tabela"><%= cp.codigo %></strong></td>
+                  <td data-rotulo="Vendedor"><%= cp.nome_criador %></td>
+                  <td data-rotulo="Desconto"><%= rotuloDesconto(cp).replace(' OFF', '') %></td>
+                  <td data-rotulo="Validade"><%= dataBR(cp.data_inicio) %> a <%= dataBR(cp.data_fim) %></td>
+                  <td data-rotulo="Usos"><%= cp.usos %>/<%= cp.limite_usos == null ? '∞' : cp.limite_usos %></td>
+                  <td data-rotulo="Descontado"><%= formatarPreco(cp.total_descontado || 0) %></td>
+                  <td data-rotulo="Status"><span class="cm-badge <%= st.classe %>"><%= st.rotulo %></span></td>
+                  <td data-rotulo="Ações">
+                    <div class="acoes-linha">
+                      <a class="cm-btn cm-btn--ghost cm-btn--pequeno" href="/adm/cupons?editar=<%= cp.id_cupom %>#form-cupom">Editar<span class="cm-sr"> <%= cp.codigo %></span></a>
+                      <form action="/adm/cupons/<%= cp.id_cupom %>/ativo" method="POST">
+                        <input type="hidden" name="ativo" value="<%= cp.ativo ? '0' : '1' %>">
+                        <button type="submit" class="cm-btn cm-btn--ghost cm-btn--pequeno"><%= cp.ativo ? 'Desativar' : 'Ativar' %><span class="cm-sr"> <%= cp.codigo %></span></button>
+                      </form>
+                      <form action="/adm/cupons/<%= cp.id_cupom %>/excluir" method="POST"
+                            data-confirmar="<%= cp.usos > 0 ? 'O cupom ' + cp.codigo + ' já foi usado: ele será desativado (o histórico das compras fica). Continuar?' : 'Excluir o cupom ' + cp.codigo + '?' %>">
+                        <button type="submit" class="cm-btn cm-btn--perigo cm-btn--pequeno"><i class="fa-regular fa-trash-can" aria-hidden="true"></i> Excluir<span class="cm-sr"> <%= cp.codigo %></span></button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </section>
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <script>
+    (function () {
+      var form = document.querySelector('[data-cupom-form]');
+      if (!form) return;
+      var caixaValor = form.querySelector('.campo-unidade');
+      var valor = form.querySelector('[data-valor]');
+      var dica = form.querySelector('[data-valor-dica]');
+      var textos = {
+        percentual: { unidade: '%', exemplo: '10', dica: 'De 1% a 100% sobre os produtos do vendedor no carrinho.' },
+        fixo: { unidade: 'R$', exemplo: '20,00', dica: 'De R$ 0,01 a R$ 99.999,99 — nunca passa do valor dos produtos do vendedor no carrinho.' }
+      };
+      form.querySelectorAll('[data-tipo]').forEach(function (r) {
+        r.addEventListener('change', function () {
+          var t = textos[r.value];
+          caixaValor.setAttribute('data-unidade', t.unidade);
+          valor.placeholder = t.exemplo;
+          dica.textContent = t.dica;
+        });
+      });
+      var limite = form.querySelector('[data-limite]');
+      form.querySelector('[data-ilimitado]').addEventListener('change', function (e) {
+        limite.disabled = e.target.checked;
+        if (!e.target.checked && !limite.value) { limite.value = '100'; limite.focus(); }
+      });
+      var codigo = form.querySelector('[data-codigo]');
+      codigo.addEventListener('input', function () {
+        var pos = codigo.selectionStart;
+        var novo = codigo.value.toUpperCase().replace(/\s+/g, '');
+        if (novo !== codigo.value) { codigo.value = novo; codigo.setSelectionRange(pos, pos); }
+      });
+    })();
+  </script>
+</body>
+</html>

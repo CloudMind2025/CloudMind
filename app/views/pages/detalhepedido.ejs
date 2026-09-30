@@ -1,0 +1,143 @@
+<%
+  const STATUS_PEDIDO = {
+    pago:        { classe: 'cm-badge--ok',    rotulo: 'Pago' },
+    pendente:    { classe: 'cm-badge--aviso', rotulo: 'Aguardando pagamento' },
+    cancelado:   { classe: 'cm-badge--erro',  rotulo: 'Cancelado' },
+    reembolsado: { classe: 'cm-badge--erro',  rotulo: 'Reembolsado' }
+  };
+  const st = STATUS_PEDIDO[pedido.status] || { classe: '', rotulo: pedido.status };
+  const pago = pedido.status === 'pago';
+  const pendente = pedido.status === 'pendente';
+  const info = locals.infoPagamento || null;
+  const METODOS = { credit_card: 'cartão de crédito', debit_card: 'cartão de débito', bank_transfer: 'Pix', ticket: 'boleto', account_money: 'saldo Mercado Pago' };
+  const metodo = info && info.metodo_pagamento ? (METODOS[String(info.metodo_pagamento).split('/')[0]] || null) : null;
+  const total = itens.reduce(function (soma, i) { return soma + Math.round(Number(i.preco_unitario) * 100) * Number(i.quantidade); }, 0) / 100;
+  const descontoTotal = itens.reduce(function (soma, i) { return soma + Number(i.desconto || 0); }, 0);
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: `Pedido #${pedido.id_pedido}`, noindex: true }) %>
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/conta.css">
+  <link rel="stylesheet" href="/css/detalhe.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+  <%- include('../partials/sidebar') %>
+
+  <main class="conta-main" id="conteudo" tabindex="-1">
+    <%- include('../partials/btnV', { voltarPara: '/minhascompras' }) %>
+    <header class="page-header">
+      <h1>Detalhes da compra</h1>
+      <p>Veja as informações completas do seu pedido.</p>
+    </header>
+
+    <% if (recemCriado && recemCriado.aviso) { %>
+      <p class="cm-alert cm-alert--<%= recemCriado.aviso.tipo %>" role="<%= recemCriado.aviso.tipo === 'erro' ? 'alert' : 'status' %>">
+        <i class="fa-solid <%= recemCriado.aviso.tipo === 'sucesso' ? 'fa-circle-check' : recemCriado.aviso.tipo === 'erro' ? 'fa-circle-exclamation' : 'fa-circle-info' %>" aria-hidden="true"></i>
+        <span><%= recemCriado.aviso.msg %></span>
+      </p>
+    <% } else if (recemCriado && pago) { %>
+      <div class="cm-alert cm-alert--sucesso" role="status">
+        <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+        <div>
+          <p><strong>Compra concluída!</strong></p>
+          <p>Seus arquivos já estão disponíveis em <a href="/meusdowloads">Meus downloads</a>.</p>
+        </div>
+      </div>
+    <% } %>
+    <% if (recemCriado && recemCriado.ignorados > 0) { %>
+      <p class="cm-alert cm-alert--info" role="status">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <span><%= recemCriado.ignorados %> <%= recemCriado.ignorados === 1 ? 'item ficou' : 'itens ficaram' %> no carrinho porque <%= recemCriado.ignorados === 1 ? 'está indisponível ou já tinha sido comprado' : 'estão indisponíveis ou já tinham sido comprados' %>.</span>
+      </p>
+    <% } %>
+
+    <section class="conta-bloco" aria-labelledby="pedido-titulo">
+      <div class="pedido-topo">
+        <div>
+          <h2 id="pedido-titulo">Pedido #<%= pedido.id_pedido %></h2>
+          <p><time datetime="<%= moment(pedido.data_pedido).format('YYYY-MM-DDTHH:mm') %>"><%= moment(pedido.data_pedido).format('DD/MM/YYYY [às] HH:mm') %></time></p>
+        </div>
+        <span class="cm-badge <%= st.classe %>"><%= st.rotulo %></span>
+      </div>
+
+      <div class="pedido-secao">
+        <h3>Itens do pedido</h3>
+        <ul class="itens-pedido">
+          <% itens.forEach(function (item) { const t = tipoProduto(item.tipo_produto); %>
+            <li class="item">
+              <% if (item.imagem) { %>
+                <img src="<%= urlMidia(item.imagem) %>" alt="" loading="lazy" width="72" height="72">
+              <% } else { %>
+                <span class="item-sem-img" aria-hidden="true"><i class="fa-solid <%= t.icone %>"></i></span>
+              <% } %>
+              <div class="details">
+                <h4><a href="/paginnerprod?id=<%= item.id_produto %>"><%= item.titulo %></a></h4>
+                <p><%= t.rotulo %><% if (item.formato_arquivo) { %> · <%= item.formato_arquivo %><% } %></p>
+                <% if (pago) { %>
+                  <div class="item-acoes">
+                    <% if (item.formato_arquivo) { %>
+                      <a class="cm-btn cm-btn--pequeno" href="/downloads/<%= item.id_produto %>"><i class="fa-solid fa-download" aria-hidden="true"></i> Baixar<span class="cm-sr"> <%= item.titulo %></span></a>
+                    <% } else { %>
+                      <span class="item-aguardando"><i class="fa-regular fa-clock" aria-hidden="true"></i> Aguardando o vendedor enviar o arquivo</span>
+                    <% } %>
+                    <a class="cm-btn cm-btn--ghost cm-btn--pequeno" href="/paginnerprod?id=<%= item.id_produto %>#avaliar"><i class="fa-regular fa-star" aria-hidden="true"></i> Avaliar<span class="cm-sr"> <%= item.titulo %></span></a>
+                  </div>
+                <% } %>
+              </div>
+              <span class="valor">
+                <% if (Number(item.desconto) > 0) { %>
+                  <s class="valor-original"><span class="cm-sr">Preço original: </span><%= formatarPreco(Number(item.preco_unitario) + Number(item.desconto)) %></s>
+                <% } %>
+                <%= formatarPreco(item.preco_unitario) %>
+              </span>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+
+      <% if (descontoTotal > 0) { %>
+        <div class="pedido-secao resumo resumo-cupom">
+          <span><i class="fa-solid fa-ticket" aria-hidden="true"></i> Cupom<%= pedido.cupom ? ' ' + pedido.cupom.codigo : '' %></span>
+          <span>− <%= formatarPreco(descontoTotal) %></span>
+        </div>
+      <% } %>
+      <div class="pedido-secao resumo">
+        <span>Total</span>
+        <span><%= formatarPreco(total) %></span>
+      </div>
+
+      <div class="pedido-secao pagamento">
+        <h3>Pagamento</h3>
+        <% if (total === 0) { %>
+          <p><strong>Método:</strong> Sem cobrança (pedido gratuito)</p>
+        <% } else if (info) { %>
+          <p><strong>Método:</strong> Mercado Pago<%= metodo ? ' · ' + metodo : '' %></p>
+        <% } %>
+        <p><strong>Situação:</strong> <%= pago ? 'Aprovado' : st.rotulo %></p>
+        <% if (pendente) { %>
+          <p>Os arquivos são liberados assim que o Mercado Pago confirmar o pagamento.</p>
+        <% } %>
+      </div>
+
+      <div class="acoes-pedido">
+        <% if (pago) { %>
+          <a class="cm-btn" href="/meusdowloads"><i class="fa-solid fa-download" aria-hidden="true"></i> Ir para Meus downloads</a>
+        <% } %>
+        <% if (pendente && pagamentoOnline) { %>
+          <form action="/pedido/pagar" method="POST" data-enviando="Abrindo o pagamento…">
+            <input type="hidden" name="id_pedido" value="<%= pedido.id_pedido %>">
+            <button type="submit" class="cm-btn"><i class="fa-solid fa-lock" aria-hidden="true"></i> <span>Pagar agora</span></button>
+          </form>
+          <a class="cm-btn cm-btn--ghost" href="/pagamento/retorno?pedido=<%= pedido.id_pedido %>"><i class="fa-solid fa-rotate" aria-hidden="true"></i> Verificar pagamento</a>
+        <% } %>
+        <a class="cm-btn cm-btn--ghost" href="/minhascompras">Voltar para Minhas compras</a>
+      </div>
+    </section>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

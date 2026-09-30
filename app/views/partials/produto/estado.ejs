@@ -1,0 +1,33 @@
+<%
+  const estados = {
+    nao_encontrado: {
+      icone: 'fa-magnifying-glass',
+      titulo: 'Produto não encontrado',
+      texto: 'O link pode estar incorreto ou o produto foi removido pelo vendedor.'
+    },
+    indisponivel: {
+      icone: 'fa-box-archive',
+      titulo: 'Produto indisponível',
+      texto: 'Este produto não está disponível para compra no momento.'
+    },
+    erro: {
+      icone: 'fa-triangle-exclamation',
+      titulo: 'Não foi possível carregar este produto',
+      texto: 'Tivemos um problema ao buscar as informações. Tente novamente em instantes.'
+    }
+  };
+  const e = estados[estado] || estados.erro;
+%>
+<section class="pd-state pd-surface" aria-labelledby="pd-estado-titulo">
+  <span class="pd-state-icon" aria-hidden="true"><i class="fa-solid <%= e.icone %>"></i></span>
+  <h1 id="pd-estado-titulo"><%= e.titulo %></h1>
+  <p><%= e.texto %></p>
+  <div class="pd-state-actions">
+    <% if (estado === 'erro') { %>
+      <a class="pd-btn pd-btn--primary" href=""><i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Tentar novamente</a>
+      <a class="pd-btn pd-btn--ghost" href="/PProdutos">Ver catálogo</a>
+    <% } else { %>
+      <a class="pd-btn pd-btn--primary" href="/PProdutos">Explorar produtos</a>
+    <% } %>
+  </div>
+</section>

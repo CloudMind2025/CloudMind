@@ -1,0 +1,61 @@
+/* ===== favoritos.css — Grade de favoritos (layout vem de conta.css) ===== */
+.favoritos-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+  list-style: none;
+}
+
+.card-favorito {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: var(--cm-raio);
+  overflow: hidden;
+  box-shadow: var(--cm-sombra-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card-favorito:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(13, 18, 26, 0.12); }
+
+.card-favorito-midia { aspect-ratio: 16 / 10; background: #0d3a4a; }
+.card-favorito-midia img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card-favorito-midia .conta-card-sem-img { width: 100%; height: 100%; }
+
+.card-favorito .info {
+  flex: 1;
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-favorito .tipo {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--cm-dourado-tinta);
+}
+
+.card-favorito h2 { font-size: 1.05rem; line-height: 1.35; color: var(--cm-navy); }
+.card-favorito h2 a { color: inherit; text-decoration: none; }
+.card-favorito h2 a:hover { text-decoration: underline; }
+
+.card-favorito .descricao {
+  font-size: 0.9rem;
+  color: var(--cm-texto-suave);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-favorito .preco { margin-top: auto; padding-top: 4px; font-weight: 800; font-size: 1.1rem; color: var(--cm-navy); }
+
+.card-favorito .acoes { display: flex; gap: 8px; margin-top: 8px; }
+.card-favorito .acoes > * { flex: 1; }
+.card-favorito .acoes form { display: flex; }
+.card-favorito .acoes form .cm-btn { flex: 1; }

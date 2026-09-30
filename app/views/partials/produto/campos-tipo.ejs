@@ -1,0 +1,82 @@
+<%
+  const cfgT = locals.configTipos || { tipos: {} };
+  const pref = locals.prefixo || 'ct';
+  const tipoSel = cfgT.tipos[locals.tipoAtual] ? tipoAtual : '';
+  const valores = locals.detalhesAtuais || {};
+  const catsDoTipo = tipoSel ? cfgT.tipos[tipoSel].categorias : [];
+  const semCategorias = !Object.keys(cfgT.tipos).some(function (k) { return cfgT.tipos[k].categorias.length; });
+  const comoLista = function (v) { return v == null || v === '' ? [] : (Array.isArray(v) ? v.map(String) : [String(v)]); };
+%>
+<div class="ct" data-campos-tipo data-config="<%= JSON.stringify(cfgT) %>">
+  <div class="ct-campo ct-categoria">
+    <label class="ct-rotulo" for="<%= pref %>-categoria">Categoria <span class="ct-obrig" aria-hidden="true">*</span></label>
+    <select id="<%= pref %>-categoria" name="id_categoria" required data-ct-categoria
+            aria-describedby="<%= pref %>-categoria-dica <%= pref %>-categoria-erro"<% if (!tipoSel) { %> disabled<% } %>>
+      <option value=""><%= tipoSel ? 'Selecione o assunto' : 'Escolha o tipo primeiro' %></option>
+      <% catsDoTipo.forEach(function (cat) { %>
+        <option value="<%= cat.id %>" <%= String(locals.idCategoriaAtual) === String(cat.id) ? 'selected' : '' %>><%= cat.nome %></option>
+      <% }) %>
+    </select>
+    <small class="ct-dica" id="<%= pref %>-categoria-dica">O assunto do produto — ajuda o comprador a encontrá-lo. As opções mudam conforme o tipo.</small>
+    <small class="ct-erro" id="<%= pref %>-categoria-erro" data-ct-erro="categoria" role="alert" hidden></small>
+    <% if (semCategorias) { %>
+      <p class="cm-alert cm-alert--aviso ct-aviso">
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+        <span>As categorias ainda não foram carregadas do banco. Reinicie o servidor para aplicar a atualização e tente de novo.</span>
+      </p>
+    <% } %>
+  </div>
+
+  <% Object.keys(cfgT.tipos).forEach(function (chave) {
+       const t = cfgT.tipos[chave];
+       const ativo = chave === tipoSel; %>
+    <fieldset class="ct-grupo" data-ct-grupo="<%= chave %>"<% if (!ativo) { %> hidden disabled<% } %>>
+      <legend class="ct-legenda"><i class="fa-solid <%= t.icone %>" aria-hidden="true"></i> Informações do <%= t.rotulo %></legend>
+      <p class="ct-sub">Aparecem em “O que você recebe”, na página do produto. <span class="ct-obrig" aria-hidden="true">*</span> obrigatório</p>
+      <div class="ct-grade">
+        <% t.campos.forEach(function (c) {
+             const id = pref + '-' + chave + '-' + c.chave;
+             const v = ativo ? valores[c.chave] : undefined;
+             const nome = 'detalhes[' + c.chave + ']';
+             const descr = (c.dica ? id + '-dica ' : '') + id + '-erro'; %>
+          <div class="ct-campo<%= c.tipo === 'multi' ? ' ct-campo--largo' : '' %>" data-ct-campo="<%= c.chave %>">
+            <% if (c.tipo === 'multi') { %>
+              <p class="ct-rotulo" id="<%= id %>-rotulo"><%= c.rotulo %><% if (c.obrigatorio) { %> <span class="ct-obrig" aria-hidden="true">*</span><% } %></p>
+              <div class="ct-chips" role="group" aria-labelledby="<%= id %>-rotulo" aria-describedby="<%= descr %>">
+                <% const marcados = comoLista(v); %>
+                <% Object.keys(c.opcoes).forEach(function (op) { %>
+                  <label class="ct-chip">
+                    <input type="checkbox" name="<%= nome %>[]" value="<%= op %>" <%= marcados.includes(op) ? 'checked' : '' %>>
+                    <span><%= c.opcoes[op] %></span>
+                  </label>
+                <% }) %>
+              </div>
+            <% } else { %>
+              <label class="ct-rotulo" for="<%= id %>"><%= c.rotulo %><% if (c.obrigatorio) { %> <span class="ct-obrig" aria-hidden="true">*</span><% } else { %> <span class="ct-opcional">(opcional)</span><% } %></label>
+              <% if (c.tipo === 'select') { %>
+                <select id="<%= id %>" name="<%= nome %>" aria-describedby="<%= descr %>"<% if (c.obrigatorio) { %> required<% } %>>
+                  <option value="">Selecione</option>
+                  <% Object.keys(c.opcoes).forEach(function (op) { %>
+                    <option value="<%= op %>" <%= String(v) === op ? 'selected' : '' %>><%= c.opcoes[op] %></option>
+                  <% }) %>
+                </select>
+              <% } else if (c.tipo === 'inteiro') { %>
+                <input id="<%= id %>" name="<%= nome %>" type="number" inputmode="numeric" step="1" min="<%= c.min %>" max="<%= c.max %>"
+                       value="<%= v == null ? '' : v %>" aria-describedby="<%= descr %>"<% if (c.obrigatorio) { %> required<% } %>>
+              <% } else if (c.tipo === 'duracao') { %>
+                <input id="<%= id %>" name="<%= nome %>" type="text" placeholder="Ex.: 5:32" maxlength="7" autocomplete="off"
+                       value="<%= v == null ? '' : v %>" aria-describedby="<%= id %>-formato <%= descr %>"<% if (c.obrigatorio) { %> required<% } %>>
+                <small class="ct-dica" id="<%= id %>-formato">Horas e minutos (h:mm).</small>
+              <% } else { %>
+                <input id="<%= id %>" name="<%= nome %>" type="text" maxlength="<%= c.max %>" placeholder="<%= c.placeholder || '' %>"
+                       value="<%= v == null ? '' : v %>" aria-describedby="<%= descr %>"<% if (c.obrigatorio) { %> required<% } %>>
+              <% } %>
+            <% } %>
+            <% if (c.dica) { %><small class="ct-dica" id="<%= id %>-dica"><%= c.dica %></small><% } %>
+            <small class="ct-erro" id="<%= id %>-erro" data-ct-erro="<%= c.chave %>" role="alert" hidden></small>
+          </div>
+        <% }) %>
+      </div>
+    </fieldset>
+  <% }) %>
+</div>

@@ -1,0 +1,91 @@
+<%
+  const caminhoMenu = locals.caminhoAtual || '';
+  const uMenu = locals.usuarioLogado || null;
+  const admMenu = !!uMenu && uMenu.tipo === 'admin';
+  const linksMenu = admMenu ? [] : [
+    { href: '/',          rotulo: 'Início',   ativo: caminhoMenu === '/' },
+    { href: '/PProdutos', rotulo: 'Produtos', ativo: caminhoMenu === '/PProdutos' || caminhoMenu === '/paginnerprod' },
+    { href: '/SobreNos',  rotulo: 'Sobre',    ativo: caminhoMenu === '/SobreNos' },
+    { href: '/suporte',   rotulo: 'Suporte',  ativo: caminhoMenu === '/suporte' }
+  ];
+  const rotuloTipo = uMenu ? ({ admin: 'ADM', criador: 'Vendedor' }[uMenu.tipo] || 'Cliente') : '';
+%>
+<a class="cm-skip" href="#<%= locals.alvoConteudo || 'conteudo' %>">Pular para o conteúdo</a>
+<header class="cm-header">
+  <nav class="menu" aria-label="Principal">
+    <a href="<%= admMenu ? '/paineladm' : '/' %>" class="logo">
+      <img src="/image/logo-final2.svg" alt="CloudMind — página inicial" width="128" height="50">
+    </a>
+
+    <ul class="menu-links">
+      <% linksMenu.forEach(function (l) { %>
+        <li><a href="<%= l.href %>"<% if (l.ativo) { %> aria-current="page"<% } %>><%= l.rotulo %></a></li>
+      <% }) %>
+    </ul>
+
+    <div class="menu-direita">
+      <% if (uMenu) { %>
+        <a href="<%= admMenu ? '/paineladm' : '/perfiluser' %>" class="menu-user-link"
+           aria-label="<%= admMenu ? 'Painel administrativo' : 'Minha conta' %> — <%= uMenu.nome %>">
+          <span class="menu-user-avatar">
+            <img src="<%= urlFoto(uMenu.foto) || (admMenu ? '/image/avatar-admin.svg' : '/image/User1.png') %>" alt="" class="menu-avatar-img" width="34" height="34" data-avatar-menu>
+            <span class="menu-user-badge menu-badge-<%= uMenu.tipo %>"><%= rotuloTipo %></span>
+          </span>
+        </a>
+      <% } else { %>
+        <a href="/login" class="menu-entrar">
+          <img src="/image/User1.png" alt="" width="28" height="28">
+          <span>Entrar</span>
+        </a>
+        <a href="/cadastro" class="menu-cadastrar">Criar conta</a>
+      <% } %>
+      <% if (!admMenu) { %>
+        <a href="/carrinho" class="menu-carrinho" aria-label="Carrinho"<% if (caminhoMenu === '/carrinho') { %> aria-current="page"<% } %>>
+          <img src="/image/Carrinho1.png" alt="" width="28" height="28">
+        </a>
+      <% } %>
+      <button type="button" id="menu-toggle" class="hamburger" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobile-menu">
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+      </button>
+    </div>
+  </nav>
+
+  <nav class="mobile-menu" id="mobile-menu" aria-label="Menu">
+    <% linksMenu.forEach(function (l) { %>
+      <a href="<%= l.href %>"<% if (l.ativo) { %> aria-current="page"<% } %>><%= l.rotulo %></a>
+    <% }) %>
+    <% if (uMenu) { %>
+      <% if (admMenu) { %>
+        <a href="/paineladm"<% if (caminhoMenu === '/paineladm') { %> aria-current="page"<% } %>>Painel administrativo</a>
+      <% } else { %>
+        <a href="/perfiluser">Minha conta</a>
+        <a href="/carrinho">Carrinho</a>
+      <% } %>
+      <a href="/logout" class="mobile-menu-sair">Sair</a>
+    <% } else { %>
+      <a href="/login">Entrar</a>
+      <a href="/cadastro">Criar conta</a>
+    <% } %>
+  </nav>
+</header>
+
+<script>
+  (function () {
+    var botao = document.getElementById('menu-toggle');
+    var menu = document.getElementById('mobile-menu');
+    if (!botao || !menu) return;
+    function definir(aberto) {
+      menu.classList.toggle('show', aberto);
+      botao.setAttribute('aria-expanded', String(aberto));
+      botao.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
+      botao.firstElementChild.className = 'fa-solid ' + (aberto ? 'fa-xmark' : 'fa-bars');
+    }
+    botao.addEventListener('click', function () { definir(!menu.classList.contains('show')); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && menu.classList.contains('show')) { definir(false); botao.focus(); }
+    });
+    document.addEventListener('click', function (e) {
+      if (menu.classList.contains('show') && !menu.contains(e.target) && !botao.contains(e.target)) definir(false);
+    });
+  })();
+</script>

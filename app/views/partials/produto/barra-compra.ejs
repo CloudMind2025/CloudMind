@@ -1,0 +1,17 @@
+<% if (!ehDono && disponivel && !jaComprou) { %>
+  <div class="pd-buybar" data-barra-compra role="region" aria-label="Compra rápida">
+    <div class="pd-buybar-info">
+      <p class="pd-buybar-title"><%= produto.titulo %></p>
+      <p class="pd-buybar-price"><%= formatarPreco(produto.preco) %></p>
+    </div>
+    <% if (noCarrinho) { %>
+      <a class="pd-btn pd-btn--primary" href="/carrinho" data-carrinho-botao data-curto>
+        <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i> <span>Ver carrinho</span>
+      </a>
+    <% } else { %>
+      <button type="submit" form="pd-form-carrinho" class="pd-btn pd-btn--primary" data-carrinho-botao data-curto>
+        <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> <span>Adicionar</span>
+      </button>
+    <% } %>
+  </div>
+<% } %>

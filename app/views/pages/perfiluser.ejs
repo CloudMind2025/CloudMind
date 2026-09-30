@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Meu perfil', noindex: true }) %>
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/conta.css">
+  <link rel="stylesheet" href="/css/perfiluser.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+  <%- include('../partials/sidebar') %>
+
+  <main class="conta-main" id="conteudo" tabindex="-1">
+    <header class="page-header">
+      <h1>Meu perfil</h1>
+      <p>Seus dados, segurança e preferências da conta.</p>
+    </header>
+
+    <div class="perfil-grade">
+      <!-- Dados Pessoais -->
+      <section class="conta-bloco perfil-bloco" aria-labelledby="dados-titulo">
+        <div class="perfil-bloco-topo">
+          <h2 id="dados-titulo"><i class="fa-solid fa-id-card" aria-hidden="true"></i> Dados pessoais</h2>
+          <a href="/editardados" class="cm-btn cm-btn--pequeno"><i class="fa-solid fa-pen" aria-hidden="true"></i> Editar</a>
+        </div>
+        <dl class="perfil-dados">
+          <div><dt>Nome</dt><dd><%= cliente && cliente.nome ? cliente.nome : '—' %></dd></div>
+          <div><dt>E-mail</dt><dd><%= cliente && cliente.email ? cliente.email : '—' %></dd></div>
+          <div><dt>Tipo de conta</dt><dd><%= cliente && cliente.tipo === 'criador' ? 'Vendedor' : 'Cliente' %></dd></div>
+          <div><dt>Membro desde</dt><dd><%= cliente && cliente.data_cadastro ? moment(cliente.data_cadastro).format('DD/MM/YYYY') : '—' %></dd></div>
+        </dl>
+      </section>
+
+      <!-- Privacidade e Segurança -->
+      <section class="conta-bloco perfil-bloco" aria-labelledby="seguranca-titulo">
+        <div class="perfil-bloco-topo">
+          <h2 id="seguranca-titulo"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Privacidade e segurança</h2>
+        </div>
+        <p>Altere sua senha, encerre sua conta e tenha acesso aos dados de segurança.</p>
+        <a href="/alterarsenha" class="cm-btn cm-btn--escuro"><i class="fa-solid fa-key" aria-hidden="true"></i> Alterar senha</a>
+      </section>
+
+      <!-- Configurações -->
+      <section class="conta-bloco perfil-bloco" aria-labelledby="config-titulo">
+        <div class="perfil-bloco-topo">
+          <h2 id="config-titulo"><i class="fa-solid fa-sliders" aria-hidden="true"></i> Configurações</h2>
+        </div>
+        <p>Configure as funções do site como preferir.</p>
+        <a href="/config" class="cm-btn cm-btn--escuro"><i class="fa-solid fa-gear" aria-hidden="true"></i> Acessar configurações</a>
+      </section>
+    </div>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

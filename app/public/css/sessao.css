@@ -1,0 +1,43 @@
+.vendas-section {
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+}
+
+.resultado-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.destaque {
+  display: inline-block;
+  background: linear-gradient(185deg, #15202c, #18343b);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+}
+
+.destaque h2 { font-size: 1.25rem; font-weight: 700; }
+
+.resultado-info { color: var(--cm-texto-suave); font-size: 0.95rem; }
+.resultado-info a { color: var(--cm-link); font-weight: 600; }
+
+.vendas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 20px;
+  list-style: none;
+}
+
+.paginacao { display: flex; justify-content: center; margin: 2.5rem 0 1rem; }
+
+@media (max-width: 480px) {
+  .vendas-section { padding: 24px 14px 40px; }
+  .vendas-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+}

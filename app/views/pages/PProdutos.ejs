@@ -1,0 +1,228 @@
+<%
+  const FILTROS = [
+    { tipo: 'ebook',     rotulo: 'EBOOKS' },
+    { tipo: 'curso',     rotulo: 'CURSO' },
+    { tipo: 'audiobook', rotulo: 'AUDIOBOOK' }
+  ];
+  const TODOS_TIPOS = TIPOS_CHAVES;
+  const urlCatalogo = function (mudancas) {
+    const p = Object.assign({ q: q, tipo: tipo, pagina: 1 }, mudancas);
+    const partes = [];
+    if (p.q) partes.push('q=' + encodeURIComponent(p.q));
+    if (p.tipo) partes.push('tipo=' + encodeURIComponent(p.tipo));
+    if (p.pagina > 1) partes.push('pagina=' + p.pagina);
+    return '/PProdutos' + (partes.length ? '?' + partes.join('&') : '');
+  };
+  const filtrando = !!(q || tipo);
+  const rotuloTipoAtual = tipo ? tipoProduto(tipo).rotulo : '';
+  const paginas = [];
+  for (let n = 1; n <= totalPaginas; n++) {
+    if (n === 1 || n === totalPaginas || Math.abs(n - pagina) <= 1) paginas.push(n);
+    else if (paginas[paginas.length - 1] !== '…') paginas.push('…');
+  }
+  const idUsuario = usuarioLogado ? Number(usuarioLogado.id_usuario) : null;
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', {
+        titulo: q ? `Busca: ${q}` : (tipo ? `${rotuloTipoAtual} — Produtos` : 'Produtos'),
+        descricao: 'Catálogo CloudMind: ebooks, cursos, templates, audiobooks e assets de criadores independentes.',
+        noindex: pagina > 1 || !!q
+      }) %>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/sessao.css">
+  <link rel="stylesheet" href="/css/produto-card.css">
+  <link rel="stylesheet" href="/css/slider.css">
+  <link rel="stylesheet" href="/css/faq.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+
+  <section class="busca-area">
+    <figure class="avatar" aria-hidden="true">
+      <img src="/image/Avatar.png" alt="" width="430" height="300">
+    </figure>
+    <div class="conteudo-busca">
+      <header>
+        <h1>O que você procura hoje?</h1>
+        <p>Explore nosso catálogo e ache o que precisa</p>
+      </header>
+      <form class="barra-pesquisa" role="search" action="/PProdutos" method="GET" autocomplete="off">
+        <% if (tipo) { %><input type="hidden" name="tipo" value="<%= tipo %>"><% } %>
+        <input type="search" name="q" value="<%= q %>" placeholder="Pesquisar por título ou assunto..." aria-label="Pesquisar produtos"
+               maxlength="100" data-sugestoes="<%= JSON.stringify(sugestoes || []) %>"
+               role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sugestoes-busca">
+        <button type="submit" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
+      </form>
+      <nav class="botoes-filtros" aria-label="Filtrar por tipo">
+        <button type="button">OFERTAS</button>
+        <% FILTROS.forEach(function (f) { %>
+          <a href="<%= urlCatalogo({ tipo: tipo === f.tipo ? '' : f.tipo }) %>"<% if (tipo === f.tipo) { %> aria-current="true"<% } %>><%= f.rotulo %></a>
+        <% }) %>
+        <details class="filtro-categorias">
+          <summary>CATEGORIAS <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>
+          <ul>
+            <li><a href="<%= urlCatalogo({ tipo: '' }) %>"<% if (!tipo) { %> aria-current="true"<% } %>><i class="fa-solid fa-border-all" aria-hidden="true"></i> Todas as categorias</a></li>
+            <% TODOS_TIPOS.forEach(function (t) { const info = tipoProduto(t); %>
+              <li><a href="<%= urlCatalogo({ tipo: t }) %>"<% if (tipo === t) { %> aria-current="true"<% } %>><i class="fa-solid <%= info.icone %>" aria-hidden="true"></i> <%= info.rotulo %></a></li>
+            <% }) %>
+          </ul>
+        </details>
+      </nav>
+    </div>
+  </section>
+
+  <main class="vendas-section" id="conteudo" tabindex="-1">
+    <div class="resultado-topo">
+      <div class="destaque">
+        <h2><%= q ? 'Resultados da busca' : (tipo ? rotuloTipoAtual : 'Destaques') %></h2>
+      </div>
+      <% if (!erro) { %>
+        <p class="resultado-info" role="status">
+          <%= total %> <%= total === 1 ? 'produto encontrado' : 'produtos encontrados' %><% if (q) { %> para “<strong><%= q %></strong>”<% } %><% if (tipo) { %> em <strong><%= rotuloTipoAtual %></strong><% } %>
+          <% if (filtrando) { %> · <a href="/PProdutos">Limpar filtros</a><% } %>
+        </p>
+      <% } %>
+    </div>
+
+    <% if (erro) { %>
+      <div class="cm-empty">
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+        <p><%= erro %></p>
+        <a class="cm-btn" href="<%= urlCatalogo({}) %>"><i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Tentar novamente</a>
+      </div>
+    <% } else if (!produtos.length) { %>
+      <div class="cm-empty">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <% if (filtrando) { %>
+          <p>Nenhum produto encontrado<% if (q) { %> para “<strong><%= q %></strong>”<% } %><% if (tipo) { %> em <strong><%= rotuloTipoAtual %></strong><% } %>. Tente outras palavras ou remova o filtro.</p>
+          <a class="cm-btn" href="/PProdutos">Ver todos os produtos</a>
+        <% } else { %>
+          <p>Ainda não há produtos publicados. Volte em breve — ou publique o primeiro!</p>
+          <a class="cm-btn" href="/cadastro">Quero vender</a>
+        <% } %>
+      </div>
+    <% } else { %>
+      <ul class="vendas-grid">
+        <% produtos.forEach(function (p) { %>
+          <li><%- include('../partials/produto-card', { p: p, idUsuario: idUsuario, mostrarVendedor: true }) %></li>
+        <% }) %>
+      </ul>
+
+      <% if (totalPaginas > 1) { %>
+        <nav class="paginacao cm-paginacao" aria-label="Páginas do catálogo">
+          <ul>
+            <% if (pagina > 1) { %><li><a href="<%= urlCatalogo({ pagina: pagina - 1 }) %>" rel="prev">‹ Anterior</a></li><% } %>
+            <% paginas.forEach(function (n) { %>
+              <% if (n === '…') { %><li><span aria-hidden="true">…</span></li>
+              <% } else { %><li><a href="<%= urlCatalogo({ pagina: n }) %>"<% if (n === pagina) { %> aria-current="page"<% } %> aria-label="Página <%= n %>"><%= n %></a></li><% } %>
+            <% }) %>
+            <% if (pagina < totalPaginas) { %><li><a href="<%= urlCatalogo({ pagina: pagina + 1 }) %>" rel="next">Próximo ›</a></li><% } %>
+          </ul>
+        </nav>
+      <% } %>
+    <% } %>
+
+    <section class="slider-container" aria-roledescription="carrossel" aria-label="Destaques da CloudMind">
+      <div class="slides" id="slides">
+        <section class="slide" aria-roledescription="slide" aria-label="1 de 3">
+          <div class="slide-content">
+            <h2>Tenha mais facilidade para ler o que gosta.</h2>
+            <p>Quer carregar seus livros no seu bolso?</p>
+            <button type="button">Ver produtos</button>
+          </div>
+          <img src="/image/ebook.png" alt="" width="200" height="200">
+        </section>
+        <section class="slide" aria-roledescription="slide" aria-label="2 de 3">
+          <div class="slide-content">
+            <h2>Muito ocupado ultimamente? Sem tempo?</h2>
+            <p>Explore nossa área de Audiobooks e otimize seu tempo!</p>
+            <button type="button">Ver produtos</button>
+          </div>
+          <img src="/image/audiobook.png" alt="" width="200" height="200">
+        </section>
+        <section class="slide" aria-roledescription="slide" aria-label="3 de 3">
+          <div class="slide-content">
+            <h2>Pague menos nos cursos mais bem avaliados!</h2>
+            <p>Aproveite até 70% de desconto.</p>
+            <button type="button">Descubra mais</button>
+          </div>
+          <img src="/image/Curso.png" alt="" width="200" height="200">
+        </section>
+      </div>
+    </section>
+
+    <section class="faq" aria-labelledby="faq-titulo">
+      <h2 id="faq-titulo">Dúvidas frequentes</h2>
+      <div class="faq-container">
+        <div class="faq-item">
+          <button type="button" class="faq-question" aria-expanded="false">Como posso vender meus produtos digitais?</button>
+          <div class="faq-answer"><p>Basta criar uma conta, acessar sua área de criador e publicar seu eBook, curso, template ou outro conteúdo. O processo é simples e rápido.</p></div>
+        </div>
+        <div class="faq-item">
+          <button type="button" class="faq-question" aria-expanded="false">A plataforma é segura?</button>
+          <div class="faq-answer"><p>Sim! Nossa plataforma foi desenvolvida com foco total na segurança de criadores e compradores.</p></div>
+        </div>
+        <div class="faq-item">
+          <button type="button" class="faq-question" aria-expanded="false">Quais tipos de produtos posso vender?</button>
+          <div class="faq-answer"><p>Você pode vender eBooks, cursos, templates, mapas mentais, flashcards, audiobooks, checklists e muito mais!</p></div>
+        </div>
+        <div class="faq-item">
+          <button type="button" class="faq-question" aria-expanded="false">Como recebo o pagamento das vendas?</button>
+          <div class="faq-answer"><p>Você recebe diretamente na sua conta cadastrada após a confirmação da compra, de forma segura e transparente.</p></div>
+        </div>
+        <div class="faq-item">
+          <button type="button" class="faq-question" aria-expanded="false">Há taxas para vender na plataforma?</button>
+          <div class="faq-answer"><p>Sim, cobramos uma pequena taxa administrativa por venda para manter a plataforma funcionando e segura.</p></div>
+        </div>
+        <div class="faq-item">
+          <button type="button" class="faq-question" aria-expanded="false">Posso vender produtos gratuitos?</button>
+          <div class="faq-answer"><p>Sim! Você pode disponibilizar produtos gratuitos como forma de atrair clientes e aumentar sua base de seguidores.</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <script>
+    (function () {
+      var slides = document.getElementById('slides');
+      if (!slides) return;
+      var total = slides.children.length, atual = 0, timer = null;
+      var reduzir = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function mostrar(i) { atual = i; slides.style.transform = 'translateX(-' + (i * 100) + '%)'; }
+      function iniciar() { parar(); if (!reduzir) timer = setInterval(function () { mostrar((atual + 1) % total); }, 6000); }
+      function parar() { clearInterval(timer); timer = null; }
+      var container = slides.parentElement;
+      container.addEventListener('mouseenter', parar);
+      container.addEventListener('mouseleave', iniciar);
+      container.addEventListener('focusin', parar);
+      container.addEventListener('focusout', iniciar);
+      iniciar();
+    })();
+
+    document.querySelectorAll('.faq .faq-item').forEach(function (item) {
+      var botao = item.querySelector('.faq-question');
+      botao.addEventListener('click', function () {
+        var abrir = !item.classList.contains('active');
+        document.querySelectorAll('.faq .faq-item').forEach(function (el) {
+          el.classList.remove('active');
+          el.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+        });
+        item.classList.toggle('active', abrir);
+        botao.setAttribute('aria-expanded', String(abrir));
+      });
+    });
+
+    (function () {
+      var det = document.querySelector('.filtro-categorias');
+      if (!det) return;
+      document.addEventListener('click', function (e) { if (det.open && !det.contains(e.target)) det.open = false; });
+      det.addEventListener('keydown', function (e) { if (e.key === 'Escape') { det.open = false; det.querySelector('summary').focus(); } });
+    })();
+  </script>
+  <script src="/js/validaF_barrapesquisa.js" defer></script>
+</body>
+</html>

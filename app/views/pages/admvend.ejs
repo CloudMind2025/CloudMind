@@ -1,0 +1,262 @@
+<%
+  const STATUS_PRODUTO = {
+    ativo:    { rotulo: 'Publicado', classe: 'cm-badge--ok' },
+    inativo:  { rotulo: 'Inativo',   classe: 'cm-badge--aviso' },
+    suspenso: { rotulo: 'Suspenso',  classe: 'cm-badge--erro' }
+  };
+  const STATUS_PEDIDO = { pago: 'Pago', pendente: 'Aguardando pagamento', cancelado: 'Cancelado', reembolsado: 'Reembolsado' };
+
+  const meses = [];
+  for (let i = 5; i >= 0; i--) meses.push(moment().startOf('month').subtract(i, 'months'));
+  const porMes = {};
+  (vendasMes || []).forEach(function (v) { porMes[v.mes] = v.total; });
+  const grafico = {
+    rotulos: meses.map(function (m) { return m.format('MMM/YY'); }),
+    valores: meses.map(function (m) { return Number((porMes[m.format('YYYY-MM')] || 0).toFixed(2)); })
+  };
+  const temVendas = grafico.valores.some(function (v) { return v > 0; });
+
+  const dadosEdicao = produtos.filter(function (p) { return ['ativo', 'inativo'].includes(p.status_produto); })
+    .map(function (p) {
+      return {
+        id: p.id_produto, titulo: p.titulo, tipo_produto: p.tipo_produto,
+        id_categoria: p.categoria_legada ? '' : p.id_categoria,
+        detalhes: detalhesParaFormulario(p.tipo_produto, p.detalhes),
+        incompleto: p.categoria_legada || !detalhesCompletos(p.tipo_produto, p.detalhes),
+        sku: p.sku || '', preco: Number(p.preco).toFixed(2).replace('.', ','), resumo: p.resumo || '',
+        descricao: p.descricao || '', imagem: p.imagem ? urlMidia(p.imagem) : null,
+        adicionais: Number(p.qtd_imagens_adicionais) || 0, formato: p.formato_arquivo || null,
+        status: (STATUS_PRODUTO[p.status_produto] || {}).rotulo || p.status_produto, vendas: Number(p.vendas) || 0
+      };
+    });
+  const tiposRotulo = {};
+  TIPOS_CHAVES.forEach(function (t) { tiposRotulo[t] = tipoProduto(t).rotulo; });
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Painel do vendedor', noindex: true }) %>
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/conta.css">
+  <link rel="stylesheet" href="/css/admvend.css">
+  <link rel="stylesheet" href="/css/campos-tipo.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+  <%- include('../partials/sidebar') %>
+
+  <main class="conta-main painel-vendedor" id="conteudo" tabindex="-1">
+    <header class="page-header painel-topo">
+      <div>
+        <h1>Painel do vendedor</h1>
+        <p>Seus produtos, vendas e avaliações.</p>
+      </div>
+      <a class="cm-btn cm-btn--ghost" href="/perfilvend"><i class="fa-solid fa-store" aria-hidden="true"></i> Ver minha loja</a>
+    </header>
+
+    <% if (locals.aviso) { %>
+      <p class="cm-alert cm-alert--<%= aviso.tipo %>" role="<%= aviso.tipo === 'erro' ? 'alert' : 'status' %>">
+        <i class="fa-solid <%= aviso.tipo === 'erro' ? 'fa-circle-exclamation' : 'fa-circle-check' %>" aria-hidden="true"></i>
+        <span><%= aviso.msg %><% if (aviso.link) { %> <a href="<%= aviso.link.href %>"><%= aviso.link.rotulo %></a><% } %></span>
+      </p>
+    <% } %>
+
+    <!-- PRODUTOS -->
+    <section class="card" aria-labelledby="titulo-produtos">
+      <div class="top">
+        <h2 id="titulo-produtos">Seus produtos</h2>
+        <div class="top-right">
+          <label class="search-bar">
+            <i class="fa-solid fa-search" aria-hidden="true"></i>
+            <input type="search" placeholder="Buscar produto..." aria-label="Buscar entre seus produtos" data-filtro-produtos>
+          </label>
+          <a href="/cdstraprod" class="cm-btn"><i class="fa-solid fa-plus" aria-hidden="true"></i> Novo produto</a>
+        </div>
+      </div>
+
+      <% if (erroProdutos) { %>
+        <p class="cm-alert cm-alert--erro" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span>Não foi possível carregar seus produtos. Recarregue a página para tentar novamente.</span></p>
+      <% } else if (!produtos.length) { %>
+        <div class="cm-empty">
+          <i class="fa-solid fa-box-open" aria-hidden="true"></i>
+          <p>Você ainda não publicou nenhum produto. Publique o primeiro em poucos passos.</p>
+          <a class="cm-btn" href="/cdstraprod">Publicar produto</a>
+        </div>
+      <% } else { %>
+        <div class="vend-tabela cm-tabela-wrap">
+          <table class="cm-tabela">
+            <thead>
+              <tr>
+                <th scope="col">Produto</th>
+                <th scope="col">Preço</th>
+                <th scope="col">Categoria</th>
+                <th scope="col">Status</th>
+                <th scope="col">Arquivo</th>
+                <th scope="col">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% produtos.forEach(function (p) {
+                   const formatos = (formatosArquivo[p.tipo_produto] || []);
+                   const st = STATUS_PRODUTO[p.status_produto] || { rotulo: p.status_produto, classe: '' };
+                   const vendas = Number(p.vendas) || 0;
+                   const textoExcluir = vendas > 0
+                     ? `Excluir "${p.titulo}"? Como ele já foi vendido, sai da loja, mas quem comprou continua com acesso ao arquivo. Esta ação não pode ser desfeita.`
+                     : `Excluir "${p.titulo}" permanentemente? Esta ação não pode ser desfeita.`; %>
+                <tr data-titulo="<%= p.titulo.toLowerCase() %>">
+                  <td data-rotulo="Produto">
+                    <div class="vend-produto">
+                      <a class="vend-link" href="/paginnerprod?id=<%= p.id_produto %>"><%= p.titulo %></a>
+                      <span class="vend-vendas"><%= vendas %> <%= vendas === 1 ? 'venda' : 'vendas' %></span>
+                    </div>
+                  </td>
+                  <td data-rotulo="Preço"><%= formatarPreco(p.preco) %></td>
+                  <td data-rotulo="Categoria">
+                    <% if (p.nome_categoria) { %><%= p.nome_categoria %><% } else { %><span class="vend-sem-categoria">Sem categoria</span><% } %>
+                    <% if (['ativo', 'inativo'].includes(p.status_produto) && (p.categoria_legada || !detalhesCompletos(p.tipo_produto, p.detalhes))) { %>
+                      <span class="cm-badge cm-badge--aviso vend-completar" title="Escolha a categoria e complete as informações do tipo">Completar dados</span>
+                    <% } %>
+                  </td>
+                  <td data-rotulo="Status"><span class="cm-badge status-vend <%= st.classe %>"><%= st.rotulo %></span></td>
+                  <td data-rotulo="Arquivo">
+                    <div class="vend-arquivo">
+                      <% if (p.formato_arquivo) { %>
+                        <a class="vend-link" href="/downloads/<%= p.id_produto %>" title="Baixar o arquivo enviado">
+                          <i class="fa-solid fa-circle-check" aria-hidden="true"></i> <%= p.formato_arquivo %>
+                        </a>
+                      <% } else { %>
+                        <span class="vend-pendente"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Pendente</span>
+                      <% } %>
+                      <form class="vend-arquivo-form" action="/produto/arquivo" method="POST" enctype="multipart/form-data"
+                            data-titulo="<%= p.titulo %>" data-tem-arquivo="<%= p.formato_arquivo ? 'sim' : 'nao' %>"
+                            data-formatos="<%= formatos.join(',') %>" data-max-mb="<%= tamanhoMaxArquivoMb %>">
+                        <input type="hidden" name="id_produto" value="<%= p.id_produto %>">
+                        <label class="vend-arquivo-label">
+                          <i class="fa-solid fa-upload" aria-hidden="true"></i> <span><%= p.formato_arquivo ? 'Trocar' : 'Enviar' %></span>
+                          <input type="file" name="arquivo" class="vend-arquivo-input"
+                                 accept="<%= formatos.map(function (f) { return '.' + f; }).join(',') %>"
+                                 aria-label="<%= p.formato_arquivo ? 'Trocar' : 'Enviar' %> arquivo de <%= p.titulo %> (<%= formatos.join(', ').toUpperCase() %>, até <%= tamanhoMaxArquivoMb %>MB)">
+                        </label>
+                        <noscript><button type="submit" class="cm-btn cm-btn--pequeno">Salvar arquivo</button></noscript>
+                      </form>
+                    </div>
+                  </td>
+                  <td data-rotulo="Ações">
+                    <div class="actions-cell">
+                      <% if (['ativo', 'inativo'].includes(p.status_produto)) { %>
+                        <a class="cm-btn cm-btn--ghost cm-btn--pequeno" href="/admvend?editar=<%= p.id_produto %>" data-editar="<%= p.id_produto %>">
+                          <i class="fa-solid fa-pen" aria-hidden="true"></i> Editar<span class="cm-sr"> <%= p.titulo %></span>
+                        </a>
+                      <% } %>
+                      <% if (p.status_produto === 'ativo') { %>
+                        <form action="/produto/inativar" method="POST" data-confirmar="Inativar &quot;<%= p.titulo %>&quot;? Ele deixa de aparecer no catálogo até você reativar.">
+                          <input type="hidden" name="id_produto" value="<%= p.id_produto %>">
+                          <button type="submit" class="cm-btn cm-btn--ghost cm-btn--pequeno">Inativar</button>
+                        </form>
+                      <% } else if (p.status_produto === 'inativo') { %>
+                        <form action="/produto/reativar" method="POST" data-enviando="Reativando…">
+                          <input type="hidden" name="id_produto" value="<%= p.id_produto %>">
+                          <button type="submit" class="cm-btn cm-btn--pequeno"><span>Reativar</span></button>
+                        </form>
+                      <% } %>
+                      <form action="/produto/excluir" method="POST" data-confirmar="<%= textoExcluir %>">
+                        <input type="hidden" name="id_produto" value="<%= p.id_produto %>">
+                        <button type="submit" class="cm-btn cm-btn--perigo cm-btn--pequeno">
+                          <i class="fa-solid fa-trash-can" aria-hidden="true"></i> Excluir<span class="cm-sr"> <%= p.titulo %></span>
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+          <p class="cm-empty" data-filtro-vazio hidden>Nenhum produto com esse nome.</p>
+        </div>
+      <% } %>
+    </section>
+
+    <div class="grid">
+      <section class="card" aria-labelledby="titulo-grafico">
+        <h2 id="titulo-grafico">Vendas nos últimos 6 meses</h2>
+        <% if (vendasMes === null) { %>
+          <p class="cm-alert cm-alert--erro" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span>Não foi possível carregar as vendas agora.</span></p>
+        <% } else if (!temVendas) { %>
+          <div class="cm-empty"><i class="fa-solid fa-chart-line" aria-hidden="true"></i><p>Quando você vender, o gráfico mostra o valor vendido em cada mês.</p></div>
+        <% } else { %>
+          <div class="grafico-wrap">
+            <canvas id="salesChart" role="img" aria-label="Gráfico de vendas por mês: <%= grafico.rotulos.map(function (r, i) { return r + ' ' + formatarPreco(grafico.valores[i]); }).join(', ') %>"
+                    data-rotulos="<%= JSON.stringify(grafico.rotulos) %>" data-valores="<%= JSON.stringify(grafico.valores) %>"></canvas>
+          </div>
+        <% } %>
+      </section>
+
+      <section class="card" aria-labelledby="titulo-pedidos">
+        <h2 id="titulo-pedidos">Vendas recentes</h2>
+        <% if (vendasRecentes === null) { %>
+          <p class="cm-alert cm-alert--erro" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span>Não foi possível carregar as vendas agora.</span></p>
+        <% } else if (!vendasRecentes.length) { %>
+          <div class="cm-empty"><i class="fa-solid fa-receipt" aria-hidden="true"></i><p>Nenhuma venda ainda.</p></div>
+        <% } else { %>
+          <ul class="lista-painel">
+            <% vendasRecentes.forEach(function (v) { %>
+              <li>
+                <span class="titulo"><%= v.titulo %></span>
+                <span class="valor"><%= formatarPreco(Number(v.preco_unitario) * Number(v.quantidade)) %></span>
+                <span class="meta"><%= nomePublico(v.nome_cliente) %> · <%= moment(v.data_pedido).format('DD/MM/YYYY') %> · <%= STATUS_PEDIDO[v.status] || v.status %></span>
+              </li>
+            <% }) %>
+          </ul>
+        <% } %>
+      </section>
+    </div>
+
+    <!-- AVALIAÇÕES E PAGAMENTOS -->
+    <div class="grid-2">
+      <section class="card" aria-labelledby="titulo-avaliacoes">
+        <h2 id="titulo-avaliacoes">Avaliações recentes</h2>
+        <% if (avaliacoesRecentes === null) { %>
+          <p class="cm-alert cm-alert--erro" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span>Não foi possível carregar as avaliações agora.</span></p>
+        <% } else if (!avaliacoesRecentes.length) { %>
+          <div class="cm-empty"><i class="fa-regular fa-star" aria-hidden="true"></i><p>Seus produtos ainda não receberam avaliações.</p></div>
+        <% } else { %>
+          <ul class="lista-painel">
+            <% avaliacoesRecentes.forEach(function (a) { %>
+              <li>
+                <span class="titulo"><a class="vend-link" href="/paginnerprod?id=<%= a.id_produto %>#avaliacoes"><%= a.titulo %></a></span>
+                <span class="estrelas" aria-label="Nota <%= a.nota %> de 5"><%= '★'.repeat(a.nota) + '☆'.repeat(5 - a.nota) %></span>
+                <% if (a.comentario) { %><span class="comentario">“<%= a.comentario.length > 140 ? a.comentario.slice(0, 140) + '…' : a.comentario %>”</span><% } %>
+                <span class="meta"><%= nomePublico(a.nome_cliente) %> · <%= moment(a.data_avaliacao).format('DD/MM/YYYY') %></span>
+              </li>
+            <% }) %>
+          </ul>
+        <% } %>
+      </section>
+
+      <section class="card" aria-labelledby="titulo-pagamentos">
+        <h2 id="titulo-pagamentos">Pagamentos</h2>
+        <% if (totais) { %>
+          <p class="total-vendido"><%= formatarPreco(totais.total) %></p>
+          <p class="total-legenda">Total vendido em <%= totais.vendas %> <%= totais.vendas === 1 ? 'venda' : 'vendas' %> com pagamento aprovado</p>
+        <% } else { %>
+          <p class="cm-alert cm-alert--erro" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span>Não foi possível carregar os totais agora.</span></p>
+        <% } %>
+        <button type="button" class="cm-btn">Solicitar saque</button>
+      </section>
+    </div>
+  </main>
+
+  <% if (!erroProdutos && produtos.length) { %>
+    <%- include('../partials/editar-produto') %>
+    <script type="application/json" id="vend-produtos-dados"><%- JSON.stringify({ produtos: dadosEdicao, tipos: tiposRotulo }).replace(/</g, '\\u003c') %></script>
+  <% } %>
+
+  <%- include('../partials/footer') %>
+
+  <% if (temVendas) { %>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+  <% } %>
+  <script src="/js/detalhes-produto.js" defer></script>
+  <script src="/js/admvend.js" defer></script>
+</body>
+</html>

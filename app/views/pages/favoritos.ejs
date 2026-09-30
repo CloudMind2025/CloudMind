@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Meus favoritos', noindex: true }) %>
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/conta.css">
+  <link rel="stylesheet" href="/css/favoritos.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+  <%- include('../partials/sidebar') %>
+
+  <main class="conta-main" id="conteudo" tabindex="-1">
+    <%- include('../partials/btnV', { voltarPara: '/perfiluser' }) %>
+    <header class="page-header">
+      <h1>Meus favoritos</h1>
+      <p>Os produtos que você salvou para ver depois.</p>
+    </header>
+
+    <% if (locals.erro) { %>
+      <p class="cm-alert cm-alert--erro" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span><%= erro %> Recarregue a página para tentar novamente.</span></p>
+    <% } else if (!favoritos || !favoritos.length) { %>
+      <div class="cm-empty">
+        <i class="fa-regular fa-heart" aria-hidden="true"></i>
+        <p>Você ainda não tem favoritos. Na página de um produto, toque em <strong>Favoritar</strong> para guardá-lo aqui.</p>
+        <a class="cm-btn" href="/PProdutos">Explorar produtos</a>
+      </div>
+    <% } else { %>
+      <ul class="favoritos-lista">
+        <% favoritos.forEach(function (fav) { const t = tipoProduto(fav.tipo_produto); %>
+          <li>
+            <article class="card-favorito">
+              <div class="card-favorito-midia">
+                <% if (fav.imagem) { %>
+                  <img src="<%= urlMidia(fav.imagem) %>" alt="" loading="lazy" width="400" height="250">
+                <% } else { %>
+                  <span class="conta-card-sem-img" aria-hidden="true"><i class="fa-solid <%= t.icone %>"></i></span>
+                <% } %>
+              </div>
+              <div class="info">
+                <span class="tipo"><i class="fa-solid <%= t.icone %>" aria-hidden="true"></i> <%= t.rotulo %></span>
+                <h2><a href="/paginnerprod?id=<%= fav.id_produto %>"><%= fav.titulo %></a></h2>
+                <% if (fav.descricao) { %><p class="descricao"><%= fav.descricao %></p><% } %>
+                <p class="preco"><span class="cm-sr">Preço: </span><%= formatarPreco(fav.preco) %></p>
+                <div class="acoes">
+                  <a class="cm-btn cm-btn--pequeno" href="/paginnerprod?id=<%= fav.id_produto %>"><i class="fa-solid fa-eye" aria-hidden="true"></i> Ver detalhes</a>
+                  <form action="/favoritos/remover" method="POST" data-confirmar="Remover &quot;<%= fav.titulo %>&quot; dos favoritos?">
+                    <input type="hidden" name="id_produto" value="<%= fav.id_produto %>">
+                    <button type="submit" class="cm-btn cm-btn--ghost cm-btn--pequeno"><i class="fa-regular fa-trash-can" aria-hidden="true"></i> Remover<span class="cm-sr"> <%= fav.titulo %> dos favoritos</span></button>
+                  </form>
+                </div>
+              </div>
+            </article>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

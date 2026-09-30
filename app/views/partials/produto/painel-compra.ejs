@@ -1,0 +1,173 @@
+<%
+  const tituloUrl = encodeURIComponent(produto.titulo);
+  const urlCodificada = encodeURIComponent(urlPublica);
+  const ficha = fichaDoProduto(produto.tipo_produto, produto.detalhes);
+%>
+<div class="pd-info">
+  <p class="pd-kicker">
+    <span class="pd-type"><i class="fa-solid <%= tipo.icone %>" aria-hidden="true"></i> <%= tipo.rotulo %></span>
+
+    <% if (produto.nome_categoria) { %>
+      <span class="pd-category"><span class="pd-kicker-label">Categoria</span> <%= produto.nome_categoria %></span>
+    <% } %>
+  </p>
+
+  <h1 class="pd-title" id="pd-titulo"><%= produto.titulo %></h1>
+  <% if (produto.resumo) { %>
+    <p class="pd-subtitle"><%= produto.resumo %></p>
+  <% } %>
+
+  <%- include('vendedor') %>
+
+  <div class="pd-purchase">
+    <p class="pd-price"><span class="pd-sr">Preço: </span><%= formatarPreco(produto.preco) %></p>
+
+    <% if (disponivel) { %>
+      <p class="pd-availability pd-availability--ok">
+        <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Disponível
+        <span class="pd-muted">· entrega digital</span>
+      </p>
+    <% } else if (jaComprou && !ehDono) { %>
+      <p class="pd-availability pd-availability--off">
+        <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i> Não está mais à venda
+      </p>
+    <% } else { %>
+      <p class="pd-availability pd-availability--off">
+        <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i> Indisponível para compradores
+      </p>
+    <% } %>
+
+    <section class="pd-receive" aria-labelledby="pd-recebe-titulo">
+      <h2 id="pd-recebe-titulo">O que você recebe</h2>
+      <% if (ficha.length) { %>
+
+        <dl class="pd-receive-specs">
+          <% if (produto.formato_arquivo) { %>
+            <div>
+              <dt><i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i> Formato</dt>
+              <dd><%= produto.formato_arquivo %></dd>
+            </div>
+          <% } %>
+          <% ficha.forEach(function (l) { %>
+            <div<% if (l.valor.length > 18) { %> class="pd-receive-spec--largo"<% } %>>
+              <dt><i class="fa-solid <%= l.icone %>" aria-hidden="true"></i> <%= l.rotulo %></dt>
+              <dd><%= l.valor %></dd>
+            </div>
+          <% }) %>
+        </dl>
+      <% } %>
+
+      <% if (!ficha.length) { %>
+
+        <ul>
+          <li>
+            <i class="fa-solid <%= tipo.icone %>" aria-hidden="true"></i>
+            <span><%= tipo.entrega %><% if (produto.formato_arquivo) { %> (<%= produto.formato_arquivo %>)<% } %></span>
+          </li>
+          <li>
+            <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i>
+            <span>Produto 100% digital, sem envio físico</span>
+          </li>
+        </ul>
+      <% } %>
+    </section>
+
+    <% if (ehDono) { %>
+      <a class="pd-btn pd-btn--primary pd-btn--block" href="/admvend">
+        <i class="fa-solid fa-gear" aria-hidden="true"></i> Gerenciar produto
+      </a>
+    <% } else if (jaComprou) { %>
+      <div class="pd-owned">
+        <p class="pd-owned-note"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Você já comprou este produto.</p>
+        <% if (produto.formato_arquivo) { %>
+          <a class="pd-btn pd-btn--primary pd-btn--block" href="/downloads/<%= produto.id_produto %>">
+            <i class="fa-solid fa-download" aria-hidden="true"></i> Baixar arquivo (<%= produto.formato_arquivo %>)
+          </a>
+        <% } else { %>
+          <a class="pd-btn pd-btn--primary pd-btn--block" href="/meusdowloads">
+            <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> Ir para Meus downloads
+          </a>
+          <p class="pd-muted pd-owned-hint">O vendedor ainda não enviou o arquivo. Ele aparece em Meus downloads assim que for enviado.</p>
+        <% } %>
+        <a class="pd-link pd-owned-review" href="#avaliar">
+          <i class="fa-regular fa-star" aria-hidden="true"></i> <%= minhaAvaliacao ? 'Editar sua avaliação' : 'Avaliar este produto' %>
+        </a>
+      </div>
+    <% } else if (disponivel) { %>
+      <form id="pd-form-carrinho" class="pd-cart-form" action="/carrinho/adicionar" method="POST"
+            data-carrinho data-estado="<%= noCarrinho ? 'adicionado' : 'pronto' %>">
+        <input type="hidden" name="id_produto" value="<%= produto.id_produto %>">
+        <% if (noCarrinho) { %>
+          <a class="pd-btn pd-btn--primary pd-btn--block" href="/carrinho" data-carrinho-botao>
+            <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i> <span>Ver no carrinho</span>
+          </a>
+          <p class="pd-cart-note"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Este produto já está no seu carrinho.</p>
+        <% } else { %>
+          <button type="submit" class="pd-btn pd-btn--primary pd-btn--block" data-carrinho-botao>
+            <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> <span>Adicionar ao carrinho</span>
+          </button>
+        <% } %>
+      </form>
+    <% } %>
+
+    <div class="pd-actions">
+      <% if (!ehDono) { %>
+        <% if (usuarioLogado) { %>
+          <form class="pd-fav-form" method="POST"
+                action="/favoritos/<%= favoritado ? 'remover' : 'adicionar' %>"
+                data-favorito data-favoritado="<%= favoritado %>">
+            <input type="hidden" name="id_produto" value="<%= produto.id_produto %>">
+            <input type="hidden" name="origem" value="produto">
+            <button type="submit" class="pd-btn pd-btn--ghost" data-favorito-botao>
+              <i class="fa-<%= favoritado ? 'solid' : 'regular' %> fa-heart" aria-hidden="true"></i>
+              <span data-favorito-rotulo><%= favoritado ? 'Nos favoritos' : 'Favoritar' %></span>
+            </button>
+          </form>
+        <% } else { %>
+          <a class="pd-btn pd-btn--ghost" href="<%= locals.urlLogin || '/login' %>" title="Entre na sua conta para favoritar">
+            <i class="fa-regular fa-heart" aria-hidden="true"></i> Favoritar
+          </a>
+        <% } %>
+      <% } %>
+
+      <div class="pd-share" data-compartilhar data-id="<%= produto.id_produto %>" data-titulo="<%= produto.titulo %>">
+        <button type="button" class="pd-btn pd-btn--ghost" data-compartilhar-botao
+                aria-expanded="false" aria-controls="pd-share-menu">
+          <i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Compartilhar
+        </button>
+        <div class="pd-share-menu" id="pd-share-menu" data-compartilhar-menu hidden>
+          <p class="pd-share-title">Compartilhar produto</p>
+          <ul>
+            <li>
+              <button type="button" data-copiar-link>
+                <i class="fa-regular fa-copy" aria-hidden="true"></i> <span>Copiar link</span>
+              </button>
+            </li>
+            <li>
+              <a href="https://wa.me/?text=<%= tituloUrl %>%20<%= urlCodificada %>" target="_blank" rel="noopener noreferrer" data-rede="whatsapp">
+                <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/intent/tweet?text=<%= tituloUrl %>&amp;url=<%= urlCodificada %>" target="_blank" rel="noopener noreferrer" data-rede="x">
+                <i class="fa-brands fa-x-twitter" aria-hidden="true"></i> X
+              </a>
+            </li>
+            <li>
+              <a href="https://www.facebook.com/sharer/sharer.php?u=<%= urlCodificada %>" target="_blank" rel="noopener noreferrer" data-rede="facebook">
+                <i class="fa-brands fa-facebook-f" aria-hidden="true"></i> Facebook
+              </a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/sharing/share-offsite/?url=<%= urlCodificada %>" target="_blank" rel="noopener noreferrer" data-rede="linkedin">
+                <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i> LinkedIn
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('garantias') %>
+</div>

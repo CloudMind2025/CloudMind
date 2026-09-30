@@ -1,0 +1,123 @@
+<%
+  const carregado = estado === 'ok';
+  const titulosEstado = {
+    nao_encontrado: 'Produto não encontrado',
+    indisponivel:   'Produto indisponível',
+    erro:           'Erro ao carregar o produto'
+  };
+  const tituloPagina = carregado ? produto.titulo : titulosEstado[estado];
+  const descricaoMeta = carregado
+    ? (produto.resumo || String(produto.descricao || '').replace(/\s+/g, ' ').trim().slice(0, 160))
+    : '';
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title><%= tituloPagina %> — CloudMind</title>
+  <% if (carregado && disponivel) { %>
+    <% if (descricaoMeta) { %><meta name="description" content="<%= descricaoMeta %>"><% } %>
+    <link rel="canonical" href="<%= urlPublica %>">
+    <meta property="og:type" content="product">
+    <meta property="og:site_name" content="CloudMind">
+    <meta property="og:title" content="<%= produto.titulo %>">
+    <% if (descricaoMeta) { %><meta property="og:description" content="<%= descricaoMeta %>"><% } %>
+    <meta property="og:url" content="<%= urlPublica %>">
+    <% if (produto.imagem) { const imgOg = urlMidia(produto.imagem); %><meta property="og:image" content="<%= /^https?:/i.test(imgOg) ? imgOg : urlBase + imgOg %>"><% } %>
+  <% } else { %>
+    <meta name="robots" content="noindex">
+  <% } %>
+  <script>document.documentElement.classList.add('pd-js');</script>
+  <meta name="theme-color" content="#15202c">
+  <link rel="icon" href="/image/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/produto.css">
+  <% if (carregado && produto.imagem) { %><link rel="preload" as="image" href="<%= urlMidia(produto.imagem) %>" fetchpriority="high"><% } %>
+  <noscript><style>.pd-page .pd-tabpanel[hidden] { display: block !important; } .pd-tablist { display: none; }</style></noscript>
+</head>
+<body class="pd-page">
+  <%- include('../partials/menu', { alvoConteudo: 'pd-conteudo' }) %>
+
+  <main class="pd-main" id="pd-conteudo" tabindex="-1">
+   <div class="pd">
+    <% if (!carregado) { %>
+      <%- include('../partials/produto/estado') %>
+    <% } else { %>
+
+      <nav class="pd-trail" aria-label="Navegação">
+        <a href="/PProdutos" class="pd-back" data-voltar>
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Voltar
+        </a>
+        <ol class="pd-breadcrumb">
+          <li><a href="/PProdutos">Produtos</a></li>
+          <% if (TIPOS_CHAVES.includes(tipo.chave)) { %>
+            <li><a href="/PProdutos?tipo=<%= tipo.chave %>"><%= tipo.rotulo %></a></li>
+          <% } %>
+          <% if (produto.nome_categoria) { %><li><%= produto.nome_categoria %></li><% } %>
+          <li aria-current="page"><%= produto.titulo %></li>
+        </ol>
+      </nav>
+
+      <% if (!ehDono && !disponivel && jaComprou) { %>
+        <div class="pd-owner-banner" role="note">
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          <p>
+            <strong>Este produto não está mais à venda.</strong>
+            Como você já comprou, continua com acesso ao arquivo e pode avaliá-lo.
+          </p>
+        </div>
+      <% } %>
+
+      <% if (ehDono) { %>
+        <div class="pd-owner-banner" role="note">
+          <i class="fa-solid fa-store" aria-hidden="true"></i>
+          <p>
+            <strong>Você está vendo a página pública do seu produto.</strong>
+            <% if (produto.status_produto === 'inativo') { %>
+              Ele está <strong>inativo</strong> e não aparece para compradores.
+            <% } else if (produto.status_produto === 'suspenso') { %>
+              Ele foi <strong>suspenso</strong> e não aparece para compradores. Fale com o suporte para mais detalhes.
+            <% } else { %>
+              Compradores veem esta mesma página, com as opções de compra.
+            <% } %>
+          </p>
+        </div>
+      <% } %>
+
+      <section class="pd-hero pd-surface" aria-labelledby="pd-titulo">
+        <%- include('../partials/produto/galeria') %>
+        <%- include('../partials/produto/painel-compra') %>
+        <%- include('../partials/produto/como-receber') %>
+      </section>
+
+      <div class="pd-body">
+        <%- include('../partials/produto/abas') %>
+        <%- include('../partials/produto/avaliacoes-resumo') %>
+        <%- include('../partials/produto/avaliacoes-lista') %>
+      </div>
+
+      <%- include('../partials/produto/relacionados') %>
+      <%- include('../partials/produto/barra-compra') %>
+
+      <div class="pd-sr" role="status" aria-live="polite" data-aviso-status></div>
+      <div class="pd-sr" role="alert" data-aviso-alerta></div>
+      <div class="pd-toast" data-toast aria-hidden="true"></div>
+    <% } %>
+   </div>
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <% if (carregado) { %>
+    <script src="/js/produto-galeria.js" defer></script>
+    <script src="/js/produto.js" defer></script>
+  <% } %>
+</body>
+</html>

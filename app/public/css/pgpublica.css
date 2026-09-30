@@ -1,0 +1,77 @@
+.public-topo { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; }
+
+.public-form { max-width: none; }
+.public-form textarea { resize: vertical; min-height: 160px; line-height: 1.6; }
+.public-dicas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; }
+.public-contador { font-variant-numeric: tabular-nums; }
+.public-contador.is-perto { color: var(--cm-aviso-tinta); font-weight: 700; }
+
+.public-texto { color: var(--cm-texto-suave); margin-bottom: 10px; }
+.public-lista { display: grid; gap: 8px; list-style: none; color: var(--cm-texto-suave); }
+.public-lista li { display: flex; align-items: baseline; gap: 10px; }
+.public-lista i { color: var(--cm-dourado-tinta); width: 18px; text-align: center; }
+.public-lista a { color: var(--cm-link); font-weight: 600; }
+
+/* ===== Capa da loja ===== */
+.public-capa .public-texto { margin-top: -6px; }
+
+.public-previas { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); gap: 14px; margin-bottom: 16px; }
+.public-previas figure { display: grid; gap: 6px; }
+.public-previas figcaption { font-size: 0.8rem; font-weight: 600; color: var(--cm-muted); }
+.public-previa {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #112146;
+}
+
+.public-previa::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 3px;
+  background: var(--cm-dourado);
+}
+.public-previa--desktop { aspect-ratio: 6 / 1; }
+.public-previa--celular { aspect-ratio: 3 / 1; }
+.public-previa.is-padrao {
+  background:
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.08) 1px, transparent 0) 0 0 / 14px 14px,
+    radial-gradient(ellipse at 95% -10%, rgba(114, 142, 158, 0.55), transparent 50%),
+    radial-gradient(ellipse at 5% 130%, rgba(68, 122, 140, 0.45), transparent 55%),
+    linear-gradient(120deg, #0b1220 0%, #112146 55%, #18343b 100%);
+}
+.public-previa img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.public-capa-form .cm-campo { margin-bottom: 12px; }
+.public-capa-form input[type="file"] {
+  width: 100%;
+  max-width: 520px;
+  padding: 10px;
+  border: 1.5px dashed rgba(17, 33, 70, 0.28);
+  border-radius: 10px;
+  background: var(--cm-afundado);
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+.public-capa-form input[type="file"]::file-selector-button {
+  margin-right: 12px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--cm-escuro-solido);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+.public-aviso { font-size: 0.84rem; font-weight: 600; }
+.public-aviso:empty { display: none; }
+.public-aviso.is-erro  { color: var(--cm-erro); }
+.public-aviso.is-aviso { color: var(--cm-aviso-tinta); }
+.public-aviso.is-ok    { color: var(--cm-ok); }
+.public-capa-acoes { display: flex; flex-wrap: wrap; gap: 10px; }
+
+@media (max-width: 640px) {
+  .public-previas { grid-template-columns: 1fr; }
+  .public-previa--celular { max-width: 260px; }
+}

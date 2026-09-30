@@ -1,0 +1,95 @@
+<%
+  const flash = flashPergunta || null;
+  const flashResposta = flash && flash.id_pergunta ? flash : null;
+  const flashGeral = flash && !flash.id_pergunta ? flash : null;
+%>
+<h2 class="pd-panel-title">Perguntas sobre este produto</h2>
+
+<% if (flashGeral) { %>
+  <p class="pd-alert pd-alert--<%= flashGeral.tipo %>" role="<%= flashGeral.tipo === 'erro' ? 'alert' : 'status' %>" tabindex="-1" data-flash>
+    <i class="fa-solid <%= flashGeral.tipo === 'erro' ? 'fa-circle-exclamation' : 'fa-circle-check' %>" aria-hidden="true"></i>
+    <%= flashGeral.msg %>
+  </p>
+<% } %>
+
+<% if (ehDono) { %>
+  <p class="pd-muted pd-questions-intro">
+    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+    Este é o seu produto: responda às perguntas dos compradores logo abaixo.
+  </p>
+<% } else if (usuarioLogado) { %>
+  <form class="pd-question-form" action="/produto/perguntar" method="POST" data-form-texto novalidate>
+    <input type="hidden" name="id_produto" value="<%= produto.id_produto %>">
+    <label for="pd-pergunta" class="pd-label">Sua pergunta para o vendedor</label>
+    <textarea id="pd-pergunta" name="pergunta" rows="3" minlength="10" maxlength="500" required
+              placeholder="Escreva sua pergunta…"
+              aria-describedby="pd-pergunta-ajuda pd-pergunta-contador pd-pergunta-erro"
+              data-contador="pd-pergunta-contador"><%= flashGeral && flashGeral.tipo === 'erro' ? (flashGeral.texto || '') : '' %></textarea>
+    <div class="pd-form-meta">
+      <small id="pd-pergunta-ajuda" class="pd-muted">Entre 10 e 500 caracteres. Não compartilhe dados pessoais.</small>
+      <small id="pd-pergunta-contador" class="pd-muted" aria-live="off">0/500</small>
+    </div>
+    <p id="pd-pergunta-erro" class="pd-field-error" hidden></p>
+    <button type="submit" class="pd-btn pd-btn--dark">
+      <i class="fa-regular fa-paper-plane" aria-hidden="true"></i> Perguntar
+    </button>
+  </form>
+<% } else { %>
+  <div class="pd-login-cta">
+    <p><i class="fa-regular fa-comments" aria-hidden="true"></i> Entre na sua conta para enviar uma pergunta ao vendedor.</p>
+    <a class="pd-btn pd-btn--dark" href="<%= locals.urlLogin ? urlLogin + '%23perguntas' : '/login' %>">Entrar para perguntar</a>
+  </div>
+<% } %>
+
+<h3 class="pd-questions-heading">
+  Perguntas recentes<% if (perguntas && perguntas.length) { %> <span class="pd-muted">(<%= perguntas.length %>)</span><% } %>
+</h3>
+
+<% if (perguntas === null) { %>
+  <p class="pd-alert pd-alert--erro" role="alert">
+    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+    Não foi possível carregar as perguntas agora. Recarregue a página para tentar novamente.
+  </p>
+<% } else if (perguntas.length === 0) { %>
+  <div class="pd-empty">
+    <i class="fa-regular fa-comment-dots" aria-hidden="true"></i>
+    <p>
+      Ainda não há perguntas sobre este produto.
+      <% if (!ehDono && usuarioLogado) { %>Seja o primeiro a perguntar.<% } %>
+    </p>
+  </div>
+<% } else { %>
+  <ol class="pd-question-list">
+    <% perguntas.forEach(function (q) { %>
+      <li class="pd-question">
+        <p class="pd-question-text"><i class="fa-regular fa-circle-question" aria-hidden="true"></i> <%= q.pergunta %></p>
+        <p class="pd-question-meta">
+          <%= nomePublico(q.nome_usuario) %> ·
+          <time datetime="<%= moment(q.data_pergunta).format('YYYY-MM-DD') %>"><%= moment(q.data_pergunta).format('DD/MM/YYYY') %></time>
+        </p>
+
+        <% if (q.resposta) { %>
+          <div class="pd-answer">
+            <p class="pd-answer-label"><i class="fa-solid fa-reply" aria-hidden="true"></i> Respondido pelo vendedor
+              <% if (q.data_resposta) { %>· <time datetime="<%= moment(q.data_resposta).format('YYYY-MM-DD') %>"><%= moment(q.data_resposta).format('DD/MM/YYYY') %></time><% } %>
+            </p>
+            <p class="pd-answer-text"><%= q.resposta %></p>
+          </div>
+        <% } else if (ehDono) { %>
+          <% const erroAqui = flashResposta && Number(flashResposta.id_pergunta) === Number(q.id_pergunta); %>
+          <form class="pd-answer-form" action="/produto/pergunta/responder" method="POST" data-form-texto novalidate>
+            <input type="hidden" name="id_pergunta" value="<%= q.id_pergunta %>">
+            <input type="hidden" name="id_produto" value="<%= produto.id_produto %>">
+            <label for="pd-resposta-<%= q.id_pergunta %>" class="pd-label">Sua resposta</label>
+            <textarea id="pd-resposta-<%= q.id_pergunta %>" name="resposta" rows="2" minlength="2" maxlength="1000" required
+                      aria-describedby="pd-resposta-erro-<%= q.id_pergunta %>"><%= erroAqui ? (flashResposta.texto || '') : '' %></textarea>
+            <p id="pd-resposta-erro-<%= q.id_pergunta %>" class="pd-field-error" <%- erroAqui ? 'tabindex="-1" data-flash' : 'hidden' %>><%= erroAqui ? flashResposta.msg : '' %></p>
+            <button type="submit" class="pd-btn pd-btn--dark pd-btn--small">Responder</button>
+          </form>
+        <% } else { %>
+          <p class="pd-answer-pending"><i class="fa-regular fa-clock" aria-hidden="true"></i> Aguardando resposta do vendedor</p>
+        <% } %>
+      </li>
+    <% }) %>
+  </ol>
+<% } %>

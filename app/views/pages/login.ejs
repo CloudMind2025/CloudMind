@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: 'Entrar', descricao: 'Entre na sua conta CloudMind para comprar, baixar e vender produtos digitais.' }) %>
+  <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+
+  <main class="auth" id="conteudo" tabindex="-1">
+    <section class="auth-card">
+
+      <aside class="auth-info" aria-label="Sobre a sua conta">
+        <h2>Bem-vindo de volta</h2>
+        <ul>
+          <li><i class="fa-solid fa-key" aria-hidden="true"></i> Acesse sua conta de forma rápida e segura.</li>
+          <li><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Continue seus estudos, projetos e vendas de onde parou.</li>
+          <li><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Seus arquivos comprados ficam guardados em Meus downloads.</li>
+        </ul>
+      </aside>
+
+      <section class="auth-form" aria-labelledby="titulo-login">
+        <h1 id="titulo-login">Entre na sua conta</h1>
+
+        <% if (locals.aviso) { %>
+          <p class="cm-alert cm-alert--<%= aviso.tipo %>" role="status">
+            <i class="fa-solid <%= aviso.tipo === 'sucesso' ? 'fa-circle-check' : aviso.tipo === 'aviso' ? 'fa-triangle-exclamation' : 'fa-circle-info' %>" aria-hidden="true"></i>
+            <span><%= aviso.msg %></span>
+          </p>
+        <% } %>
+
+        <div class="social-login">
+          <button type="button" class="google"><i class="fa-brands fa-google" aria-hidden="true"></i> Google</button>
+          <button type="button" class="apple"><i class="fa-brands fa-apple" aria-hidden="true"></i> Apple</button>
+        </div>
+
+        <p class="auth-divisor">ou use seu e-mail</p>
+
+        <form action="/login" method="POST" novalidate data-form-login>
+          <% if (locals.erro) { %>
+            <p class="cm-alert cm-alert--erro" role="alert" id="login-erro">
+              <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <span><%= erro %></span>
+            </p>
+          <% } %>
+
+          <div class="cm-campo">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" autocomplete="email" required
+                   value="<%= locals.campos && campos.email ? campos.email : '' %>"
+                   <% if (locals.erro) { %>aria-invalid="true" aria-describedby="login-erro"<% } %>>
+          </div>
+
+          <div class="cm-campo">
+            <label for="password">Senha</label>
+            <div class="campo-senha">
+              <input type="password" id="password" name="senha" autocomplete="current-password" required
+                     <% if (locals.erro) { %>aria-invalid="true" aria-describedby="login-erro"<% } %>>
+              <button type="button" class="mostrar-senha" data-mostrar-senha="password" aria-label="Mostrar senha" aria-pressed="false">
+                <i class="fa-regular fa-eye" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="auth-opcoes">
+            <a href="#">Esqueceu a senha?</a>
+          </div>
+
+          <div class="auth-acoes">
+            <button type="submit" class="cm-btn cm-btn--bloco"><span>Entrar</span></button>
+            <a href="/cadastro" class="cm-btn cm-btn--escuro cm-btn--bloco">Criar nova conta</a>
+          </div>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <script src="/js/validacao.js" defer></script>
+  <script src="/js/validaF_login.js" defer></script>
+</body>
+</html>

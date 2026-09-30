@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Administrador">
+  <defs>
+    <linearGradient id="fundo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1c2f57"/>
+      <stop offset="1" stop-color="#18343b"/>
+    </linearGradient>
+    <linearGradient id="ouro" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e3c173"/>
+      <stop offset="1" stop-color="#b88b32"/>
+    </linearGradient>
+    <clipPath id="circulo"><circle cx="60" cy="60" r="60"/></clipPath>
+  </defs>
+  <g clip-path="url(#circulo)">
+    <rect width="120" height="120" fill="url(#fundo)"/>
+    <!-- pessoa -->
+    <circle cx="60" cy="46" r="20" fill="#dfe6ee"/>
+    <path d="M18 120c3-26 20-40 42-40s39 14 42 40z" fill="#dfe6ee"/>
+  </g>
+  <!-- escudo de administrador -->
+  <path d="M92 64l16 6v12c0 11-7 19-16 23-9-4-16-12-16-23V70z" fill="url(#ouro)" stroke="#18343b" stroke-width="3"/>
+  <path d="M85.5 84.5l4.5 4.5 8.5-9" fill="none" stroke="#18343b" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

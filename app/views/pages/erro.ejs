@@ -1,0 +1,54 @@
+<%
+  const ESTADOS_ERRO = {
+    404: {
+      icone: 'fa-compass',
+      titulo: 'Página não encontrada',
+      texto: 'O endereço pode estar incorreto ou a página foi removida.'
+    },
+    403: {
+      icone: 'fa-lock',
+      titulo: 'Acesso não permitido',
+      texto: 'Você não tem permissão para ver esta página.'
+    },
+    500: {
+      icone: 'fa-triangle-exclamation',
+      titulo: 'Algo deu errado',
+      texto: 'Tivemos um problema ao carregar esta página. Tente novamente em instantes.'
+    }
+  };
+  const cod = ESTADOS_ERRO[locals.codigo] ? locals.codigo : 500;
+  const est = ESTADOS_ERRO[cod];
+  const ehAdmErro = !!(locals.usuarioLogado && usuarioLogado.tipo === 'admin');
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head', { titulo: est.titulo, noindex: true }) %>
+  <link rel="stylesheet" href="/css/erro.css">
+</head>
+<body>
+  <%- include('../partials/menu') %>
+
+  <main class="erro-pagina" id="conteudo" tabindex="-1">
+    <section class="erro-cartao" aria-labelledby="erro-titulo">
+      <span class="erro-icone" aria-hidden="true"><i class="fa-solid <%= est.icone %>"></i></span>
+      <p class="erro-codigo">Erro <%= cod %></p>
+      <h1 id="erro-titulo"><%= est.titulo %></h1>
+      <p><%= est.texto %></p>
+      <div class="erro-acoes">
+        <% if (cod === 500) { %>
+          <a class="cm-btn" href=""><i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Tentar novamente</a>
+        <% } %>
+        <% if (ehAdmErro) { %>
+          <a class="cm-btn <%= cod === 500 ? 'cm-btn--ghost' : '' %>" href="/paineladm">Ir para o painel</a>
+        <% } else { %>
+          <a class="cm-btn <%= cod === 500 ? 'cm-btn--ghost' : '' %>" href="/PProdutos">Explorar produtos</a>
+          <a class="cm-btn cm-btn--ghost" href="/">Página inicial</a>
+        <% } %>
+      </div>
+    </section>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>
